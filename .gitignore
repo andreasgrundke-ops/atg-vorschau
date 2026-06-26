@@ -1,0 +1,14 @@
+# Astro / Node
+node_modules/
+dist/
+.astro/
+.vite/
+
+# interne Referenz (nicht ins öffentliche Repo)
+_referenz-alt/
+
+# OS / Logs
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*

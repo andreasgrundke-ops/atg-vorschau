@@ -1,0 +1,143 @@
+---
+/**
+ * FloatingActions — schwebende Schnellaktionen rechts + Scroll-to-Top.
+ *
+ * Ablauf:
+ *  1. Beim Scrollen über die Hero hinaus (ca. 70 % Viewport-Höhe) blendet die Leiste sanft ein.
+ *  2. Schnellaktionen: Mitglied werden (rot) · Fahrzeug buchen (gelb) · Anrufen (tel:) · E-Mail (mailto:).
+ *  3. Scroll-to-Top nutzt Lenis (window.lenis), sonst native smooth-scroll als Fallback.
+ *
+ * Desktop (>=768px): Pill-Buttons mit Icon + Text, vertikal rechts unten.
+ * Mobil   (<768px):  runde Icon-FABs (50px), rechts unten gestapelt — Labels via aria-label.
+ *
+ * Version: 1.0 · Autor: Grundke IT-Service · Datum: 2026-06-26
+ */
+const TEL = 'tel:+498921541339';
+const MAIL = 'mailto:info@atg-grasbrunn.de?subject=Mitglied%20werden%20bei%20ATG';
+const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+---
+
+<div class="fab" id="fab">
+  <nav class="fab-cta" aria-label="Schnellaktionen">
+    <a class="fab-btn fab-red" href="/#mitglied">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line>
+      </svg>
+      <span>Mitglied werden</span>
+    </a>
+    <a class="fab-btn fab-yellow" href={BOOK} rel="noopener" aria-label="Fahrzeug buchen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 1 12v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle>
+      </svg>
+      <span>Fahrzeug buchen</span>
+    </a>
+    <a class="fab-btn fab-line" href={TEL} aria-label="Jetzt anrufen: 089 21541339">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path>
+      </svg>
+      <span>Jetzt anrufen</span>
+    </a>
+    <a class="fab-btn fab-line" href={MAIL} aria-label="E-Mail schreiben">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+      </svg>
+      <span>E-Mail schreiben</span>
+    </a>
+  </nav>
+
+  <button class="fab-top" id="fab-top" type="button" aria-label="Nach oben scrollen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path>
+    </svg>
+  </button>
+</div>
+
+<style>
+  .fab {
+    position: fixed;
+    right: clamp(0.75rem, 2vw, 1.4rem);
+    bottom: clamp(0.9rem, 3vw, 1.6rem);
+    z-index: var(--z-fab);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.55rem;
+    /* Standard: ausgeblendet, bis über die Hero gescrollt wird */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(14px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .fab.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+
+  .fab-cta { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; }
+
+  .fab-btn {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-family: var(--font-body); font-weight: 700; font-size: 0.95rem;
+    padding: 0.7rem 1.1rem; border-radius: 999px;
+    min-height: 48px; border: 2px solid transparent; white-space: nowrap;
+    box-shadow: 0 10px 26px -12px rgba(24, 21, 19, 0.55);
+    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease, background 0.18s ease;
+  }
+  .fab-btn svg { width: 20px; height: 20px; flex: none; }
+  .fab-btn:hover { transform: translateX(-3px); box-shadow: 0 14px 30px -12px rgba(24, 21, 19, 0.6); }
+
+  .fab-red { background: var(--color-red); color: #fff; }
+  .fab-red:hover { background: var(--color-red-deep); }
+  .fab-yellow { background: var(--color-yellow); color: var(--color-ink); }
+  .fab-yellow:hover { background: var(--color-yellow-deep); }
+  .fab-line { background: #fff; color: var(--color-ink); border-color: var(--color-line); }
+  .fab-line:hover { border-color: var(--color-ink); }
+
+  .fab-top {
+    display: inline-grid; place-items: center;
+    width: 48px; height: 48px; border-radius: 999px;
+    background: var(--color-ink); color: var(--color-yellow);
+    border: 0; cursor: pointer;
+    box-shadow: 0 10px 26px -12px rgba(24, 21, 19, 0.6);
+    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease;
+  }
+  .fab-top svg { width: 22px; height: 22px; }
+  .fab-top:hover { transform: translateY(-3px); background: #000; }
+
+  /* Mobil: nur Icons (runde FABs), Labels visuell ausblenden — Platz sparen, tappbar bleiben */
+  @media (max-width: 767px) {
+    .fab-btn { padding: 0; width: 50px; height: 50px; justify-content: center; border-radius: 999px; position: relative; }
+    .fab-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .fab-btn svg { width: 22px; height: 22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fab { transition: opacity 0.2s ease, visibility 0.2s; transform: none; }
+    .fab.is-visible { transform: none; }
+    .fab-btn:hover, .fab-top:hover { transform: none; }
+  }
+</style>
+
+<script>
+  // Einblenden, sobald über die Hero hinaus gescrollt wurde (~70 % Viewport-Höhe).
+  const fab = document.getElementById('fab');
+  if (fab) {
+    let ticking = false;
+    const update = () => {
+      fab.classList.toggle('is-visible', window.scrollY > window.innerHeight * 0.7);
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+  }
+
+  // Scroll-to-Top: Lenis bevorzugt (geschmeidig), sonst native Fallback.
+  const top = document.getElementById('fab-top');
+  if (top) {
+    top.addEventListener('click', () => {
+      const lenis = (window as any).lenis;
+      if (lenis) lenis.scrollTo(0);
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+</script>

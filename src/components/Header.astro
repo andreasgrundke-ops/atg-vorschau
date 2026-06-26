@@ -1,0 +1,80 @@
+---
+/**
+ * Header — sticky. Logo + Wortmarke, Hauptnav, Sofort-CTAs:
+ *  - 1-Tap-Anruf (tel:) sichtbar auf Mobil
+ *  - "Fahrzeug buchen" (für Mitglieder → Buchungssystem)
+ *  - "Mitglied werden" (roter Primär-CTA)
+ */
+---
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="/" aria-label="Auto-Teiler Grasbrunn e.V. – Startseite">
+      <img src="/img/atg-logo.jpg" width="46" height="46" alt="Logo Auto-Teiler Grasbrunn e.V." />
+      <span class="brand-text">
+        <b>Auto-Teiler Grasbrunn</b>
+        <small>Carsharing dahoam</small>
+      </span>
+    </a>
+
+    <nav class="mainnav" aria-label="Hauptnavigation">
+      <a href="/#flotte">Flotte</a>
+      <a href="/#so-gehts">So geht's</a>
+      <a href="/#preise">Preise</a>
+      <a href="/#kontakt">Kontakt</a>
+    </nav>
+
+    <div class="actions">
+      <a class="icon-call" href="tel:+498921541339" aria-label="Anrufen: 089 21541339">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+      </a>
+      <a class="btn btn-ghost only-desk" href="https://www.atg-grasbrunn.de/mitgliederbereich/" rel="noopener">Fahrzeug buchen</a>
+      <a class="btn btn-red" href="/#mitglied">Mitglied werden</a>
+    </div>
+  </div>
+
+  <style>
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: color-mix(in srgb, var(--color-bg) 86%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-line);
+    }
+    .bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.55rem clamp(1rem, 4vw, 2rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
+    .brand img { border-radius: 11px; height: 46px; width: 46px; object-fit: cover; }
+    .brand-text b { font-family: var(--font-display); font-weight: 800; font-size: 1.02rem; line-height: 1.02; display: block; }
+    .brand-text small { color: var(--color-muted); font-size: 0.78rem; font-weight: 600; }
+    .mainnav { display: none; gap: 1.4rem; }
+    .mainnav a { font-weight: 600; color: var(--color-ink); transition: color 0.15s ease; }
+    .mainnav a:hover { color: var(--color-red); }
+    .actions { display: flex; align-items: center; gap: 0.5rem; }
+    .actions .btn { padding: 0.6rem 1.05rem; font-size: 0.95rem; min-height: 44px; }
+    .icon-call {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 46px; height: 46px; border-radius: 999px;
+      background: var(--color-red); color: #fff;
+    }
+    .only-desk { display: none; }
+    @media (min-width: 900px) {
+      .mainnav { display: flex; }
+      .only-desk { display: inline-flex; }
+      .icon-call { display: none; }
+    }
+    @media (max-width: 420px) {
+      .brand-text small { display: none; }
+    }
+  </style>
+</header>

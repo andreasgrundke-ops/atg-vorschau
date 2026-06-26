@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* =====================================================================================
+   ATG Carsharing — Design-Tokens (CI 2026)
+   Markenfarben aus Logo & Fahrzeugen: ROT + GELB. Neuer heller, sauberer Hintergrund
+   (kein warmes Creme). Dunkle Fast-Schwarz-Flächen lassen Rot/Gelb knallen.
+   Fonts (lokal via @fontsource, DSGVO) werden im Base-Layout importiert.
+   ===================================================================================== */
+@theme {
+  --color-red: #d42a22;        /* Logo-/Fahrzeugrot — CTAs, Akzentflächen, Hero */
+  --color-red-deep: #a81e18;   /* Text/Hover auf Hell (Weiß drauf = WCAG AA) */
+  --color-red-soft: #fbeae8;   /* sehr helle rote Tönung (Badges/Flächen) */
+  --color-yellow: #ffc400;     /* Logo-Gelb — Akzent, Highlights, Zahlen */
+  --color-yellow-deep: #e0a400;/* Gelb dunkler für feine Linien auf hell */
+  --color-ink: #181513;        /* warmes Fast-Schwarz — Fließtext + dunkle Sektionen */
+  --color-ink-soft: #2c2620;   /* dunkle Karten in der Ink-Sektion */
+  --color-muted: #6b6258;      /* Sekundärtext (AA auf bg) */
+  --color-bg: #f3f5f6;         /* NEU: helles, sauberes Neutral (leicht kühl) */
+  --color-bg-alt: #ffffff;     /* abwechselnde Sektionsfläche */
+  --color-surface: #ffffff;    /* Cards */
+  --color-line: #e4e6e8;       /* Trennlinien/Rahmen */
+
+  --font-display: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk Variable", "Hanken Grotesk", system-ui, sans-serif;
+}
+
+/* === Base === */
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.022em; line-height: 1.04; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+:focus-visible { outline: 3px solid var(--color-yellow); outline-offset: 2px; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+/* === Wiederverwendbare Utilities (Buttons etc.) === */
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-body); font-weight: 700; font-size: 1rem;
+  padding: .8rem 1.35rem; border-radius: 999px; min-height: 48px;
+  border: 2px solid transparent; cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+}
+.btn-red { background: var(--color-red); color: #fff; box-shadow: 0 8px 20px -10px rgba(212,42,34,.7); }
+.btn-red:hover { background: var(--color-red-deep); transform: translateY(-2px); }
+.btn-yellow { background: var(--color-yellow); color: var(--color-ink); }
+.btn-yellow:hover { background: var(--color-yellow-deep); transform: translateY(-2px); }
+.btn-ghost { background: transparent; color: var(--color-ink); border-color: var(--color-line); }
+.btn-ghost:hover { border-color: var(--color-ink); transform: translateY(-2px); }
+.btn-on-dark { background: #fff; color: var(--color-ink); }
+.btn-on-dark:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -12px rgba(0,0,0,.5); }
+.btn-outline-light { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
+.btn-outline-light:hover { border-color: #fff; transform: translateY(-2px); }
+
+/* === z-index-Skala (semantisch, keine Magic-Numbers) === */
+:root {
+  --z-base: 0;
+  --z-header: 50;
+  --z-fab: 60;     /* schwebende CTAs + Scroll-to-Top über Content */
+  --z-skip: 200;
+}
+
+/* === Lenis Smooth-Scroll (self-hosted, DSGVO) ===
+   Lenis übernimmt das geschmeidige Ausrollen; native scroll-behavior wird dann ausgeschaltet. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }

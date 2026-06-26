@@ -1,0 +1,65 @@
+---
+/**
+ * Footer — dunkle Ink-Fläche. NAP, Kontakt (Sofort-Aktionen), Partner VAT, Rechts-Links.
+ * Impressum/Datenschutz/Barrierefreiheit verlinken später auf eigene Seiten (Phase 1 Pflicht).
+ */
+---
+
+<footer class="site-footer" id="kontakt">
+  <div class="inner">
+    <div class="grid">
+      <div>
+        <div class="f-brand">Auto-Teiler Grasbrunn e.V.</div>
+        <p class="muted">
+          Gemeinnütziges Carsharing für Grasbrunn und Umgebung: Neukeferloh, Harthausen,
+          Möschenfeld, Keferloh — im Landkreis München.
+        </p>
+        <p class="muted addr">Winklerring 12 · 85630 Grasbrunn</p>
+      </div>
+
+      <div>
+        <h2 class="f-head">Kontakt</h2>
+        <a class="f-link" href="tel:+498921541339">089 21541339</a>
+        <a class="f-link" href="mailto:info@atg-grasbrunn.de">info@atg-grasbrunn.de</a>
+        <a class="f-link" href="https://www.atg-grasbrunn.de/mitgliederbereich/" rel="noopener">Mitgliederbereich / Buchung →</a>
+        <p class="muted small">Vorstand: Dirk Böhme, Klaus Graf von Buxhoeveden, Wolfgang Schneidt</p>
+      </div>
+
+      <div>
+        <h2 class="f-head">Partner</h2>
+        <a class="f-link" href="https://www.carsharing-vaterstetten.de/" rel="noopener">Vaterstettener Auto-Teiler e.V.</a>
+        <p class="muted small">Gemeinsame Flotte &amp; MVV-Karten — beidseitig nutzbar.</p>
+      </div>
+    </div>
+
+    <div class="legal">
+      <div class="legal-links">
+        <a href="/impressum/">Impressum</a>
+        <a href="/datenschutz/">Datenschutz</a>
+        <a href="/barrierefreiheit/">Barrierefreiheit</a>
+      </div>
+      <span class="muted small">© 2026 Auto-Teiler Grasbrunn e.V. · VR 207138, AG München · „Carsharing dahoam“</span>
+    </div>
+  </div>
+
+  <style>
+    .site-footer { background: var(--color-ink); color: #e9e2d8; }
+    .inner { max-width: 1200px; margin: 0 auto; padding: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem) 2rem; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 1.8rem; }
+    @media (min-width: 760px) { .grid { grid-template-columns: 1.5fr 1fr 1fr; } }
+    .f-brand { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: #fff; margin-bottom: 0.6rem; }
+    .f-head { font-family: var(--font-display); font-size: 1.02rem; color: #fff; margin: 0 0 0.7rem; }
+    .muted { color: #b3a99c; }
+    .small { font-size: 0.84rem; }
+    .addr { margin-top: 0.5rem; }
+    .f-link { display: block; color: #fff; font-weight: 600; margin-bottom: 0.35rem; }
+    .f-link:hover { color: var(--color-yellow); }
+    .legal {
+      margin-top: 2.2rem; padding-top: 1.2rem; border-top: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; align-items: center; justify-content: space-between;
+    }
+    .legal-links { display: flex; flex-wrap: wrap; gap: 1.1rem; }
+    .legal-links a { color: #e9e2d8; font-weight: 600; }
+    .legal-links a:hover { color: var(--color-yellow); }
+  </style>
+</footer>

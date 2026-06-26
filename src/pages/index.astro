@@ -1,0 +1,450 @@
+---
+/**
+ * Startseite ATG Carsharing — Durchstich in neuer CI (Rot/Gelb aus Logo & Fahrzeugen).
+ * Sektionen: Hero · Stat-Leiste · So geht's · Flotte · Preise+Kostenrechner · Kooperation · FAQ · CTA.
+ * Fahrzeugfotos: aktuell von der Live-Seite referenziert → Phase 2 lokal + WebP/AVIF + srcset.
+ */
+import Base from '../layouts/Base.astro';
+
+const heroPhoto = 'https://www.atg-grasbrunn.de/wp-content/uploads/2024/09/WhatsApp-Bild-2024-09-01-um-12.45.09_ef67264d-1.jpg';
+const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+
+// Hero-Slider-Motive (echte Fahrzeugfotos) + slide-spezifischer Tag-Text.
+const heroSlides = [
+  { img: heroPhoto, tag: 'Renault ZOE — emissionsfrei, ab 1 €/h tagsüber' },
+  { img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg', tag: 'Renault Trafic — bis 9 Sitze für Umzug & große Touren' },
+  { img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg', tag: 'Renault Clio Grandtour — Kombi für Einkauf & Ausflug' },
+];
+
+const cars = [
+  { name: 'Renault ZOE', type: 'Elektro · emissionsfrei', badge: 'E-Auto · Wallbox', loc: 'Am Rathaus Grasbrunn', img: heroPhoto },
+  { name: 'Opel Corsa', type: 'Wendiger Stadtflitzer', badge: 'Kleinwagen', loc: 'Finkenstraße, hinter der Kirche', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Opel-Corsa-NEU.jpg' },
+  { name: 'Dacia Sandero', type: 'Günstig & praktisch', badge: 'Kleinwagen', loc: 'Ecke Waldstraße / Saarlandstraße', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Dacia-Sandero-NEU-1.jpg' },
+  { name: 'Renault Clio Grandtour', type: 'Kombi mit großem Kofferraum', badge: 'Kombi', loc: 'Standort wird ergänzt', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg' },
+  { name: 'Renault Trafic', type: 'Transporter / Bus — bis 9 Sitze', badge: 'Transporter', loc: 'Standort wird ergänzt', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg' },
+];
+
+const steps = [
+  { n: '1', h: 'Online melden', t: 'Kurzes Formular ausfüllen. Wir melden uns mit allen Infos zum Verein und zur Carsharing-Teilnahme.' },
+  { n: '2', h: 'Unterlagen & Einlage', t: 'Ausweis und Führerschein nachreichen, einmalig 50 € Aufnahme und 600 € Einlage (bei Austritt zurück).' },
+  { n: '3', h: 'Einweisung & losfahren', t: 'Kurze Einweisung vor Ort, Transponderkarte erhalten — ab dann buchst du jedes freie Fahrzeug selbst.' },
+];
+
+const faqs = [
+  { q: 'Was kostet Carsharing bei ATG?', a: 'Tagsüber 1,00 €/Std., nachts 0,20 €/Std., dazu Kilometer ab 0,40 €/km je nach Fahrzeug. Einmalig 50 € Aufnahme und 600 € Einlage (bei Austritt zurück). Kein Monatsbeitrag.' },
+  { q: 'Wie werde ich Mitglied?', a: 'Online melden, Ausweis und Führerschein nachreichen, Einlage zahlen, kurze Einweisung vor Ort — dann buchst du selbstständig.' },
+  { q: 'Wo stehen die Fahrzeuge?', a: 'An festen Stellplätzen in Grasbrunn (u.a. Rathaus, Finkenstraße, Waldstraße/Saarlandstraße). Über die Kooperation mit Vaterstetten stehen weitere Fahrzeuge bereit.' },
+  { q: 'Was sind die MVV-Karten?', a: 'Über die Kooperation mit Vaterstetten nutzbare Karten für Bus & Bahn. Abhol- und Rückgabestandort ist der Bahnhof Vaterstetten.' },
+  { q: 'Gibt es einen Monatsbeitrag?', a: 'Nein. Nur die einmalige Einlage (rückzahlbar) und der Aufnahmebeitrag. Bezahlt wird nur, was gefahren wird.' },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<Base>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+
+  <!-- ============ HERO (Kino-Slider) ============ -->
+  <section class="hero" id="top" aria-label="Carsharing in Grasbrunn">
+    <div class="hero-bg" aria-hidden="true">
+      {heroSlides.map((s, i) => (
+        <div
+          class:list={['hero-slide', { 'is-active': i === 0 }]}
+          data-tag={s.tag}
+          style={`background-image:url(${s.img})`}
+        ></div>
+      ))}
+    </div>
+    <div class="hero-scrim" aria-hidden="true"></div>
+
+    <div class="wrap hero-inner">
+      <p class="hero-kicker"><span class="dot"></span> Carsharing dahoam · Grasbrunn &amp; Umgebung</p>
+      <h1>Weniger Autos.<br /><span class="hl">Dennoch mobil.</span></h1>
+      <p class="hero-lead">
+        Teil dir ein Auto, statt eins zu besitzen — vom E-Auto bis zum 9-Sitzer,
+        direkt um die Ecke. <strong>Ohne Monatsbeitrag.</strong>
+      </p>
+      <p class="hero-tag" id="hero-tag">{heroSlides[0].tag}</p>
+      <div class="cta-row">
+        <a class="btn btn-red" href="#mitglied">Mitglied werden</a>
+        <a class="btn btn-yellow" href={BOOK} rel="noopener">Fahrzeug buchen</a>
+      </div>
+      <ul class="trust">
+        <li><span class="ck">✓</span> Kein Monatsbeitrag</li>
+        <li><span class="ck">✓</span> E-Auto &amp; Transporter</li>
+        <li><span class="ck">✓</span> In Minuten gebucht</li>
+      </ul>
+    </div>
+
+    <div class="hero-dots" role="tablist" aria-label="Fahrzeug-Motive wechseln">
+      {heroSlides.map((s, i) => (
+        <button
+          class:list={['hero-dot', { 'is-on': i === 0 }]}
+          type="button"
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-label={`Motiv ${i + 1}`}
+        ></button>
+      ))}
+    </div>
+
+    <a class="hero-scrollcue" href="#so-gehts" aria-label="Weiter zu: So geht's"><span></span></a>
+  </section>
+
+  <!-- ============ STAT-LEISTE ============ -->
+  <section class="stats">
+    <div class="wrap stats-grid">
+      <div class="stat"><b>41</b><span>Fahrzeuge mit Vaterstetten</span></div>
+      <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag</span></div>
+      <div class="stat"><b>1&nbsp;€/h</b><span>tagsüber fahren</span></div>
+      <div class="stat"><b>5</b><span>Fahrzeugklassen vor Ort</span></div>
+    </div>
+  </section>
+
+  <!-- ============ SO GEHT'S ============ -->
+  <section id="so-gehts" class="sec sec-white">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>In 3 Schritten Mitglied — und losgefahren</h2>
+        <p>Kein kompliziertes Verfahren. Du meldest dich online, wir lernen uns kurz vor Ort kennen, dann fährst du.</p>
+      </header>
+      <div class="steps">
+        {steps.map((s) => (
+          <article class="step">
+            <div class="step-num">{s.n}</div>
+            <h3>{s.h}</h3>
+            <p>{s.t}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FLOTTE ============ -->
+  <section id="flotte" class="sec">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>Fünf Fahrzeuge für jeden Zweck</h2>
+        <p>Vom kleinen Stadtflitzer übers E-Auto bis zum Transporter für den Umzug — alle an festen Stellplätzen.</p>
+      </header>
+      <div class="cars">
+        {cars.map((c) => (
+          <article class="car">
+            <div class="car-photo">
+              <img src={c.img} alt={`${c.name} – Carsharing-Fahrzeug der ATG`} width="400" height="260" loading="lazy" />
+              <span class="car-badge">{c.badge}</span>
+            </div>
+            <div class="car-body">
+              <h3>{c.name}</h3>
+              <p class="car-type">{c.type}</p>
+              <p class="car-loc"><span aria-hidden="true">📍</span> {c.loc}</p>
+            </div>
+          </article>
+        ))}
+        <article class="car car-coop">
+          <div class="coop-inner">
+            <h3>+36 Fahrzeuge nebenan</h3>
+            <p>Über die Kooperation mit den Vaterstettener Auto-Teilern nutzt du eine gemeinsame Flotte — beidseitig.</p>
+            <a class="btn btn-yellow" href="#kooperation">Mehr zur Kooperation</a>
+          </div>
+        </article>
+      </div>
+      <p class="note">📷 Phase 2: echte Fotos der Fahrzeuge an ihren realen Standorten + Detailseiten je Fahrzeug (Cockpit, Kofferraum, Sitze).</p>
+    </div>
+  </section>
+
+  <!-- ============ PREISE + KOSTENRECHNER ============ -->
+  <section id="preise" class="sec sec-white">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>Was kostet mich das?</h2>
+        <p>Du zahlst nur, was du fährst: Zeit plus Kilometer. Kein Monatsbeitrag, keine versteckten Gebühren.</p>
+      </header>
+      <div class="price-grid">
+        <div class="card price-table">
+          <h3>Tarife im Überblick</h3>
+          <table>
+            <tbody>
+              <tr><td>Zeittarif tagsüber (8–20 Uhr)</td><td>1,00 €/h</td></tr>
+              <tr><td>Zeittarif nachts (20–8 Uhr)</td><td>0,20 €/h</td></tr>
+              <tr><td>Kilometer (Kleinwagen)</td><td>ab 0,40 €/km</td></tr>
+              <tr><td>Kilometer (E-Auto / größer)</td><td>ab 0,45 €/km</td></tr>
+              <tr><td>Kilometer (Transporter)</td><td>ab 0,60 €/km</td></tr>
+              <tr><td>Aufnahmebeitrag (einmalig)</td><td>50 €</td></tr>
+              <tr><td>Einlage (bei Austritt zurück)</td><td>600 €</td></tr>
+              <tr><td>Monatsbeitrag</td><td><span class="free">0 € · keiner</span></td></tr>
+            </tbody>
+          </table>
+          <p class="fine">Stand 04/2026. Versicherung inkl. (SB Haftpflicht 200 € / Kasko 600 €). Saisonaler Sprit-Aufschlag möglich.</p>
+        </div>
+
+        <div class="card calc">
+          <h3>Kostenrechner</h3>
+          <label for="calc-h">Dauer: <span id="calc-hv" class="val">3 Std.</span> tagsüber</label>
+          <input id="calc-h" type="range" min="1" max="24" value="3" step="1" />
+          <label for="calc-km">Strecke: <span id="calc-kmv" class="val">30 km</span></label>
+          <input id="calc-km" type="range" min="5" max="300" value="30" step="5" />
+          <label for="calc-cls">Fahrzeug</label>
+          <select id="calc-cls">
+            <option value="0.40">Kleinwagen (Corsa / Sandero) – 0,40 €/km</option>
+            <option value="0.45">E-Auto / Clio – 0,45 €/km</option>
+            <option value="0.60">Transporter (Trafic) – 0,60 €/km</option>
+          </select>
+          <div class="calc-result"><span>Beispielpreis</span><b id="calc-total">7,50 €</b></div>
+          <p class="fine">Überschlag: Zeittarif (tags 1 €/h) + Kilometer, inkl. Versicherung. Echte Abrechnung übers Buchungssystem.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KOOPERATION ============ -->
+  <section id="kooperation" class="sec">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2>Gemeinsam mit den Vaterstettener Auto-Teilern</h2>
+        <p>Zwei Vereine, eine Idee: Mitglieder nutzen die Fahrzeuge beidseitig — so steht eine gemeinsame Flotte zur Verfügung.</p>
+      </header>
+      <div class="coop-grid">
+        <div class="card">
+          <h3>Eine Flotte, zwei Vereine</h3>
+          <p class="muted-p">5 Fahrzeuge in Grasbrunn plus rund 36 in Vaterstetten und Baldham — gemeinsam rund <strong>41 Fahrzeuge</strong>. Als Mitglied buchst du auf beiden Seiten.</p>
+          <a class="btn btn-ghost" href="https://www.carsharing-vaterstetten.de/" rel="noopener">Zu den Vaterstettener Auto-Teilern</a>
+        </div>
+        <div class="card card-dark">
+          <h3>MVV-Karten inklusive</h3>
+          <p>Über die Kooperation nutzt du MVV-Karten — flexibel mit Bus und Bahn statt Auto.</p>
+          <small>Abhol- und Rückgabestandort: Bahnhof Vaterstetten.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="sec sec-white">
+    <div class="wrap wrap-narrow">
+      <header class="sec-head">
+        <h2>Häufige Fragen</h2>
+      </header>
+      <div class="faq">
+        {faqs.map((f, i) => (
+          <details open={i === 0}>
+            <summary>{f.q}</summary>
+            <div class="faq-a">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MITGLIED WERDEN (CTA-Band) ============ -->
+  <section id="mitglied" class="band">
+    <div class="wrap band-inner">
+      <h2>Möchtest du Mitglied werden?</h2>
+      <p>Werd Teil von Carsharing dahoam in Grasbrunn. Wir melden uns persönlich bei dir — einfach und unverbindlich.</p>
+      <div class="cta-row band-cta">
+        <a class="btn btn-on-dark" href="mailto:info@atg-grasbrunn.de?subject=Mitglied%20werden%20bei%20ATG">E-Mail schreiben</a>
+        <a class="btn btn-yellow" href="tel:+498921541339">089 21541339 anrufen</a>
+        <a class="btn btn-outline-light" href="mailto:info@atg-grasbrunn.de?subject=R%C3%BCckruf%20gew%C3%BCnscht&body=Bitte%20ruft%20mich%20zu%20folgender%20Zeit%20an%3A%20">Rückruf anfordern</a>
+      </div>
+      <p class="band-fine">Phase 2: sicheres Online-Antragsformular (DSGVO-konform, verschlüsselt) mit Dokumenten-Upload.</p>
+    </div>
+  </section>
+
+  <!-- Hero-Slider: Crossfade + Ken-Burns, Auto-Rotation, Dots, Tag-Wechsel -->
+  <script>
+    const heroSlideEls = document.querySelectorAll<HTMLElement>('.hero-slide');
+    const heroDots = document.querySelectorAll<HTMLButtonElement>('.hero-dot');
+    const heroTag = document.getElementById('hero-tag');
+    if (heroSlideEls.length > 1) {
+      const reduceMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let cur = 0;
+      let timer = 0;
+      const show = (n: number) => {
+        cur = (n + heroSlideEls.length) % heroSlideEls.length;
+        heroSlideEls.forEach((s, i) => s.classList.toggle('is-active', i === cur));
+        heroDots.forEach((d, i) => {
+          d.classList.toggle('is-on', i === cur);
+          d.setAttribute('aria-selected', i === cur ? 'true' : 'false');
+        });
+        const tag = heroSlideEls[cur].getAttribute('data-tag');
+        if (heroTag && tag) heroTag.textContent = tag;
+      };
+      const start = () => { if (!reduceMo) timer = window.setInterval(() => show(cur + 1), 6500); };
+      heroDots.forEach((d, i) => d.addEventListener('click', () => { window.clearInterval(timer); show(i); start(); }));
+      start();
+    }
+  </script>
+
+  <!-- Kostenrechner-Logik (clientseitig; Phase 2 ggf. als Insel/Komponente) -->
+  <script>
+    const h = document.getElementById('calc-h') as HTMLInputElement | null;
+    const km = document.getElementById('calc-km') as HTMLInputElement | null;
+    const cls = document.getElementById('calc-cls') as HTMLSelectElement | null;
+    const hv = document.getElementById('calc-hv');
+    const kmv = document.getElementById('calc-kmv');
+    const total = document.getElementById('calc-total');
+    if (h && km && cls && hv && kmv && total) {
+      const eur = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+      const calc = () => {
+        const hours = parseInt(h.value, 10);
+        const dist = parseInt(km.value, 10);
+        const perKm = parseFloat(cls.value);
+        hv.textContent = hours + ' Std.';
+        kmv.textContent = dist + ' km';
+        total.textContent = eur(hours * 1.0 + dist * perKm);
+      };
+      [h, km, cls].forEach((el) => el.addEventListener('input', calc));
+      calc();
+    }
+  </script>
+
+  <style>
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }
+    .wrap-narrow { max-width: 820px; }
+    .sec { padding: clamp(2.8rem, 6vw, 4.8rem) 0; }
+    .sec-white { background: var(--color-bg-alt); }
+    .sec-head { max-width: 60ch; margin-bottom: 2rem; }
+    .sec-head h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); font-weight: 800; margin-bottom: 0.5rem; }
+    .sec-head p { color: var(--color-muted); font-size: 1.08rem; }
+    .card { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 1.6rem; box-shadow: 0 1px 2px rgba(24,21,19,.05), 0 18px 40px -28px rgba(24,21,19,.4); }
+    .muted-p { color: var(--color-muted); }
+
+    /* Hero — Kino-Slider (Vollbild, Crossfade + Ken-Burns) */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+      color: #fff;
+      isolation: isolate;
+    }
+    .hero-bg { position: absolute; inset: 0; z-index: -2; }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0; transform: scale(1.06);
+      transition: opacity 1.2s ease;
+      will-change: opacity, transform;
+    }
+    .hero-slide.is-active { opacity: 1; animation: kenburns 8s ease-out forwards; }
+    @keyframes kenburns { from { transform: scale(1.06); } to { transform: scale(1.17); } }
+    .hero-scrim {
+      position: absolute; inset: 0; z-index: -1;
+      background:
+        linear-gradient(96deg, rgba(20,15,12,.9) 0%, rgba(20,15,12,.62) 40%, rgba(20,15,12,.2) 72%, rgba(20,15,12,.4) 100%),
+        linear-gradient(0deg, rgba(20,15,12,.6) 0%, rgba(20,15,12,0) 42%);
+    }
+    .hero-inner { position: relative; z-index: 0; padding-top: clamp(3rem, 9vh, 6rem); padding-bottom: clamp(4.5rem, 12vh, 7rem); }
+    .hero-kicker { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 0.92rem; color: #fff; background: rgba(255,255,255,.13); backdrop-filter: blur(4px); padding: 0.42rem 0.95rem; border-radius: 999px; }
+    .hero-kicker .dot { width: 9px; height: 9px; border-radius: 999px; background: var(--color-yellow); box-shadow: 0 0 0 4px rgba(255,196,0,.25); }
+    .hero h1 { font-size: clamp(2.9rem, 8.2vw, 5.4rem); font-weight: 800; margin: 1rem 0 0.5rem; letter-spacing: -0.03em; text-shadow: 0 2px 34px rgba(0,0,0,.35); }
+    .hero h1 .hl { position: relative; white-space: nowrap; }
+    .hero h1 .hl::after { content: ''; position: absolute; left: -2px; right: -2px; bottom: 0.07em; height: 0.32em; background: var(--color-yellow); z-index: -1; border-radius: 3px; }
+    .hero-lead { font-size: clamp(1.08rem, 2.2vw, 1.32rem); color: rgba(255,255,255,.92); max-width: 48ch; margin: 0 0 0.9rem; text-shadow: 0 1px 16px rgba(0,0,0,.45); }
+    .hero-lead strong { color: #fff; }
+    .hero-tag { display: inline-block; font-family: var(--font-display); font-weight: 700; font-size: 1rem; color: var(--color-yellow); margin-bottom: 1.5rem; min-height: 1.4em; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .trust { list-style: none; padding: 0; margin: 1.6rem 0 0; display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-weight: 600; font-size: 0.95rem; color: #fff; }
+    .trust li { display: flex; align-items: center; gap: 0.45rem; text-shadow: 0 1px 10px rgba(0,0,0,.4); }
+    .trust .ck { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 999px; background: var(--color-yellow); color: var(--color-ink); font-size: 0.8rem; font-weight: 800; }
+
+    .hero-dots { position: absolute; z-index: 1; left: 50%; transform: translateX(-50%); bottom: 1.4rem; display: flex; gap: 0.5rem; }
+    .hero-dot { width: 34px; height: 5px; border-radius: 999px; border: 0; background: rgba(255,255,255,.42); cursor: pointer; padding: 0; transition: background 0.3s ease, width 0.3s ease; }
+    .hero-dot.is-on { background: var(--color-yellow); width: 50px; }
+    .hero-scrollcue { position: absolute; z-index: 1; right: clamp(1rem, 4vw, 2rem); bottom: 1.2rem; width: 30px; height: 48px; border: 2px solid rgba(255,255,255,.5); border-radius: 999px; display: none; }
+    .hero-scrollcue span { position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; border-radius: 999px; background: #fff; transform: translateX(-50%); animation: scrollcue 1.8s ease-in-out infinite; }
+    @keyframes scrollcue { 0%, 100% { opacity: 0; transform: translate(-50%, 0); } 50% { opacity: 1; transform: translate(-50%, 13px); } }
+    @media (min-width: 760px) { .hero-scrollcue { display: block; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-slide.is-active { animation: none; transform: none; }
+      .hero-slide { transition: opacity 0.3s ease; transform: none; }
+      .hero-scrollcue span { animation: none; opacity: 1; }
+    }
+
+    /* Stat-Leiste */
+    .stats { background: var(--color-ink); color: #fff; }
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.4rem 1rem; padding: clamp(1.8rem, 4vw, 2.6rem) clamp(1rem, 4vw, 2rem); }
+    @media (min-width: 720px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+    .stat b { display: block; font-family: var(--font-display); font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; color: var(--color-yellow); line-height: 1; }
+    .stat span { font-size: 0.92rem; color: #cfc7bb; }
+
+    /* Steps */
+    .steps { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    @media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+    .step { background: var(--color-bg); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 1.5rem; }
+    .step-num { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: var(--color-red); color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; margin-bottom: 0.8rem; }
+    .step h3 { font-size: 1.22rem; margin-bottom: 0.35rem; }
+    .step p { color: var(--color-muted); }
+
+    /* Flotte */
+    .cars { display: grid; gap: 1.1rem; grid-template-columns: 1fr; }
+    @media (min-width: 600px) { .cars { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 980px) { .cars { grid-template-columns: repeat(3, 1fr); } }
+    .car { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); overflow: hidden; box-shadow: 0 14px 34px -26px rgba(24,21,19,.5); transition: transform 0.15s ease; }
+    .car:hover { transform: translateY(-3px); }
+    .car-photo { position: relative; aspect-ratio: 3 / 2; background: var(--color-bg); }
+    .car-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .car-badge { position: absolute; top: 0.7rem; left: 0.7rem; background: var(--color-yellow); color: var(--color-ink); font-weight: 800; font-size: 0.74rem; padding: 0.25rem 0.6rem; border-radius: 999px; }
+    .car-body { padding: 1rem 1.1rem 1.2rem; }
+    .car-body h3 { font-size: 1.2rem; }
+    .car-type { color: var(--color-red-deep); font-weight: 700; font-size: 0.86rem; margin: 0.15rem 0 0.5rem; }
+    .car-loc { color: var(--color-muted); font-size: 0.92rem; }
+    .car-coop { background: var(--color-ink); color: #fff; display: grid; }
+    .coop-inner { padding: 1.4rem; display: flex; flex-direction: column; justify-content: center; gap: 0.6rem; }
+    .car-coop h3 { color: #fff; }
+    .car-coop p { color: #cfc7bb; font-size: 0.95rem; }
+    .car-coop .btn { align-self: start; }
+    .note { margin-top: 1.2rem; font-size: 0.86rem; color: var(--color-muted); }
+
+    /* Preise + Rechner */
+    .price-grid { display: grid; gap: 1.1rem; grid-template-columns: 1fr; }
+    @media (min-width: 880px) { .price-grid { grid-template-columns: 1.1fr 1fr; } }
+    .price-table h3, .calc h3 { font-size: 1.3rem; margin-bottom: 0.8rem; }
+    .price-table table { width: 100%; border-collapse: collapse; font-size: 0.97rem; }
+    .price-table td { padding: 0.55rem 0; border-bottom: 1px solid var(--color-line); }
+    .price-table td:last-child { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .price-table tr:last-child td { border-bottom: 0; }
+    .free { background: #167a4e; color: #fff; font-weight: 800; font-size: 0.78rem; padding: 0.2rem 0.6rem; border-radius: 999px; }
+    .fine { font-size: 0.82rem; color: var(--color-muted); margin-top: 0.9rem; }
+    .calc { background: var(--color-ink); color: #fff; }
+    .calc h3 { color: #fff; }
+    .calc label { display: block; font-weight: 700; margin: 0.9rem 0 0.3rem; font-size: 0.95rem; }
+    .calc input[type='range'] { width: 100%; accent-color: var(--color-yellow); }
+    .calc .val { color: var(--color-yellow); font-weight: 800; font-variant-numeric: tabular-nums; }
+    .calc select { width: 100%; padding: 0.6rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.2); background: var(--color-ink-soft); color: #fff; font: inherit; min-height: 44px; }
+    .calc-result { margin-top: 1.2rem; background: var(--color-red); border-radius: 12px; padding: 1rem 1.2rem; display: flex; justify-content: space-between; align-items: baseline; }
+    .calc-result b { font-family: var(--font-display); font-size: 2rem; }
+    .calc .fine { color: #cfc7bb; }
+
+    /* Kooperation */
+    .coop-grid { display: grid; gap: 1.1rem; grid-template-columns: 1fr; }
+    @media (min-width: 820px) { .coop-grid { grid-template-columns: 1fr 1fr; } }
+    .card-dark { background: var(--color-ink); color: #fff; }
+    .card-dark h3 { color: #fff; }
+    .card-dark small { color: #b3a99c; }
+    .card h3 { font-size: 1.25rem; margin-bottom: 0.6rem; }
+    .card .btn { margin-top: 0.4rem; }
+
+    /* FAQ */
+    .faq details { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 12px; margin-bottom: 0.7rem; overflow: hidden; }
+    .faq summary { cursor: pointer; font-weight: 700; padding: 1rem 1.2rem; list-style: none; display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after { content: '+'; font-family: var(--font-display); font-size: 1.5rem; color: var(--color-red); }
+    .faq details[open] summary::after { content: '–'; }
+    .faq-a { padding: 0 1.2rem 1.1rem; color: var(--color-muted); }
+
+    /* CTA-Band */
+    .band { background: linear-gradient(135deg, var(--color-red) 0%, var(--color-red-deep) 100%); color: #fff; }
+    .band-inner { padding: clamp(2.6rem, 6vw, 4.2rem) clamp(1rem, 4vw, 2rem); text-align: center; }
+    .band h2 { font-size: clamp(1.9rem, 5vw, 2.9rem); font-weight: 800; max-width: 18ch; margin: 0 auto 0.7rem; }
+    .band p { max-width: 48ch; margin: 0 auto 1.4rem; color: #ffe7e3; }
+    .band-cta { justify-content: center; }
+    .band-fine { font-size: 0.84rem; color: #ffd6d0; margin-top: 1.1rem; }
+  </style>
+</Base>

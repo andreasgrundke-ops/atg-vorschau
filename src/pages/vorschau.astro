@@ -64,10 +64,10 @@ const icons = {
     <!-- Nav (grundke-it.de-Stil: fixed, dunkel, Logo mit Cyan-Glow) -->
     <nav>
       <div class="inner nav-inner">
-        <div class="logo">
-          <span class="logo-text">grundke<span class="dot">.</span></span>
+        <a class="logo" href="https://grundke-it.de" target="_blank" rel="noopener" aria-label="Grundke IT-Service">
+          <img class="logo-img" src={`${base}img/logo-grundke-it-white.png`} width="150" height="50" alt="Grundke IT-Service" />
           <span class="nav-tag">Entwurfspaket</span>
-        </div>
+        </a>
         <a class="nav-cta" href="https://grundke-it.de" target="_blank" rel="noopener">grundke-it.de ↗</a>
       </div>
     </nav>
@@ -190,13 +190,20 @@ const icons = {
 
       let mode = 'desktop';
 
+      // Verfügbare Breite am Eltern-Container messen (konstant) — NICHT an der Stage
+      // selbst, deren Breite wir gleich setzen (sonst Rückkopplung → Rand-Flackern).
+      const host = stage.parentElement as HTMLElement; // .preview
       function fit() {
         const cfg = STAGES[mode];
-        const avail = stage.clientWidth - 4;
+        const cs = getComputedStyle(host);
+        const pad = parseFloat(cs.paddingLeft || '0') + parseFloat(cs.paddingRight || '0');
+        const avail = Math.max(240, host.clientWidth - pad);
         const scale = Math.min(1, avail / cfg.w);
         device.style.width = cfg.w + 'px';
         device.style.height = cfg.h + 'px';
         device.style.transform = `scale(${scale})`;
+        // Stage exakt = skalierte Frame-Größe → kein Overflow, kein Flackern.
+        stage.style.width = Math.round(cfg.w * scale) + 'px';
         stage.style.height = Math.round(cfg.h * scale) + 'px';
       }
 
@@ -250,10 +257,10 @@ const icons = {
       /* Nav */
       nav { position: sticky; top: 0; z-index: 300; height: var(--nav-h); background: rgba(15,17,23,.93); backdrop-filter: blur(18px); border-bottom: 1px solid var(--border); }
       .nav-inner { height: 100%; display: flex; align-items: center; justify-content: space-between; }
-      .logo { display: flex; align-items: center; gap: 12px; position: relative; isolation: isolate; }
-      .logo::before { content: ''; position: absolute; inset: -16px -24px; z-index: -1; background: radial-gradient(ellipse 70% 140% at 30% 50%, rgba(38,189,239,.45), transparent 65%), radial-gradient(ellipse 55% 110% at 30% 50%, rgba(12,77,162,.6), transparent 70%); filter: blur(14px); pointer-events: none; }
-      .logo-text { font-family: var(--fh); font-weight: 800; font-size: 1.3rem; color: #fff; letter-spacing: -.02em; }
-      .logo-text .dot { color: var(--cyan); }
+      .logo { display: flex; align-items: center; gap: 12px; position: relative; isolation: isolate; text-decoration: none; }
+      .logo::before { content: ''; position: absolute; inset: -16px -24px; z-index: -1; background: radial-gradient(ellipse 70% 140% at 30% 50%, rgba(38,189,239,.45), transparent 65%), radial-gradient(ellipse 55% 110% at 30% 50%, rgba(12,77,162,.6), transparent 70%); filter: blur(14px); pointer-events: none; transition: filter .25s ease; }
+      .logo:hover::before { filter: blur(18px); }
+      .logo-img { display: block; height: clamp(2.1rem, 6vw, 2.6rem); width: auto; }
       .nav-tag { font-family: var(--fm); font-size: .64rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan); background: var(--cyan-dim); border: 1px solid rgba(38,189,239,.35); padding: .25rem .6rem; border-radius: 999px; white-space: nowrap; }
       @media (max-width: 520px) { .nav-tag { display: none; } }
       .nav-cta { background: var(--accent); color: #fff; padding: .5rem 1.1rem; border-radius: 8px; font-weight: 700; font-size: .85rem; transition: background .2s, transform .15s, box-shadow .2s; }
@@ -297,8 +304,9 @@ const icons = {
       .open-real { color: var(--cyan); font-weight: 700; font-size: .85rem; }
       .open-real:hover { text-decoration: underline; }
 
-      .stage { position: relative; width: 100%; display: flex; justify-content: center; overflow: hidden; background: var(--bg); border-radius: 12px; }
-      .device { transform-origin: top center; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.5); flex: none; }
+      /* Stage exakt = skalierte Frame-Größe (kein Flexbox-Overflow → kein Rand-Flackern beim Repaint des animierten iframes) */
+      .stage { position: relative; margin: 0 auto; max-width: 100%; overflow: hidden; background: var(--bg); border-radius: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+      .device { position: absolute; top: 0; left: 0; transform-origin: top left; background: #fff; }
       .device iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
       .device[data-mode="mobile"] { border: 8px solid #080b11; border-radius: 28px; }
       .device[data-mode="tablet"] { border: 10px solid #080b11; border-radius: 20px; }

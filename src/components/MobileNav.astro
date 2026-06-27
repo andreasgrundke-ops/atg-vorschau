@@ -1,0 +1,91 @@
+---
+/**
+ * MobileNav — Offcanvas-Drawer (App-Navigation) für Mobile.
+ * Liegt bewusst AUSSERHALB des Headers (der Header hat backdrop-filter, das einen
+ * containing block für position:fixed erzeugt → der Drawer würde sonst am Header
+ * statt am Viewport ausgerichtet). Wird vom Hamburger-Button (#burger im Header)
+ * über die Element-IDs gesteuert.
+ *
+ * Version: 1.0 · Autor: Grundke IT-Service · Datum: 2026-06-28
+ */
+const base = import.meta.env.BASE_URL;
+const navLinks = [
+  { href: `${base}#flotte`, label: 'Flotte' },
+  { href: `${base}#standorte`, label: 'Standorte' },
+  { href: `${base}#mvv`, label: 'MVV-Karten' },
+  { href: `${base}#so-gehts`, label: "So geht's" },
+  { href: `${base}#preise`, label: 'Preise' },
+  { href: `${base}#kontakt`, label: 'Kontakt' },
+];
+---
+
+<div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+<aside class="drawer" id="drawer" aria-label="Navigationsmenü" aria-hidden="true">
+  <div class="drawer-head">
+    <span class="drawer-title">Menü</span>
+    <button class="drawer-close" id="drawer-close" type="button" aria-label="Menü schließen">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="drawer-nav" aria-label="Menü">
+    {navLinks.map((l) => <a href={l.href} class="drawer-link">{l.label}</a>)}
+  </nav>
+  <div class="drawer-cta">
+    <a class="btn btn-red" href={`${base}#mitglied`}>Mitglied werden</a>
+    <a class="btn btn-yellow" href="https://www.atg-grasbrunn.de/mitgliederbereich/" rel="noopener">Fahrzeug buchen</a>
+    <a class="btn btn-ghost" href="tel:+498921541339">089 21541339 anrufen</a>
+  </div>
+</aside>
+
+<style>
+  .drawer-backdrop { position: fixed; inset: 0; z-index: var(--z-drawer-backdrop); background: rgba(24, 21, 19, 0.5); backdrop-filter: blur(2px); opacity: 0; transition: opacity 0.3s ease; }
+  .drawer-backdrop.is-open { opacity: 1; }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: var(--z-drawer);
+    width: min(86vw, 360px); background: var(--color-surface);
+    transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex; flex-direction: column; padding: 1rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom));
+    box-shadow: -20px 0 50px -20px rgba(24, 21, 19, 0.5); overflow-y: auto;
+  }
+  .drawer.is-open { transform: translateX(0); }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+  .drawer-title { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; }
+  .drawer-close { width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--color-bg); color: var(--color-ink); cursor: pointer; display: grid; place-items: center; }
+  .drawer-nav { display: flex; flex-direction: column; padding: 0.4rem 0; }
+  .drawer-link { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; padding: 0.85rem 0.4rem; border-bottom: 1px solid var(--color-line); color: var(--color-ink); transition: color 0.15s ease, padding-left 0.15s ease; }
+  .drawer-link:hover, .drawer-link:focus-visible { color: var(--color-red); padding-left: 0.7rem; }
+  .drawer-cta { display: grid; gap: 0.6rem; margin-top: 1.2rem; }
+  .drawer-cta .btn { width: 100%; justify-content: center; min-height: 50px; }
+
+  @media (min-width: 900px) { .drawer, .drawer-backdrop { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .drawer, .drawer-backdrop { transition: none; } }
+</style>
+
+<script>
+  const burger = document.getElementById('burger');
+  const drawer = document.getElementById('drawer');
+  const backdrop = document.getElementById('drawer-backdrop');
+  const closeBtn = document.getElementById('drawer-close');
+  if (burger && drawer && backdrop && closeBtn) {
+    const open = () => {
+      backdrop.hidden = false;
+      requestAnimationFrame(() => { drawer.classList.add('is-open'); backdrop.classList.add('is-open'); });
+      burger.setAttribute('aria-expanded', 'true');
+      drawer.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+    const close = () => {
+      drawer.classList.remove('is-open');
+      backdrop.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false');
+      drawer.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      setTimeout(() => { backdrop.hidden = true; }, 320);
+    };
+    burger.addEventListener('click', () => (drawer.classList.contains('is-open') ? close() : open()));
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer.classList.contains('is-open')) close(); });
+    drawer.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+  }
+</script>

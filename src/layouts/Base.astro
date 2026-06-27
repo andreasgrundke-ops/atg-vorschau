@@ -7,8 +7,10 @@ import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/hanken-grotesk';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import MobileNav from '../components/MobileNav.astro';
 import Footer from '../components/Footer.astro';
 import FloatingActions from '../components/FloatingActions.astro';
+import AppTabBar from '../components/AppTabBar.astro';
 
 interface Props {
   title?: string;
@@ -68,9 +70,11 @@ const orgSchema = {
   <body>
     <a class="skip-link" href="#main">Zum Inhalt springen</a>
     <Header />
+    <MobileNav />
     <main id="main"><slot /></main>
     <Footer />
     <FloatingActions />
+    <AppTabBar />
     <style>
       .skip-link {
         position: absolute;

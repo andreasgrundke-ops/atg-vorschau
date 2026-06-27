@@ -1,17 +1,26 @@
 ---
 /**
- * Header — sticky. Logo + Wortmarke, Hauptnav, Sofort-CTAs:
- *  - 1-Tap-Anruf (tel:) sichtbar auf Mobil
- *  - "Fahrzeug buchen" (für Mitglieder → Buchungssystem)
- *  - "Mitglied werden" (roter Primär-CTA)
+ * Header — sticky, rollt beim Runterscrollen weg (App-Feeling), kommt beim Hochscrollen zurück.
+ * Logo + Wortmarke, Hauptnav (Desktop), Sofort-CTAs, Hamburger + Offcanvas-Drawer (Mobile).
  *
- * base = import.meta.env.BASE_URL (endet mit '/'): trägt den Pages-Unterordner,
- * damit Logo + interne Links auch unter /<repo>/ korrekt aufgelöst werden.
+ * base = import.meta.env.BASE_URL: trägt den Pages-Unterordner für Logo + interne Links.
+ *
+ * Version: 2.0 · Autor: Grundke IT-Service · Datum: 2026-06-27
+ *   2.0  Auto-Hide beim Scrollen + Hamburger + Mobile-Drawer (App-Navigation).
  */
 const base = import.meta.env.BASE_URL;
+
+const navLinks = [
+  { href: `${base}#flotte`, label: 'Flotte' },
+  { href: `${base}#standorte`, label: 'Standorte' },
+  { href: `${base}#mvv`, label: 'MVV-Karten' },
+  { href: `${base}#so-gehts`, label: "So geht's" },
+  { href: `${base}#preise`, label: 'Preise' },
+  { href: `${base}#kontakt`, label: 'Kontakt' },
+];
 ---
 
-<header class="site-header">
+<header class="site-header" id="site-header">
   <div class="bar">
     <a class="brand" href={base} aria-label="Auto-Teiler Grasbrunn e.V. – Startseite">
       <img src={`${base}img/atg-logo.jpg`} width="46" height="46" alt="Logo Auto-Teiler Grasbrunn e.V." />
@@ -22,10 +31,7 @@ const base = import.meta.env.BASE_URL;
     </a>
 
     <nav class="mainnav" aria-label="Hauptnavigation">
-      <a href={`${base}#flotte`}>Flotte</a>
-      <a href={`${base}#so-gehts`}>So geht's</a>
-      <a href={`${base}#preise`}>Preise</a>
-      <a href={`${base}#kontakt`}>Kontakt</a>
+      {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
 
     <div class="actions">
@@ -35,7 +41,10 @@ const base = import.meta.env.BASE_URL;
         </svg>
       </a>
       <a class="btn btn-ghost only-desk" href="https://www.atg-grasbrunn.de/mitgliederbereich/" rel="noopener">Fahrzeug buchen</a>
-      <a class="btn btn-red" href={`${base}#mitglied`}>Mitglied werden</a>
+      <a class="btn btn-red only-desk" href={`${base}#mitglied`}>Mitglied werden</a>
+      <button class="burger" id="burger" type="button" aria-label="Menü öffnen" aria-controls="drawer" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 
@@ -43,19 +52,20 @@ const base = import.meta.env.BASE_URL;
     .site-header {
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: var(--z-header);
       background: color-mix(in srgb, var(--color-bg) 86%, transparent);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--color-line);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
     }
+    /* Auto-Hide: rollt nach oben weg beim Runterscrollen */
+    .site-header.is-hidden { transform: translateY(-100%); }
+    .site-header.is-scrolled { box-shadow: 0 6px 24px -16px rgba(24, 21, 19, 0.5); }
+
     .bar {
-      max-width: 1200px;
-      margin: 0 auto;
+      max-width: 1200px; margin: 0 auto;
       padding: 0.55rem clamp(1rem, 4vw, 2rem);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
     }
     .brand { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
     .brand img { border-radius: 11px; height: 46px; width: 46px; object-fit: cover; }
@@ -72,13 +82,55 @@ const base = import.meta.env.BASE_URL;
       background: var(--color-red); color: #fff;
     }
     .only-desk { display: none; }
+
+    /* Hamburger */
+    .burger {
+      display: inline-flex; flex-direction: column; justify-content: center; gap: 5px;
+      width: 46px; height: 46px; border-radius: 12px; border: 1px solid var(--color-line);
+      background: var(--color-surface); cursor: pointer; padding: 0 11px;
+    }
+    .burger span { display: block; height: 2.5px; border-radius: 2px; background: var(--color-ink); transition: transform 0.25s ease, opacity 0.25s ease; }
+    .burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+    .burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+    .burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
     @media (min-width: 900px) {
       .mainnav { display: flex; }
       .only-desk { display: inline-flex; }
       .icon-call { display: none; }
+      .burger { display: none; }
     }
     @media (max-width: 420px) {
       .brand-text small { display: none; }
     }
+    @media (prefers-reduced-motion: reduce) {
+      .site-header, .drawer, .drawer-backdrop, .burger span { transition: none; }
+    }
   </style>
+
+  <script>
+    // 1) Auto-Hide: Header rollt beim Runterscrollen weg, kommt beim Hochscrollen zurück.
+    const header = document.getElementById('site-header');
+    if (header) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let lastY = window.scrollY;
+      let ticking = false;
+      const onScroll = () => {
+        const y = window.scrollY;
+        header.classList.toggle('is-scrolled', y > 8);
+        if (!reduce) {
+          // erst ab etwas Scroll-Tiefe verstecken; bei Hochscrollen sofort zeigen
+          if (y > lastY && y > 140) header.classList.add('is-hidden');
+          else header.classList.remove('is-hidden');
+        }
+        lastY = y;
+        ticking = false;
+      };
+      window.addEventListener('scroll', () => {
+        if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+      }, { passive: true });
+    }
+    // Mobile-Drawer-Logik liegt in MobileNav.astro (außerhalb des Headers, da
+    // backdrop-filter hier einen containing block für position:fixed erzeugen würde).
+  </script>
 </header>

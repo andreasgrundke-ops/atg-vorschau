@@ -25,7 +25,9 @@
 }
 
 /* === Base === */
-html { scroll-behavior: smooth; }
+/* overflow-x: clip verhindert horizontalen Overflow durch off-screen Fixed-Elemente
+   (z. B. den nach rechts geparkten Mobile-Drawer translateX(100%)) — ohne sticky zu brechen. */
+html { scroll-behavior: smooth; overflow-x: clip; }
 body {
   margin: 0;
   background: var(--color-bg);
@@ -70,8 +72,16 @@ img { display: block; max-width: 100%; }
 :root {
   --z-base: 0;
   --z-header: 50;
-  --z-fab: 60;     /* schwebende CTAs + Scroll-to-Top über Content */
+  --z-fab: 60;            /* schwebende CTAs + Scroll-to-Top über Content */
+  --z-tabbar: 70;         /* Mobile App-Bottom-Tab-Bar */
+  --z-drawer-backdrop: 90;
+  --z-drawer: 100;        /* Mobile-Navigations-Drawer über allem (außer Skip-Link) */
   --z-skip: 200;
+}
+
+/* Platz unten für die feste Mobile App-Tab-Bar (siehe AppTabBar.astro) */
+@media (max-width: 767px) {
+  body { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
 }
 
 /* === Lenis Smooth-Scroll (self-hosted, DSGVO) ===

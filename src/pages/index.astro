@@ -7,19 +7,42 @@
 import Base from '../layouts/Base.astro';
 import StandorteKarte from '../components/StandorteKarte.astro';
 
+const base = import.meta.env.BASE_URL;
 const heroPhoto = 'https://www.atg-grasbrunn.de/wp-content/uploads/2024/09/WhatsApp-Bild-2024-09-01-um-12.45.09_ef67264d-1.jpg';
 const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
 
 // Gesamtflotte (ATG + Partner Vaterstetten) — zentral, damit überall konsistent.
 const FLEET_TOTAL = 41;
 
-// Hero-Slider-Motive: echte Fahrzeugfotos (KFZ) + ein MVV-Karten-Slide.
-// kind: 'kfz' = Foto-Hintergrund · 'mvv' = gestalteter Verlauf (Bus & Bahn).
+// Hero-Slider: echte Fahrzeugfotos (KFZ) + MVV-Karten-Slide. Jeder Slide hat eine
+// eigene Botschaft (h1 zweizeilig, 2. Zeile = gelber Akzent) + Lead + Tag.
+// kind: 'kfz' = Foto-Hintergrund · 'mvv' = eigene Illustration (Bus & Bahn).
+// pos = background-position (verhindert „zu groß"/abgeschnitten wirkende Motive).
 const heroSlides = [
-  { kind: 'kfz', img: heroPhoto, tag: 'Renault ZOE — emissionsfrei, ab 1 €/h tagsüber' },
-  { kind: 'kfz', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg', tag: 'Renault Trafic — bis 9 Sitze für Umzug & große Touren' },
-  { kind: 'kfz', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg', tag: 'Renault Clio Grandtour — Kombi für Einkauf & Ausflug' },
-  { kind: 'mvv', img: null, tag: 'Lieber Bus & Bahn? MVV-Tageskarte ab 4 €/Tag — über Partner Vaterstetten' },
+  {
+    kind: 'kfz', img: heroPhoto, pos: 'center 55%',
+    h1a: 'Weniger Autos.', h1b: 'Dennoch mobil.',
+    lead: 'Teil dir ein Auto, statt eins zu besitzen — vom E-Auto bis zum 9-Sitzer, direkt um die Ecke. <strong>Ohne Monatsbeitrag.</strong>',
+    tag: 'Renault ZOE — emissionsfrei, ab 1 €/h tagsüber',
+  },
+  {
+    kind: 'kfz', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg', pos: 'center 50%',
+    h1a: 'Umzug oder', h1b: 'Großeinkauf?',
+    lead: 'Vom Transporter bis zum 9-Sitzer — das passende Fahrzeug steht bereit, wenn du es wirklich brauchst.',
+    tag: 'Renault Trafic — bis 9 Sitze für Umzug & große Touren',
+  },
+  {
+    kind: 'kfz', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg', pos: 'center 55%',
+    h1a: 'Einer für', h1b: 'jeden Weg.',
+    lead: 'Kombi, Kleinwagen oder E-Auto — fünf Fahrzeugklassen an festen Stellplätzen in Grasbrunn.',
+    tag: 'Renault Clio Grandtour — Kombi für Einkauf & Ausflug',
+  },
+  {
+    kind: 'mvv', img: null, pos: 'center',
+    h1a: 'Lieber Bus', h1b: '& Bahn?',
+    lead: 'MVV-Tageskarten M-1 bis M-5 über unseren Partner Vaterstetten — <strong>ab 4 €/Tag</strong> ausleihen statt teuer kaufen.',
+    tag: 'MVV-Tageskarte ab 4 €/Tag — Abholung am Bahnhof Vaterstetten',
+  },
 ];
 
 const cars = [
@@ -70,26 +93,23 @@ const faqSchema = {
       {heroSlides.map((s, i) => (
         <div
           class:list={['hero-slide', { 'is-active': i === 0, 'hero-slide-mvv': s.kind === 'mvv' }]}
+          data-h1a={s.h1a}
+          data-h1b={s.h1b}
+          data-lead={s.lead}
           data-tag={s.tag}
-          style={s.img ? `background-image:url(${s.img})` : undefined}
-        >
-          {s.kind === 'mvv' && (
-            <svg class="mvv-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
-              <rect x="4" y="3" width="16" height="14" rx="3" /><path d="M4 11h16" /><circle cx="8" cy="14" r="1.2" /><circle cx="16" cy="14" r="1.2" /><path d="M8 20l-2 2M16 20l2 2" />
-            </svg>
-          )}
-        </div>
+          style={`background-image:url(${s.img || `${base}img/mvv-motiv.svg`}); background-position:${s.pos};`}
+        ></div>
       ))}
     </div>
     <div class="hero-scrim" aria-hidden="true"></div>
 
     <div class="wrap hero-inner">
       <p class="hero-kicker"><span class="dot"></span> Carsharing dahoam · Grasbrunn &amp; Umgebung</p>
-      <h1>Weniger Autos.<br /><span class="hl">Dennoch mobil.</span></h1>
-      <p class="hero-lead">
-        Teil dir ein Auto, statt eins zu besitzen — vom E-Auto bis zum 9-Sitzer,
-        direkt um die Ecke. <strong>Ohne Monatsbeitrag.</strong>
-      </p>
+      <h1 class="hero-h1" id="hero-h1">
+        <span class="h1a" id="hero-h1a">{heroSlides[0].h1a}</span><br />
+        <span class="hl" id="hero-h1b">{heroSlides[0].h1b}</span>
+      </h1>
+      <p class="hero-lead" id="hero-lead" set:html={heroSlides[0].lead}></p>
       <p class="hero-tag" id="hero-tag">{heroSlides[0].tag}</p>
       <div class="cta-row">
         <a class="btn btn-red" href="#mitglied">Mitglied werden</a>
@@ -333,10 +353,20 @@ const faqSchema = {
     const heroSlideEls = document.querySelectorAll<HTMLElement>('.hero-slide');
     const heroDots = document.querySelectorAll<HTMLButtonElement>('.hero-dot');
     const heroTag = document.getElementById('hero-tag');
+    const heroH1a = document.getElementById('hero-h1a');
+    const heroH1b = document.getElementById('hero-h1b');
+    const heroLead = document.getElementById('hero-lead');
+    const heroInner = document.querySelector<HTMLElement>('.hero-inner');
     if (heroSlideEls.length > 1) {
       const reduceMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let cur = 0;
       let timer = 0;
+      const apply = (el: HTMLElement) => {
+        if (heroH1a) heroH1a.textContent = el.getAttribute('data-h1a') || '';
+        if (heroH1b) heroH1b.textContent = el.getAttribute('data-h1b') || '';
+        if (heroLead) heroLead.innerHTML = el.getAttribute('data-lead') || '';
+        if (heroTag) heroTag.textContent = el.getAttribute('data-tag') || '';
+      };
       const show = (n: number) => {
         cur = (n + heroSlideEls.length) % heroSlideEls.length;
         heroSlideEls.forEach((s, i) => s.classList.toggle('is-active', i === cur));
@@ -344,10 +374,17 @@ const faqSchema = {
           d.classList.toggle('is-on', i === cur);
           d.setAttribute('aria-selected', i === cur ? 'true' : 'false');
         });
-        const tag = heroSlideEls[cur].getAttribute('data-tag');
-        if (heroTag && tag) heroTag.textContent = tag;
+        const el = heroSlideEls[cur];
+        // Text kurz ausblenden → wechseln → einblenden (lesbarer Übergang)
+        if (heroInner && !reduceMo) {
+          heroInner.classList.add('is-switching');
+          setTimeout(() => { apply(el); heroInner.classList.remove('is-switching'); }, 260);
+        } else {
+          apply(el);
+        }
       };
-      const start = () => { if (!reduceMo) timer = window.setInterval(() => show(cur + 1), 6500); };
+      // Auto-Rotation langsamer (8,5 s) → genug Zeit zum Lesen
+      const start = () => { if (!reduceMo) timer = window.setInterval(() => show(cur + 1), 8500); };
       heroDots.forEach((d, i) => d.addEventListener('click', () => { window.clearInterval(timer); show(i); start(); }));
       start();
     }
@@ -427,12 +464,20 @@ const faqSchema = {
     .hero-slide {
       position: absolute; inset: 0;
       background-size: cover; background-position: center;
-      opacity: 0; transform: scale(1.06);
+      opacity: 0; transform: scale(1);
       transition: opacity 1.2s ease;
       will-change: opacity, transform;
     }
-    .hero-slide.is-active { opacity: 1; animation: kenburns 8s ease-out forwards; }
-    @keyframes kenburns { from { transform: scale(1.06); } to { transform: scale(1.17); } }
+    /* Sanfterer Ken-Burns (1.0 → 1.05) — Motive wirken nicht mehr zu stark herangezoomt */
+    .hero-slide.is-active { opacity: 1; animation: kenburns 11s ease-out forwards; }
+    @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.05); } }
+    .hero-slide-mvv { background-color: #181513; }
+
+    /* Text-Crossfade beim Slide-Wechsel (lesbarer Übergang) */
+    .hero-h1, .hero-lead, .hero-tag { transition: opacity 0.28s ease, transform 0.28s ease; }
+    .hero-inner.is-switching .hero-h1,
+    .hero-inner.is-switching .hero-lead,
+    .hero-inner.is-switching .hero-tag { opacity: 0; transform: translateY(10px); }
     .hero-scrim {
       position: absolute; inset: 0; z-index: -1;
       background:
@@ -554,10 +599,6 @@ const faqSchema = {
     /* KFZ-Meta (Sitze/Tarif) */
     .car-meta { list-style: none; padding: 0; margin: 0.45rem 0 0.55rem; display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; }
     .car-meta li { font-size: 0.85rem; color: var(--color-ink); font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem; }
-
-    /* Hero MVV-Slide (gestalteter Verlauf statt Foto) */
-    .hero-slide-mvv { background: radial-gradient(120% 120% at 80% 10%, #3a2018 0%, #181513 55%, #0d0b09 100%); display: grid; place-items: center; }
-    .hero-slide-mvv .mvv-watermark { width: min(62vw, 460px); height: auto; color: rgba(255, 196, 0, 0.1); }
 
     /* MVV-Sektion */
     .mvv-grid { display: grid; gap: 1.4rem; grid-template-columns: 1fr; }

@@ -24,7 +24,8 @@ const {
 // Vorschau-Build (Pages-Unterordner, base !== '/') NICHT indexieren — sonst
 // taucht die github.io-Vorschau in Suchmaschinen auf und konkurriert später
 // mit der echten Live-Domain (Duplicate Content). Live-Build (base '/') = indexierbar.
-const isPreview = import.meta.env.BASE_URL !== '/';
+const base = import.meta.env.BASE_URL;
+const isPreview = base !== '/';
 
 const orgSchema = {
   '@context': 'https://schema.org',
@@ -53,6 +54,7 @@ const orgSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
     <title>{title}</title>
     <meta name="description" content={description} />
     {isPreview && <meta name="robots" content="noindex, nofollow" />}
@@ -61,6 +63,13 @@ const orgSchema = {
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d42a22'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-size='14' fill='%23ffc400' text-anchor='middle'%3EATG%3C/text%3E%3C/svg%3E"
     />
+    <!-- PWA: installierbar als App (Icon auf Handy/Desktop) -->
+    <link rel="manifest" href={`${base}manifest.webmanifest`} />
+    <link rel="apple-touch-icon" href={`${base}icons/apple-touch-icon.png`} />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ATG Carsharing" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -97,6 +106,15 @@ const orgSchema = {
       // Bei prefers-reduced-motion: nativ scrollen (kein Lenis), barrierefrei.
       import Lenis from 'lenis';
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // PWA: Service Worker registrieren (installierbar + Offline-Shell).
+      if ('serviceWorker' in navigator) {
+        const swBase = import.meta.env.BASE_URL;
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register(swBase + 'sw.js', { scope: swBase }).catch(() => {});
+        });
+      }
+
       if (!reduce) {
         const lenis = new Lenis({
           duration: 1.1,
@@ -116,6 +134,38 @@ const orgSchema = {
             if (target) { e.preventDefault(); lenis.scrollTo(target as HTMLElement, { offset: -72 }); }
           });
         });
+      }
+
+      // Scroll-Reveal: Elemente mit .reveal beim Sichtbarwerden einblenden.
+      const revealEls = document.querySelectorAll<HTMLElement>('.reveal');
+      if (revealEls.length && !reduce) {
+        const ro = new IntersectionObserver((entries) => {
+          entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in-view'); ro.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -8% 0px' });
+        revealEls.forEach((el) => ro.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('in-view'));
+      }
+
+      // Zahlen hochzählen (Elemente mit data-count) beim Sichtbarwerden.
+      const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+      if (counters.length) {
+        const run = (el: HTMLElement) => {
+          const target = parseFloat(el.getAttribute('data-count') || '0');
+          const suffix = el.getAttribute('data-suffix') || '';
+          if (reduce) { el.textContent = target.toLocaleString('de-DE') + suffix; return; }
+          const dur = 1100; const t0 = performance.now();
+          const step = (t: number) => {
+            const p = Math.min(1, (t - t0) / dur);
+            el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString('de-DE') + suffix;
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        };
+        const co = new IntersectionObserver((entries) => {
+          entries.forEach((e) => { if (e.isIntersecting) { run(e.target as HTMLElement); co.unobserve(e.target); } });
+        }, { threshold: 0.6 });
+        counters.forEach((el) => co.observe(el));
       }
     </script>
   </body>

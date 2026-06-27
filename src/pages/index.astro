@@ -140,17 +140,17 @@ const faqSchema = {
   <!-- ============ STAT-LEISTE ============ -->
   <section class="stats">
     <div class="wrap stats-grid">
-      <div class="stat"><b>41</b><span>Fahrzeuge mit Vaterstetten</span></div>
+      <div class="stat"><b data-count="41">41</b><span>Fahrzeuge mit Vaterstetten</span></div>
       <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag</span></div>
       <div class="stat"><b>1&nbsp;€/h</b><span>tagsüber fahren</span></div>
-      <div class="stat"><b>5</b><span>Fahrzeugklassen vor Ort</span></div>
+      <div class="stat"><b data-count="5">5</b><span>Fahrzeugklassen vor Ort</span></div>
     </div>
   </section>
 
   <!-- ============ SO GEHT'S ============ -->
   <section id="so-gehts" class="sec sec-white">
     <div class="wrap">
-      <header class="sec-head">
+      <header class="sec-head reveal">
         <h2>In 3 Schritten Mitglied — und losgefahren</h2>
         <p>Kein kompliziertes Verfahren. Du meldest dich online, wir lernen uns kurz vor Ort kennen, dann fährst du.</p>
       </header>
@@ -169,7 +169,7 @@ const faqSchema = {
   <!-- ============ FLOTTE ============ -->
   <section id="flotte" class="sec">
     <div class="wrap">
-      <header class="sec-head">
+      <header class="sec-head reveal">
         <h2>Fünf Fahrzeuge für jeden Zweck</h2>
         <p>Vom kleinen Stadtflitzer übers E-Auto bis zum Transporter für den Umzug — alle an festen Stellplätzen.</p>
       </header>
@@ -209,7 +209,7 @@ const faqSchema = {
   <!-- ============ MVV-KARTEN (2. Feature nach KFZ) ============ -->
   <section id="mvv" class="sec">
     <div class="wrap">
-      <header class="sec-head">
+      <header class="sec-head reveal">
         <p class="kicker"><span class="dot"></span> Nicht nur Autos</p>
         <h2>Lieber Bus &amp; Bahn? Die MVV-Karten</h2>
         <p>Nicht jede Strecke braucht ein Auto. Über unseren Partner Vaterstetten leihst du günstig
@@ -254,7 +254,7 @@ const faqSchema = {
   <!-- ============ PREISE + KOSTENRECHNER ============ -->
   <section id="preise" class="sec sec-white">
     <div class="wrap">
-      <header class="sec-head">
+      <header class="sec-head reveal">
         <h2>Was kostet mich das?</h2>
         <p>Du zahlst nur, was du fährst: Zeit plus Kilometer. Kein Monatsbeitrag, keine versteckten Gebühren.</p>
       </header>
@@ -298,7 +298,7 @@ const faqSchema = {
   <!-- ============ KOOPERATION ============ -->
   <section id="kooperation" class="sec">
     <div class="wrap">
-      <header class="sec-head">
+      <header class="sec-head reveal">
         <h2>Gemeinsam mit den Vaterstettener Auto-Teilern</h2>
         <p>Zwei Vereine, eine Idee: Mitglieder nutzen die Fahrzeuge beidseitig — so steht eine gemeinsame Flotte zur Verfügung.</p>
       </header>
@@ -320,7 +320,7 @@ const faqSchema = {
   <!-- ============ FAQ ============ -->
   <section class="sec sec-white">
     <div class="wrap wrap-narrow">
-      <header class="sec-head">
+      <header class="sec-head reveal">
         <h2>Häufige Fragen</h2>
       </header>
       <div class="faq">
@@ -534,7 +534,8 @@ const faqSchema = {
     .car { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); overflow: hidden; box-shadow: 0 14px 34px -26px rgba(24,21,19,.5); transition: transform 0.15s ease; }
     .car:hover { transform: translateY(-3px); }
     .car-photo { position: relative; aspect-ratio: 3 / 2; background: var(--color-bg); }
-    .car-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .car-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
+    .car:hover .car-photo img { transform: scale(1.07); }
     .car-badge { position: absolute; top: 0.7rem; left: 0.7rem; background: var(--color-yellow); color: var(--color-ink); font-weight: 800; font-size: 0.74rem; padding: 0.25rem 0.6rem; border-radius: 999px; }
     .car-body { padding: 1rem 1.1rem 1.2rem; }
     .car-body h3 { font-size: 1.2rem; }

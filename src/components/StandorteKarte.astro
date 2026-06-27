@@ -1,0 +1,147 @@
+---
+/**
+ * StandorteKarte — interaktive Karte der Carsharing-Standorte.
+ *
+ * Titel:        ATG Carsharing — Standorte-Karte
+ * Version:      1.1
+ * Autor:        Grundke IT-Service
+ * Datum:        2026-06-27
+ * Beschreibung: OpenStreetMap/Leaflet-Karte (DSGVO-freundlich, KEIN Google-Tracking).
+ *               ATG-Standorte in Grasbrunn/Neukeferloh prominent (rot), Partner-Flotte
+ *               Vaterstetten ergänzend (gelb), MVV-Karten-Abholung am Bahnhof
+ *               Vaterstetten (dunkel/„S"). Marker sind runde CSS-DivIcons — keine
+ *               externen Bild-Assets, base-Path-sicher. Lazy-Init via IntersectionObserver.
+ * Änderungshistorie:
+ *   2026-06-27  1.0  Erstausgabe — ATG (Neukeferloh) + VAT (37 Pins) + MVV-Bahnhof.
+ *   2026-06-27  1.1  Runde Marker (sauberer), Lazy-Load der Tiles.
+ */
+import 'leaflet/dist/leaflet.css';
+
+const atg = [
+  { name: 'Renault ZOE (E-Auto)', loc: 'Am Rathaus, Neukeferloh', lat: 48.09617, lng: 11.76036 },
+  { name: 'Opel Corsa', loc: 'Finkenstraße, hinter der Kirche', lat: 48.09781, lng: 11.75959 },
+  { name: 'Dacia Sandero', loc: 'Ecke Waldstraße / Saarlandstraße', lat: 48.09560, lng: 11.76071 },
+];
+const mvv = { name: 'MVV-Karten (M-1 & M-5)', loc: 'Bahnhof Vaterstetten — Abholung & Rückgabe', lat: 48.10801, lng: 11.77005 };
+const vat = [
+  [48.097018,11.77617],[48.105773,11.774258],[48.107108,11.781472],[48.0968,11.784017],
+  [48.097018,11.77627],[48.105881,11.779309],[48.109311,11.774063],[48.106881,11.764723],
+  [48.095739,11.794837],[48.10267,11.780366],[48.111574,11.770139],[48.09386,11.78253],
+  [48.0971,11.78709],[48.101712,11.770523],[48.105736,11.770696],[48.103934,11.786099],
+  [48.112606,11.768162],[48.09937,11.77237],[48.098421,11.767818],[48.098593,11.803076],
+  [48.104753,11.793293],[48.091317,11.793075],[48.112606,11.768062],[48.10573,11.77059],
+  [48.099385,11.796254],[48.100786,11.786774],[48.097226,11.775026],[48.097018,11.776209],
+  [48.106483,11.76578],[48.10214,11.79412],[48.100814,11.788168],[48.10267,11.780366],
+  [48.095624,11.780117],[48.099235,11.780905],[48.110466,11.775553],[48.105736,11.770796],
+  [48.104648,11.787921],
+];
+const data = { atg, mvv, vat };
+---
+
+<section id="standorte" class="sec sec-white">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="kicker"><span class="dot"></span> Standorte</p>
+      <h2>Direkt vor der Haustür in Grasbrunn</h2>
+      <p>
+        Die ATG-Fahrzeuge stehen an festen Stellplätzen in Neukeferloh. Über die Kooperation
+        mit den Vaterstettener Auto-Teilern kommen rund 36 weitere Fahrzeuge dazu — und die
+        MVV-Karten gibt’s am Bahnhof Vaterstetten.
+      </p>
+    </header>
+
+    <div class="map-legend">
+      <span class="lg lg-atg"><i></i> ATG Grasbrunn (3 Standorte)</span>
+      <span class="lg lg-vat"><i></i> Partner Vaterstetten (~36)</span>
+      <span class="lg lg-mvv"><i>S</i> MVV-Karten · Bahnhof Vaterstetten</span>
+    </div>
+
+    <div id="atg-map" class="map" role="img" aria-label="Karte mit Carsharing-Standorten in Grasbrunn und Vaterstetten"></div>
+    <p class="map-note">
+      Karte: © OpenStreetMap-Mitwirkende · datensparsam, ohne Google-Tracking. Standorte ungefähr —
+      die genauen Stellplätze stehen vor Ort und im Buchungssystem.
+    </p>
+  </div>
+</section>
+
+<script type="application/json" id="atg-map-data" set:html={JSON.stringify(data)}></script>
+
+<script>
+  // Gebündeltes Modul-Script (kein define:vars → Vite löst den leaflet-Import auf).
+  // Daten kommen aus dem JSON-Script oben.
+  const dataEl = document.getElementById('atg-map-data');
+  const data = dataEl ? JSON.parse(dataEl.textContent || '{}') : { atg: [], vat: [], mvv: null };
+  const mapEl = document.getElementById('atg-map');
+  let loaded = false;
+
+  async function initMap() {
+    if (loaded || !mapEl) return;
+    loaded = true;
+    const L = (await import('leaflet')).default;
+
+    const map = L.map('atg-map', { scrollWheelZoom: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap',
+    }).addTo(map);
+
+    const dot = (cls, label = '') =>
+      L.divIcon({ className: '', html: `<span class="dot-pin ${cls}">${label}</span>`, iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] });
+
+    const pts = [];
+
+    data.vat.forEach((c) => {
+      L.marker([c[0], c[1]], { icon: dot('dp-vat'), keyboard: false })
+        .addTo(map)
+        .bindPopup('<b>Partner-Flotte Vaterstetten</b><br>Gemeinsam nutzbar über die Kooperation.');
+      pts.push([c[0], c[1]]);
+    });
+
+    L.marker([data.mvv.lat, data.mvv.lng], { icon: dot('dp-mvv', 'S') })
+      .addTo(map)
+      .bindPopup(`<b>${data.mvv.name}</b><br>${data.mvv.loc}`);
+    pts.push([data.mvv.lat, data.mvv.lng]);
+
+    data.atg.forEach((p) => {
+      L.marker([p.lat, p.lng], { icon: dot('dp-atg') })
+        .addTo(map)
+        .bindPopup(`<b>${p.name}</b><br>${p.loc}`);
+      pts.push([p.lat, p.lng]);
+    });
+
+    map.fitBounds(pts, { padding: [40, 40] });
+    setTimeout(() => map.invalidateSize(), 200);
+  }
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { initMap(); io.disconnect(); }
+    }, { rootMargin: '250px' });
+    io.observe(mapEl);
+  } else {
+    initMap();
+  }
+</script>
+
+<style>
+  .kicker { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-red-deep); margin-bottom: 0.6rem; }
+  .kicker .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--color-yellow); }
+
+  .map-legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; margin-bottom: 1rem; }
+  .lg { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 0.9rem; color: var(--color-ink); }
+  .lg i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 999px; flex: none; box-shadow: 0 1px 3px rgba(0,0,0,.25); font-style: normal; font-size: 0.62rem; font-weight: 800; color: #fff; }
+  .lg-atg i { background: var(--color-red); }
+  .lg-vat i { background: var(--color-yellow); }
+  .lg-mvv i { background: var(--color-ink); border: 2px solid var(--color-yellow); color: var(--color-yellow); }
+
+  .map { width: 100%; height: clamp(360px, 60vh, 560px); border-radius: var(--radius-card, 14px); overflow: hidden; border: 1px solid var(--color-line); box-shadow: 0 18px 44px -28px rgba(24,21,19,.5); z-index: 0; }
+  .map-note { font-size: 0.78rem; color: var(--color-muted); margin-top: 0.8rem; }
+
+  /* Runde CSS-Marker (keine externen Bilder, base-Path-sicher) */
+  :global(.dot-pin) { display: grid; place-items: center; border-radius: 999px; border: 2px solid #fff; box-shadow: 0 3px 8px rgba(0,0,0,.45); font-family: var(--font-display, sans-serif); font-weight: 800; line-height: 1; color: #fff; }
+  :global(.dp-atg) { width: 22px; height: 22px; background: var(--color-red, #d42a22); }
+  :global(.dp-vat) { width: 13px; height: 13px; background: var(--color-yellow, #ffc400); border-width: 1.5px; opacity: 0.92; }
+  :global(.dp-mvv) { width: 24px; height: 24px; background: var(--color-ink, #181513); border-color: var(--color-yellow, #ffc400); color: var(--color-yellow, #ffc400); font-size: 0.72rem; }
+  :global(.leaflet-popup-content) { font-family: var(--font-body, sans-serif); font-size: 0.88rem; }
+  :global(.leaflet-container) { font-family: var(--font-body, sans-serif); }
+</style>

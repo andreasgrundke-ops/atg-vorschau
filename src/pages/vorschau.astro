@@ -32,6 +32,47 @@ const tiles = [
   { key: 'visitenkarte', kind: 'link', href: `${base}visitenkarte/`, badge: 'Druck 02', title: 'Visitenkarte', desc: 'Vorder- und Rückseite im passenden Design — zum Mitgeben, mit QR-Code zum Speichern.', go: 'Visitenkarte ansehen' },
 ];
 
+// Go-Live-Fahrplan — alle Schritte bis die Seite live ist UND gut gefunden wird.
+const phases = [
+  {
+    num: '1', title: 'Prüfen & abstimmen', tag: 'Jetzt dran', tagClass: 'now',
+    items: [
+      'Design, Farben & Schriften gemeinsam festlegen und freigeben',
+      'Texte, Fotos und alle Kontaktdaten prüfen und korrigieren',
+      'KFZ-Werbung verbessern: mehr Infos je Fahrzeug, QR-Code größer & prominenter',
+      'Freigabe durch den Verein (Herr Böhme)',
+    ],
+  },
+  {
+    num: '2', title: 'Inhalte vervollständigen', tag: 'Geplant', tagClass: 'next',
+    items: [
+      'Pflichtseiten: Impressum & Datenschutz (rechtssicher, e.V.-konform)',
+      'Themenseiten: MVV-Karten · Mitglied werden · „So fährst du" (buchen → fahren → zurückgeben)',
+      'Regionale Seiten: Grasbrunn, Neukeferloh, Harthausen, Möschenfeld, Keferloh, Baldham + Umgebung',
+      'Echte Fahrzeugfotos an den realen Standorten + Fahrzeug-Detailseiten',
+    ],
+  },
+  {
+    num: '3', title: 'Veröffentlichen', tag: 'Nach Freigabe', tagClass: 'later',
+    items: [
+      'Domain umstellen (DNS) und Seite live schalten',
+      'Technik-Check: Ladezeit, Mobil-Ansicht, Barrierefreiheit',
+      'Alte Seite sauber ablösen (Weiterleitungen einrichten)',
+    ],
+  },
+  {
+    num: '4', title: 'Gefunden werden (SEO + KI)', tag: 'Laufend', tagClass: 'later',
+    items: [
+      'Google Search Console einrichten + Sitemap einreichen',
+      'Bing Webmaster Tools anmelden',
+      'Google Unternehmensprofil pflegen (Google Maps / „Mein Unternehmen")',
+      'Branchen- & Vereinsverzeichnisse eintragen',
+      'Google-Bewertungen bei zufriedenen Mitgliedern einholen',
+      'Auffindbarkeit in KI-Antworten (ChatGPT, Google AI) durch strukturierte Daten & FAQ',
+    ],
+  },
+];
+
 const arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const icons = {
   desktop: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 8h20M8 21h8M12 17v4"/></svg>',
@@ -150,6 +191,30 @@ const icons = {
                 <span class="go">{t.go} <Fragment set:html={arrow} /></span>
               </a>
             )
+          ))}
+        </div>
+      </section>
+
+      <!-- Go-Live-Fahrplan -->
+      <section class="roadmap">
+        <p class="s-label">Fahrplan bis zur Veröffentlichung</p>
+        <h2 class="s-title">Was als Nächstes kommt — bis die Seite gut gefunden wird</h2>
+        <p class="road-intro">
+          Eine schöne Seite allein reicht nicht — sie muss auch rechtssicher sein und von Menschen
+          wie von Google &amp; KI gefunden werden. Das ist der Plan Schritt für Schritt:
+        </p>
+        <div class="phases">
+          {phases.map((p) => (
+            <article class="phase">
+              <div class="phase-head">
+                <span class="phase-num">{p.num}</span>
+                <h3>{p.title}</h3>
+                <span class={`phase-tag pt-${p.tagClass}`}>{p.tag}</span>
+              </div>
+              <ul>
+                {p.items.map((it) => <li>{it}</li>)}
+              </ul>
+            </article>
           ))}
         </div>
       </section>
@@ -324,6 +389,23 @@ const icons = {
       .tile .go svg { transition: transform .2s; }
       .tile:hover .go svg { transform: translateX(4px); }
       .tile .badge { position: absolute; top: 18px; right: 18px; font-family: var(--fm); font-size: .62rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+
+      /* Roadmap / Fahrplan */
+      .roadmap { padding-top: 48px; }
+      .road-intro { color: var(--text2); max-width: 64ch; margin: 0 0 1.6rem; }
+      .phases { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 760px) { .phases { grid-template-columns: 1fr 1fr; } }
+      .phase { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+      .phase-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+      .phase-num { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--accent); color: #fff; font-family: var(--fh); font-weight: 800; }
+      .phase-head h3 { font-family: var(--fh); font-weight: 700; font-size: 1.12rem; flex: 1; min-width: 0; }
+      .phase-tag { font-family: var(--fm); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 999px; white-space: nowrap; }
+      .pt-now { background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(38, 189, 239, 0.4); }
+      .pt-next { background: rgba(255, 255, 255, 0.06); color: var(--text2); border: 1px solid var(--border); }
+      .pt-later { background: transparent; color: var(--text3); border: 1px solid var(--border); }
+      .phase ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+      .phase li { position: relative; padding-left: 1.5rem; color: var(--text2); font-size: 0.92rem; line-height: 1.5; }
+      .phase li::before { content: ''; position: absolute; left: 0; top: 0.5em; width: 7px; height: 7px; border-radius: 999px; background: var(--cyan); }
 
       /* Maker */
       .maker { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 24px 26px; margin: 34px 0; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; }

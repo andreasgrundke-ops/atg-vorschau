@@ -5,23 +5,39 @@
  * Fahrzeugfotos: aktuell von der Live-Seite referenziert → Phase 2 lokal + WebP/AVIF + srcset.
  */
 import Base from '../layouts/Base.astro';
+import StandorteKarte from '../components/StandorteKarte.astro';
 
 const heroPhoto = 'https://www.atg-grasbrunn.de/wp-content/uploads/2024/09/WhatsApp-Bild-2024-09-01-um-12.45.09_ef67264d-1.jpg';
 const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
 
-// Hero-Slider-Motive (echte Fahrzeugfotos) + slide-spezifischer Tag-Text.
+// Gesamtflotte (ATG + Partner Vaterstetten) — zentral, damit überall konsistent.
+const FLEET_TOTAL = 41;
+
+// Hero-Slider-Motive: echte Fahrzeugfotos (KFZ) + ein MVV-Karten-Slide.
+// kind: 'kfz' = Foto-Hintergrund · 'mvv' = gestalteter Verlauf (Bus & Bahn).
 const heroSlides = [
-  { img: heroPhoto, tag: 'Renault ZOE — emissionsfrei, ab 1 €/h tagsüber' },
-  { img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg', tag: 'Renault Trafic — bis 9 Sitze für Umzug & große Touren' },
-  { img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg', tag: 'Renault Clio Grandtour — Kombi für Einkauf & Ausflug' },
+  { kind: 'kfz', img: heroPhoto, tag: 'Renault ZOE — emissionsfrei, ab 1 €/h tagsüber' },
+  { kind: 'kfz', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg', tag: 'Renault Trafic — bis 9 Sitze für Umzug & große Touren' },
+  { kind: 'kfz', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg', tag: 'Renault Clio Grandtour — Kombi für Einkauf & Ausflug' },
+  { kind: 'mvv', img: null, tag: 'Lieber Bus & Bahn? MVV-Tageskarte ab 4 €/Tag — über Partner Vaterstetten' },
 ];
 
 const cars = [
-  { name: 'Renault ZOE', type: 'Elektro · emissionsfrei', badge: 'E-Auto · Wallbox', loc: 'Am Rathaus Grasbrunn', img: heroPhoto },
-  { name: 'Opel Corsa', type: 'Wendiger Stadtflitzer', badge: 'Kleinwagen', loc: 'Finkenstraße, hinter der Kirche', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Opel-Corsa-NEU.jpg' },
-  { name: 'Dacia Sandero', type: 'Günstig & praktisch', badge: 'Kleinwagen', loc: 'Ecke Waldstraße / Saarlandstraße', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Dacia-Sandero-NEU-1.jpg' },
-  { name: 'Renault Clio Grandtour', type: 'Kombi mit großem Kofferraum', badge: 'Kombi', loc: 'Standort wird ergänzt', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg' },
-  { name: 'Renault Trafic', type: 'Transporter / Bus — bis 9 Sitze', badge: 'Transporter', loc: 'Standort wird ergänzt', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg' },
+  { name: 'Renault ZOE', type: 'Elektro · emissionsfrei', badge: 'E-Auto · Wallbox', loc: 'Am Rathaus, Neukeferloh', seats: '5 Sitze', tarif: 'ab 0,45 €/km', img: heroPhoto },
+  { name: 'Opel Corsa', type: 'Wendiger Stadtflitzer', badge: 'Kleinwagen', loc: 'Finkenstraße, hinter der Kirche', seats: '5 Sitze', tarif: 'ab 0,40 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Opel-Corsa-NEU.jpg' },
+  { name: 'Dacia Sandero', type: 'Günstig & praktisch', badge: 'Kleinwagen', loc: 'Ecke Waldstraße / Saarlandstraße', seats: '5 Sitze', tarif: 'ab 0,40 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Dacia-Sandero-NEU-1.jpg' },
+  { name: 'Renault Clio Grandtour', type: 'Kombi mit großem Kofferraum', badge: 'Kombi', loc: 'Standort wird ergänzt', seats: '5 Sitze · großer Kofferraum', tarif: 'ab 0,45 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg' },
+  { name: 'Renault Trafic', type: 'Transporter / Bus — bis 9 Sitze', badge: 'Transporter', loc: 'Standort wird ergänzt', seats: 'bis 9 Sitze', tarif: 'ab 0,60 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg' },
+];
+
+// MVV-Tageskarten über die Kooperation (Partner Vaterstetten). Normalpreise „ca." —
+// vor Go-Live mit Verein/MVV verifizieren (siehe Vorschau-Roadmap).
+const ATG_MVV_PRICE = 4; // €/Tag über ATG/VAT (Vereinsangebot)
+const mvvZones = [
+  { id: 'M-1', label: 'M-1 · München Innenraum + Zone 1', normal: 9.9 },
+  { id: 'M-2', label: 'M-2 · bis Zone 2', normal: 11.6 },
+  { id: 'M-3', label: 'M-3 · bis Zone 3', normal: 13.3 },
+  { id: 'M-5', label: 'M-5 · bis Zone 5 (z. B. Flughafen)', normal: 16.7 },
 ];
 
 const steps = [
@@ -53,10 +69,16 @@ const faqSchema = {
     <div class="hero-bg" aria-hidden="true">
       {heroSlides.map((s, i) => (
         <div
-          class:list={['hero-slide', { 'is-active': i === 0 }]}
+          class:list={['hero-slide', { 'is-active': i === 0, 'hero-slide-mvv': s.kind === 'mvv' }]}
           data-tag={s.tag}
-          style={`background-image:url(${s.img})`}
-        ></div>
+          style={s.img ? `background-image:url(${s.img})` : undefined}
+        >
+          {s.kind === 'mvv' && (
+            <svg class="mvv-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+              <rect x="4" y="3" width="16" height="14" rx="3" /><path d="M4 11h16" /><circle cx="8" cy="14" r="1.2" /><circle cx="16" cy="14" r="1.2" /><path d="M8 20l-2 2M16 20l2 2" />
+            </svg>
+          )}
+        </div>
       ))}
     </div>
     <div class="hero-scrim" aria-hidden="true"></div>
@@ -74,9 +96,9 @@ const faqSchema = {
         <a class="btn btn-yellow" href={BOOK} rel="noopener">Fahrzeug buchen</a>
       </div>
       <ul class="trust">
+        <li><span class="ck">✓</span> {FLEET_TOTAL} Fahrzeuge gemeinsam mit Vaterstetten</li>
         <li><span class="ck">✓</span> Kein Monatsbeitrag</li>
-        <li><span class="ck">✓</span> E-Auto &amp; Transporter</li>
-        <li><span class="ck">✓</span> In Minuten gebucht</li>
+        <li><span class="ck">✓</span> E-Auto, Transporter &amp; MVV-Karten</li>
       </ul>
     </div>
 
@@ -141,6 +163,10 @@ const faqSchema = {
             <div class="car-body">
               <h3>{c.name}</h3>
               <p class="car-type">{c.type}</p>
+              <ul class="car-meta">
+                <li><span aria-hidden="true">👤</span> {c.seats}</li>
+                <li><span aria-hidden="true">💶</span> {c.tarif}</li>
+              </ul>
               <p class="car-loc"><span aria-hidden="true">📍</span> {c.loc}</p>
             </div>
           </article>
@@ -154,6 +180,54 @@ const faqSchema = {
         </article>
       </div>
       <p class="note">📷 Phase 2: echte Fotos der Fahrzeuge an ihren realen Standorten + Detailseiten je Fahrzeug (Cockpit, Kofferraum, Sitze).</p>
+    </div>
+  </section>
+
+  <!-- ============ STANDORTE-KARTE ============ -->
+  <StandorteKarte />
+
+  <!-- ============ MVV-KARTEN (2. Feature nach KFZ) ============ -->
+  <section id="mvv" class="sec">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="kicker"><span class="dot"></span> Nicht nur Autos</p>
+        <h2>Lieber Bus &amp; Bahn? Die MVV-Karten</h2>
+        <p>Nicht jede Strecke braucht ein Auto. Über unseren Partner Vaterstetten leihst du günstig
+          MVV-Tageskarten — ideal für die Fahrt nach München, ganz ohne eigenes Ticket.</p>
+      </header>
+
+      <div class="mvv-grid">
+        <div class="mvv-info">
+          <ul class="mvv-points">
+            <li><b>Ab 4 €/Tag</b> — deutlich günstiger als ein normales MVV-Tagesticket.</li>
+            <li><b>M-1 bis M-5</b> — vom Münchner Innenraum bis ins Umland (z. B. Flughafen).</li>
+            <li><b>Einfach online buchen</b> im Buchungsportal — genau wie ein Fahrzeug.</li>
+            <li><b>Abholung &amp; Rückgabe</b> am Bahnhof Vaterstetten.</li>
+          </ul>
+          <a class="btn btn-red" href={BOOK} rel="noopener">MVV-Karte buchen</a>
+        </div>
+
+        <div class="card mvv-calc">
+          <h3>Was spare ich?</h3>
+          <label for="mvv-zone">MVV-Bereich</label>
+          <select id="mvv-zone">
+            {mvvZones.map((z, i) => (
+              <option value={z.normal} selected={i === 0}>
+                {z.label} — ca. {z.normal.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Tag
+              </option>
+            ))}
+          </select>
+          <label for="mvv-days">Dauer: <span id="mvv-dv" class="val">1 Tag</span></label>
+          <input id="mvv-days" type="range" min="1" max="14" value="1" step="1" />
+          <div class="mvv-compare">
+            <div class="mvv-col"><span>Selbst kaufen</span><b id="mvv-normal">9,90 €</b></div>
+            <div class="mvv-vs">→</div>
+            <div class="mvv-col"><span>Über ATG / VAT</span><b id="mvv-atg" class="mvv-good">4,00 €</b></div>
+          </div>
+          <div class="mvv-save">Ersparnis: <b id="mvv-save">5,90 €</b></div>
+          <p class="fine">Normalpreise ca. (MVV-Tageskarte Single) — vor Go-Live mit MVV/Verein verifizieren.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -302,6 +376,32 @@ const faqSchema = {
     }
   </script>
 
+  <!-- MVV-Karten-Vergleichsrechner: Normalpreis vs. Vereinsangebot (4 €/Tag) -->
+  <script>
+    const mz = document.getElementById('mvv-zone') as HTMLSelectElement | null;
+    const md = document.getElementById('mvv-days') as HTMLInputElement | null;
+    const mdv = document.getElementById('mvv-dv');
+    const mnrm = document.getElementById('mvv-normal');
+    const matg = document.getElementById('mvv-atg');
+    const msv = document.getElementById('mvv-save');
+    const ATG_DAY = 4; // €/Tag über ATG/VAT
+    if (mz && md && mdv && mnrm && matg && msv) {
+      const eur = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+      const calc = () => {
+        const d = parseInt(md.value, 10);
+        const normalDay = parseFloat(mz.value);
+        mdv.textContent = d + (d === 1 ? ' Tag' : ' Tage');
+        const normalTotal = normalDay * d;
+        const atgTotal = ATG_DAY * d;
+        mnrm.textContent = eur(normalTotal);
+        matg.textContent = eur(atgTotal);
+        msv.textContent = eur(Math.max(0, normalTotal - atgTotal));
+      };
+      [mz, md].forEach((el) => el.addEventListener('input', calc));
+      calc();
+    }
+  </script>
+
   <style>
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }
     .wrap-narrow { max-width: 820px; }
@@ -446,5 +546,40 @@ const faqSchema = {
     .band p { max-width: 48ch; margin: 0 auto 1.4rem; color: #ffe7e3; }
     .band-cta { justify-content: center; }
     .band-fine { font-size: 0.84rem; color: #ffd6d0; margin-top: 1.1rem; }
+
+    /* Sektions-Eyebrow */
+    .kicker { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-red-deep); margin-bottom: 0.5rem; }
+    .kicker .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--color-yellow); }
+
+    /* KFZ-Meta (Sitze/Tarif) */
+    .car-meta { list-style: none; padding: 0; margin: 0.45rem 0 0.55rem; display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; }
+    .car-meta li { font-size: 0.85rem; color: var(--color-ink); font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem; }
+
+    /* Hero MVV-Slide (gestalteter Verlauf statt Foto) */
+    .hero-slide-mvv { background: radial-gradient(120% 120% at 80% 10%, #3a2018 0%, #181513 55%, #0d0b09 100%); display: grid; place-items: center; }
+    .hero-slide-mvv .mvv-watermark { width: min(62vw, 460px); height: auto; color: rgba(255, 196, 0, 0.1); }
+
+    /* MVV-Sektion */
+    .mvv-grid { display: grid; gap: 1.4rem; grid-template-columns: 1fr; }
+    @media (min-width: 860px) { .mvv-grid { grid-template-columns: 1fr 1fr; align-items: start; } }
+    .mvv-points { list-style: none; padding: 0; margin: 0 0 1.4rem; display: grid; gap: 0.7rem; }
+    .mvv-points li { padding-left: 1.9rem; position: relative; color: var(--color-muted); line-height: 1.5; }
+    .mvv-points li::before { content: '✓'; position: absolute; left: 0; top: 0.05em; width: 1.35rem; height: 1.35rem; display: grid; place-items: center; background: var(--color-yellow); color: var(--color-ink); border-radius: 999px; font-size: 0.72rem; font-weight: 800; }
+    .mvv-points b { color: var(--color-ink); }
+    .mvv-calc { background: var(--color-ink); color: #fff; }
+    .mvv-calc h3 { color: #fff; font-size: 1.3rem; margin-bottom: 0.6rem; }
+    .mvv-calc label { display: block; font-weight: 700; margin: 0.9rem 0 0.3rem; font-size: 0.95rem; }
+    .mvv-calc select { width: 100%; padding: 0.6rem; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); background: var(--color-ink-soft); color: #fff; font: inherit; min-height: 44px; }
+    .mvv-calc input[type='range'] { width: 100%; accent-color: var(--color-yellow); }
+    .mvv-calc .val { color: var(--color-yellow); font-weight: 800; }
+    .mvv-compare { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.5rem; margin-top: 1.2rem; }
+    .mvv-col { background: rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 0.8rem 0.6rem; text-align: center; }
+    .mvv-col span { display: block; font-size: 0.76rem; color: #cfc7bb; margin-bottom: 0.25rem; }
+    .mvv-col b { font-family: var(--font-display); font-size: 1.3rem; }
+    .mvv-good { color: var(--color-yellow); }
+    .mvv-vs { color: #cfc7bb; font-weight: 800; font-size: 1.1rem; }
+    .mvv-save { margin-top: 1rem; background: var(--color-red); border-radius: 12px; padding: 0.75rem 1.2rem; text-align: center; font-weight: 700; }
+    .mvv-save b { font-family: var(--font-display); font-size: 1.35rem; margin-left: 0.3rem; }
+    .mvv-calc .fine { color: #cfc7bb; margin-top: 0.9rem; }
   </style>
 </Base>

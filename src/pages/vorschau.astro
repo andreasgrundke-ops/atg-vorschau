@@ -1,0 +1,346 @@
+---
+/**
+ * Vorschau / Entwurfspaket-Hub — Auto-Teiler Grasbrunn e.V.
+ *
+ * Titel:        ATG — Vorschau & Freigabe-Hub (grundke-it.de Dark-CI)
+ * Version:      3.0
+ * Autor:        Grundke IT-Service
+ * Datum:        2026-06-27
+ * Beschreibung: Präsentations-Hub im Look von www.grundke-it.de (CI 2026.01 Dark:
+ *               #0f1117, Space Grotesk / Manrope / JetBrains Mono, Cyan-Glows).
+ *               Eingebettete Geräte-Vorschau der Website (PC/Tablet/Handy, skaliert)
+ *               + Bausteine-Kacheln zu Website, Flyer und Visitenkarte.
+ *               Geräte-Modus per ?d=desktop|tablet|mobile teilbar.
+ * Ablauf:       Nav → Hero (Anrede) → Hinweis → Geräte-Vorschau → Bausteine →
+ *               Maker/Kontakt → Footer (CI 2026.01).
+ * Änderungshistorie:
+ *   2026-06-27  1.0  Erstausgabe (ATG-CI, dunkel).
+ *   2026-06-27  2.0  Grundke-CI 2026.01 Light (woidflüstern-Muster) + „Hallo Herr Böhme".
+ *   2026-06-27  3.0  Angleichung an www.grundke-it.de (Dark-Mode, Space Grotesk, Cyan-Glows).
+ */
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/jetbrains-mono';
+
+const base = import.meta.env.BASE_URL;
+
+const tiles = [
+  { key: 'desktop', kind: 'web', badge: 'Ansicht 01', title: 'Web am PC', desc: 'Die komplette Seite für den großen Bildschirm — Aufbau, Texte, Bildwelt und Farbkonzept.', go: 'Am PC ansehen' },
+  { key: 'tablet', kind: 'web', badge: 'Ansicht 02', title: 'Web am Tablet', desc: 'Mittlere Breite — so wirkt die Seite auf dem Tablet, gestapelt und gut lesbar.', go: 'Am Tablet ansehen' },
+  { key: 'mobile', kind: 'web', badge: 'Ansicht 03', title: 'Web am Handy', desc: 'Die Ansicht, die Ihre Besucher am häufigsten sehen — mit 1-Tipp-Kontakt.', go: 'Am Handy ansehen' },
+  { key: 'flyer', kind: 'link', href: `${base}flyer/`, badge: 'Druck 01', title: 'Flyer (A4)', desc: 'Zum Ausdrucken und Auslegen — z. B. im Rathaus, beim Bäcker oder am Schwarzen Brett.', go: 'Flyer ansehen' },
+  { key: 'visitenkarte', kind: 'link', href: `${base}visitenkarte/`, badge: 'Druck 02', title: 'Visitenkarte', desc: 'Vorder- und Rückseite im passenden Design — zum Mitgeben, mit QR-Code zum Speichern.', go: 'Visitenkarte ansehen' },
+];
+
+const arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const icons = {
+  desktop: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 8h20M8 21h8M12 17v4"/></svg>',
+  tablet: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M10 18h4"/></svg>',
+  mobile: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>',
+  flyer: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 3h16v18l-8-4-8 4z"/><path d="M9 8h6M9 12h6"/></svg>',
+  visitenkarte: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 10h6M6 14h4M16 9h2"/></svg>',
+};
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Auto-Teiler Grasbrunn e.V. · Entwurfspaket · Grundke IT-Service</title>
+    <meta name="description" content="Präsentations-Hub: Website-, Mobil-, Flyer- und Visitenkarten-Entwurf für die Auto-Teiler Grasbrunn e.V. Erstellt von Grundke IT-Service." />
+    <meta name="theme-color" content="#0f1117" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ihr Website-Entwurf · Auto-Teiler Grasbrunn e.V." />
+    <meta property="og:description" content="Schauen Sie sich den Entwurf für Website, Flyer & Visitenkarte an – am Handy oder am PC." />
+    <meta property="og:locale" content="de_DE" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f1117'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-size='15' fill='%2326bdef' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <!-- Nav (grundke-it.de-Stil: fixed, dunkel, Logo mit Cyan-Glow) -->
+    <nav>
+      <div class="inner nav-inner">
+        <div class="logo">
+          <span class="logo-text">grundke<span class="dot">.</span></span>
+          <span class="nav-tag">Entwurfspaket</span>
+        </div>
+        <a class="nav-cta" href="https://grundke-it.de" target="_blank" rel="noopener">grundke-it.de ↗</a>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="inner hero-inner">
+        <p class="s-label">Entwurfspaket zur Ansicht</p>
+        <h1>Ihr neuer Webauftritt für<br /><span class="cyan">Auto-Teiler Grasbrunn e.V.</span></h1>
+        <p class="lead">
+          Hallo Herr Böhme, hier ist mein Entwurf für den neuen Auftritt der Auto-Teiler
+          Grasbrunn e.V. — als Nachfolger der bestehenden Seite. Schauen Sie die Website gleich hier
+          in der <b>PC-, Tablet- und Handy-Ansicht</b> an und werfen Sie einen Blick auf
+          <b>Flyer</b> und <b>Visitenkarte</b>.
+        </p>
+        <div class="hero-cta">
+          <button class="btn-p" type="button" id="toPreview">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Vorschau ansehen
+          </button>
+          <a class="btn-g" href={base} target="_blank" rel="noopener">Website in voller Größe ↗</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="inner">
+      <div class="note">
+        <b>Das ist ein Entwurf (Mockup).</b> Texte, Fotos, Farben und Kontaktdaten lassen sich noch
+        frei anpassen. Schauen Sie in Ruhe rein und sagen Sie mir, was Ihnen gefällt und was wir
+        ändern. Die Seite geht erst nach Ihrer Freigabe online — und ist aktuell nur über diesen Link erreichbar.
+      </div>
+
+      <!-- Geräte-Vorschau -->
+      <section class="preview" id="preview" aria-label="Geräte-Vorschau der Website">
+        <div class="preview-bar">
+          <p class="s-label nomargin">Live-Vorschau</p>
+          <div class="tabs" role="tablist" aria-label="Gerät wählen">
+            <button class="tab" data-mode="desktop" role="tab" type="button">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> PC
+            </button>
+            <button class="tab" data-mode="tablet" role="tab" type="button">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M10 18h4"/></svg> Tablet
+            </button>
+            <button class="tab" data-mode="mobile" role="tab" type="button">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg> Handy
+            </button>
+          </div>
+          <a class="open-real" href={base} target="_blank" rel="noopener">Neuer Tab ↗</a>
+        </div>
+
+        <div class="stage" id="stage">
+          <div class="device" id="device">
+            <iframe id="frame" src={base} title="Vorschau der Website Auto-Teiler Grasbrunn e.V." loading="eager"></iframe>
+          </div>
+        </div>
+        <p class="stage-note" id="stageNote">PC-Ansicht · 1440 × 900</p>
+      </section>
+
+      <!-- Bausteine -->
+      <section class="grid-sec">
+        <p class="s-label">Alle Bausteine</p>
+        <h2 class="s-title">Website, Flyer &amp; Visitenkarte</h2>
+        <div class="grid">
+          {tiles.map((t) => (
+            t.kind === 'web' ? (
+              <button class="tile" type="button" data-mode={t.key}>
+                <span class="badge">{t.badge}</span>
+                <span class="ic" set:html={icons[t.key]} />
+                <h3>{t.title}</h3>
+                <p>{t.desc}</p>
+                <span class="go">{t.go} <Fragment set:html={arrow} /></span>
+              </button>
+            ) : (
+              <a class="tile" href={t.href} target="_blank" rel="noopener">
+                <span class="badge">{t.badge}</span>
+                <span class="ic" set:html={icons[t.key]} />
+                <h3>{t.title}</h3>
+                <p>{t.desc}</p>
+                <span class="go">{t.go} <Fragment set:html={arrow} /></span>
+              </a>
+            )
+          ))}
+        </div>
+      </section>
+
+      <!-- Maker / Kontakt -->
+      <section class="maker">
+        <div class="who">Andreas Grundke
+          <small>Grundke IT-Service · Ihr Ansprechpartner für Web &amp; IT</small>
+        </div>
+        <div class="contact">
+          <a href="tel:+4917825844380">0178 2584438</a>
+          <a href="mailto:info@grundke-it.de?subject=Feedback%20Entwurf%20Auto-Teiler%20Grasbrunn">info@grundke-it.de</a>
+          <a href="https://grundke-it.de" target="_blank" rel="noopener">grundke-it.de</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="inner foot-bottom">
+        <span class="foot-brand">Grundke IT-Service</span>
+        <span class="foot-ci">CI 2026.01 · www.grundke-it.de · Entwurf für Auto-Teiler Grasbrunn e.V. — Weitergabe nur nach Absprache</span>
+      </div>
+    </footer>
+
+    <script>
+      const STAGES: Record<string, { w: number; h: number; label: string }> = {
+        desktop: { w: 1440, h: 900, label: 'PC-Ansicht · 1440 × 900' },
+        tablet: { w: 820, h: 1180, label: 'Tablet-Ansicht · 820 × 1180' },
+        mobile: { w: 390, h: 844, label: 'Handy-Ansicht · 390 × 844' },
+      };
+      const VALID = Object.keys(STAGES);
+
+      const stage = document.getElementById('stage') as HTMLElement;
+      const device = document.getElementById('device') as HTMLElement;
+      const note = document.getElementById('stageNote') as HTMLElement;
+      const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.tab'));
+      const tiles = Array.from(document.querySelectorAll<HTMLButtonElement>('.tile[data-mode]'));
+
+      let mode = 'desktop';
+
+      function fit() {
+        const cfg = STAGES[mode];
+        const avail = stage.clientWidth - 4;
+        const scale = Math.min(1, avail / cfg.w);
+        device.style.width = cfg.w + 'px';
+        device.style.height = cfg.h + 'px';
+        device.style.transform = `scale(${scale})`;
+        stage.style.height = Math.round(cfg.h * scale) + 'px';
+      }
+
+      function setMode(next: string, scroll = false) {
+        if (!VALID.includes(next)) next = 'desktop';
+        mode = next;
+        device.dataset.mode = mode;
+        tabs.forEach((t) => {
+          const on = t.dataset.mode === mode;
+          t.classList.toggle('is-on', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        note.textContent = STAGES[mode].label;
+        fit();
+        try { history.replaceState(null, '', '?d=' + mode); } catch {}
+        if (scroll) document.getElementById('preview')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      tabs.forEach((t) => t.addEventListener('click', () => setMode(t.dataset.mode || 'desktop')));
+      tiles.forEach((t) => t.addEventListener('click', () => setMode(t.dataset.mode || 'desktop', true)));
+      document.getElementById('toPreview')?.addEventListener('click', () =>
+        document.getElementById('preview')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      window.addEventListener('resize', fit, { passive: true });
+
+      const param = new URLSearchParams(location.search).get('d') || 'desktop';
+      setMode(param);
+    </script>
+
+    <style is:global>
+      /* ===== Grundke IT-Service · CI 2026.01 · Dark (Look von grundke-it.de) ===== */
+      :root {
+        --bg: #0f1117; --bg2: #1a1f2e; --bg3: #1e2538; --bg4: #242b3d;
+        --accent: #0c4da2; --cyan: #26bdef; --cyan-dim: rgba(38,189,239,.12);
+        --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
+        --border: #2d3748; --success: #22c55e;
+        --fh: 'Space Grotesk Variable', 'Segoe UI', sans-serif;
+        --fb: 'Manrope Variable', Arial, sans-serif;
+        --fm: 'JetBrains Mono Variable', monospace;
+        --nav-h: 64px; --r: 12px;
+        --section-highlight: radial-gradient(ellipse 75% 65% at 50% 50%, rgba(255,255,255,.14) 0%, rgba(255,255,255,.07) 35%, rgba(255,255,255,0) 60%, rgba(0,0,0,.10) 100%);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-size: 15px; scroll-behavior: smooth; }
+      body { font-family: var(--fb); background: var(--bg); color: var(--text); line-height: 1.65; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+      a { color: inherit; text-decoration: none; }
+      img { display: block; max-width: 100%; }
+      button { font-family: var(--fb); cursor: pointer; }
+      :focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; border-radius: 6px; }
+      .inner { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1rem, 5vw, 2.5rem); }
+
+      /* Nav */
+      nav { position: sticky; top: 0; z-index: 300; height: var(--nav-h); background: rgba(15,17,23,.93); backdrop-filter: blur(18px); border-bottom: 1px solid var(--border); }
+      .nav-inner { height: 100%; display: flex; align-items: center; justify-content: space-between; }
+      .logo { display: flex; align-items: center; gap: 12px; position: relative; isolation: isolate; }
+      .logo::before { content: ''; position: absolute; inset: -16px -24px; z-index: -1; background: radial-gradient(ellipse 70% 140% at 30% 50%, rgba(38,189,239,.45), transparent 65%), radial-gradient(ellipse 55% 110% at 30% 50%, rgba(12,77,162,.6), transparent 70%); filter: blur(14px); pointer-events: none; }
+      .logo-text { font-family: var(--fh); font-weight: 800; font-size: 1.3rem; color: #fff; letter-spacing: -.02em; }
+      .logo-text .dot { color: var(--cyan); }
+      .nav-tag { font-family: var(--fm); font-size: .64rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan); background: var(--cyan-dim); border: 1px solid rgba(38,189,239,.35); padding: .25rem .6rem; border-radius: 999px; white-space: nowrap; }
+      @media (max-width: 520px) { .nav-tag { display: none; } }
+      .nav-cta { background: var(--accent); color: #fff; padding: .5rem 1.1rem; border-radius: 8px; font-weight: 700; font-size: .85rem; transition: background .2s, transform .15s, box-shadow .2s; }
+      .nav-cta:hover { background: #0d59bd; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(12,77,162,.4); }
+
+      /* Shared label/title */
+      .s-label { font-family: var(--fm); font-size: .7rem; font-weight: 500; color: var(--cyan); letter-spacing: .12em; text-transform: uppercase; margin-bottom: .8rem; display: flex; align-items: center; gap: .6rem; }
+      .s-label::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--cyan); opacity: .45; }
+      .s-label.nomargin { margin-bottom: 0; }
+      .s-title { font-family: var(--fh); font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; color: var(--text); letter-spacing: -.04em; line-height: 1.15; margin-bottom: 1rem; }
+
+      /* Hero */
+      .hero { position: relative; overflow: hidden; padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2rem, 5vw, 3.5rem); border-bottom: 1px solid var(--border); }
+      .hero-glow { position: absolute; inset: 0; z-index: 0; background: radial-gradient(ellipse 60% 80% at 15% 0%, rgba(12,77,162,.4), transparent 60%), radial-gradient(ellipse 50% 70% at 95% 20%, rgba(38,189,239,.22), transparent 60%); pointer-events: none; }
+      .hero-inner { position: relative; z-index: 1; }
+      .hero h1 { font-family: var(--fh); font-weight: 800; font-size: clamp(1.9rem, 6vw, 3.4rem); line-height: 1.08; letter-spacing: -.035em; margin-bottom: 1.1rem; }
+      .hero h1 .cyan { color: var(--cyan); }
+      .hero .lead { color: var(--text2); font-size: clamp(1rem, 2vw, 1.18rem); max-width: 64ch; line-height: 1.7; }
+      .hero .lead b { color: var(--text); }
+      .hero-cta { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.8rem; }
+
+      /* Buttons (grundke-it.de) */
+      .btn-p { display: inline-flex; align-items: center; gap: .5rem; padding: .8rem 1.5rem; border-radius: 8px; border: none; background: var(--cyan); color: #0f1117; font-family: var(--fb); font-weight: 700; font-size: .95rem; transition: background .2s, transform .15s, box-shadow .2s; }
+      .btn-p:hover { background: #3dd5ff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(38,189,239,.3); }
+      .btn-g { display: inline-flex; align-items: center; gap: .5rem; padding: .8rem 1.5rem; border-radius: 8px; background: transparent; color: var(--text); font-family: var(--fb); font-weight: 600; font-size: .95rem; border: 1px solid var(--border); transition: border-color .2s, color .2s, background .2s; }
+      .btn-g:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+
+      /* Hinweis-Box */
+      .note { background: var(--cyan-dim); border-left: 3px solid var(--cyan); border-radius: 10px; padding: 16px 20px; margin: 28px 0 6px; color: var(--text2); font-size: .95rem; }
+      .note b { color: var(--cyan); }
+
+      /* Geräte-Vorschau */
+      .preview { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin: 30px 0 6px; box-shadow: 0 18px 50px rgba(0,0,0,.35); }
+      .preview-bar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+      .tabs { display: inline-flex; gap: 4px; background: var(--bg); border: 1px solid var(--border); border-radius: 30px; padding: 4px; }
+      .tab { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--text2); font-family: var(--fb); font-weight: 700; font-size: .88rem; padding: 8px 15px; border-radius: 30px; min-height: 40px; transition: background .15s ease, color .15s ease; }
+      .tab svg { opacity: .8; }
+      .tab:hover { color: var(--cyan); }
+      .tab.is-on { background: var(--cyan); color: #0f1117; }
+      .tab.is-on svg { opacity: 1; }
+      .open-real { color: var(--cyan); font-weight: 700; font-size: .85rem; }
+      .open-real:hover { text-decoration: underline; }
+
+      .stage { position: relative; width: 100%; display: flex; justify-content: center; overflow: hidden; background: var(--bg); border-radius: 12px; }
+      .device { transform-origin: top center; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.5); flex: none; }
+      .device iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+      .device[data-mode="mobile"] { border: 8px solid #080b11; border-radius: 28px; }
+      .device[data-mode="tablet"] { border: 10px solid #080b11; border-radius: 20px; }
+      .stage-note { text-align: center; color: var(--text3); font-family: var(--fm); font-size: .76rem; margin-top: 12px; }
+
+      /* Bausteine */
+      .grid-sec { padding-top: 40px; }
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 8px 0 10px; }
+      .tile { background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 24px 22px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; text-align: left; font-family: var(--fb); color: var(--text); transition: transform .2s, box-shadow .25s, border-color .2s; position: relative; width: 100%; }
+      .tile:hover { transform: translateY(-4px); box-shadow: 0 16px 38px rgba(0,0,0,.4); border-color: var(--cyan); }
+      .tile .ic { width: 46px; height: 46px; border-radius: 11px; background: var(--cyan-dim); color: var(--cyan); display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
+      .tile h3 { font-family: var(--fh); font-weight: 700; font-size: 1.2rem; letter-spacing: -.02em; }
+      .tile p { color: var(--text2); font-size: .92rem; line-height: 1.6; }
+      .tile .go { margin-top: 10px; color: var(--cyan); font-weight: 700; font-size: .9rem; display: inline-flex; align-items: center; gap: 7px; }
+      .tile .go svg { transition: transform .2s; }
+      .tile:hover .go svg { transform: translateX(4px); }
+      .tile .badge { position: absolute; top: 18px; right: 18px; font-family: var(--fm); font-size: .62rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+
+      /* Maker */
+      .maker { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 24px 26px; margin: 34px 0; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; }
+      .maker .who { font-family: var(--fh); font-weight: 700; font-size: 1.1rem; }
+      .maker .who small { display: block; font-family: var(--fb); font-weight: 500; color: var(--text2); font-size: .86rem; margin-top: 3px; }
+      .maker .contact { display: flex; flex-wrap: wrap; gap: 10px; }
+      .maker .contact a { background: var(--cyan-dim); color: var(--cyan); font-weight: 600; font-size: .88rem; padding: 10px 16px; border-radius: 9px; border: 1px solid rgba(38,189,239,.25); transition: background .2s, border-color .2s; }
+      .maker .contact a:hover { background: rgba(38,189,239,.2); border-color: var(--cyan); }
+
+      /* Footer */
+      .site-footer { background: #080b11; border-top: 1px solid var(--border); padding: 26px 0; }
+      .foot-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .5rem 1.5rem; }
+      .foot-brand { font-family: var(--fh); font-weight: 700; color: var(--text); font-size: .98rem; }
+      .foot-ci { font-family: var(--fm); font-size: .68rem; color: var(--text3); }
+
+      @media (max-width: 860px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 600px) {
+        .grid { grid-template-columns: 1fr; }
+        .maker { flex-direction: column; align-items: flex-start; }
+        .preview-bar { justify-content: center; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .device, .tab, .tile, .tile .go svg, .btn-p, .btn-g, .nav-cta { transition: none; }
+      }
+    </style>
+  </body>
+</html>

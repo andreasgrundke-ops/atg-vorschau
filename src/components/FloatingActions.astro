@@ -15,11 +15,13 @@
 const TEL = 'tel:+498921541339';
 const MAIL = 'mailto:info@atg-grasbrunn.de?subject=Mitglied%20werden%20bei%20ATG';
 const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+// base = Pages-Unterordner ('/' lokal/live) — für den internen #mitglied-Sprung.
+const base = import.meta.env.BASE_URL;
 ---
 
 <div class="fab" id="fab">
   <nav class="fab-cta" aria-label="Schnellaktionen">
-    <a class="fab-btn fab-red" href="/#mitglied">
+    <a class="fab-btn fab-red" href={`${base}#mitglied`}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line>
       </svg>

@@ -1,0 +1,165 @@
+---
+/**
+ * Visitenkarte (Vorder- & Rückseite, 85 × 55 mm) — Auto-Teiler Grasbrunn e.V.
+ *
+ * Titel:        ATG Carsharing — Visitenkarte
+ * Version:      1.0
+ * Autor:        Grundke IT-Service
+ * Datum:        2026-06-27
+ * Beschreibung: Mockup beider Kartenseiten in der aktuellen CI (Rot/Gelb).
+ *               Vorderseite: dunkel mit Logo + Claim. Rückseite: weiß, rote
+ *               Kante, Kontaktraster + vCard-QR. Bildschirm zeigt beide Seiten;
+ *               Druck stellt sie auf 85×55 mm dar.
+ * Änderungshistorie:
+ *   2026-06-27  1.0  Erstausgabe mit echten Vereinsdaten + vCard-QR.
+ */
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/hanken-grotesk';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Visitenkarte — Auto-Teiler Grasbrunn e.V. (Vorschau)</title>
+    <meta name="theme-color" content="#d42a22" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d42a22'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-size='14' fill='%23ffc400' text-anchor='middle'%3EATG%3C/text%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <div class="toolbar no-print">
+      <a class="tb-back" href={`${base}vorschau/`}>← Zur Übersicht</a>
+      <span class="tb-title">Visitenkarte · 85 × 55 mm · Vorschau</span>
+      <button class="tb-print" type="button" id="printBtn">Als PDF / drucken</button>
+    </div>
+
+    <main class="stage">
+      <div class="cards">
+        <!-- VORDERSEITE -->
+        <article class="card card-front" aria-label="Visitenkarte Vorderseite">
+          <span class="dot-accent" aria-hidden="true"></span>
+          <div class="front-top">
+            <img class="logo" src={`${base}img/atg-logo.jpg`} width="46" height="46" alt="Logo Auto-Teiler Grasbrunn e.V." />
+            <div class="brand">
+              <b>Auto-Teiler<br />Grasbrunn e.V.</b>
+              <span>Carsharing dahoam</span>
+            </div>
+          </div>
+          <p class="claim">Weniger Autos.<br /><span class="hl">Dennoch mobil.</span></p>
+        </article>
+
+        <!-- RÜCKSEITE -->
+        <article class="card card-back" aria-label="Visitenkarte Rückseite">
+          <div class="back-head">Auto-Teiler Grasbrunn e.V.</div>
+          <div class="back-grid">
+            <ul class="contact">
+              <li><i>📍</i> Winklerring 12<br />85630 Grasbrunn</li>
+              <li><i>✆</i> 089 21541339</li>
+              <li><i>✉</i> info@atg-grasbrunn.de</li>
+              <li><i>🌐</i> www.atg-grasbrunn.de</li>
+            </ul>
+            <div class="qr">
+              <img src={`${base}img/qr-vcard.svg`} width="92" height="92" alt="QR-Code mit Kontaktdaten (vCard)" />
+              <span>Kontakt speichern</span>
+            </div>
+          </div>
+          <div class="back-foot">VR 207138, AG München · gemeinnütziges Carsharing</div>
+        </article>
+      </div>
+
+      <p class="hint no-print">Vorder- und Rückseite · echte Maße 85 × 55 mm (Standard-Visitenkarte).</p>
+    </main>
+
+    <script>
+      document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+    </script>
+
+    <style is:global>
+      :root {
+        --red: #d42a22;
+        --red-deep: #a81e18;
+        --yellow: #ffc400;
+        --ink: #181513;
+        --ink-soft: #2c2620;
+        --muted: #6b6258;
+        --bg: #f3f5f6;
+        --line: #e4e6e8;
+        --font-display: 'Bricolage Grotesque Variable', system-ui, sans-serif;
+        --font-body: 'Hanken Grotesk Variable', system-ui, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body { background: var(--bg); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+      img { display: block; max-width: 100%; }
+
+      .toolbar {
+        position: sticky; top: 0; z-index: 10;
+        display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        padding: 0.7rem clamp(1rem, 4vw, 2rem);
+        background: var(--ink); color: #fff;
+      }
+      .tb-back { color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem; }
+      .tb-back:hover { color: var(--yellow); }
+      .tb-title { font-family: var(--font-display); font-weight: 700; color: #cfc7bb; font-size: 0.9rem; }
+      .tb-print { background: var(--yellow); color: var(--ink); border: 0; cursor: pointer; font-family: var(--font-body); font-weight: 800; font-size: 0.95rem; padding: 0.6rem 1.15rem; border-radius: 999px; min-height: 44px; }
+      .tb-print:hover { filter: brightness(0.94); }
+
+      .stage { padding: clamp(1.5rem, 5vw, 3.5rem) 1rem; display: grid; place-items: center; gap: 1.4rem; }
+      .cards { display: flex; flex-wrap: wrap; gap: clamp(1.2rem, 4vw, 2.4rem); justify-content: center; }
+
+      /* Karte: 85 × 55 mm */
+      .card {
+        width: 85mm; height: 55mm;
+        border-radius: 4mm; overflow: hidden; position: relative;
+        box-shadow: 0 18px 50px -24px rgba(24,21,19,.6);
+      }
+
+      /* Vorderseite — dunkel mit rotem Verlauf, gelber Punkt-Akzent */
+      .card-front {
+        background: radial-gradient(120% 130% at 100% 0%, #2c2620 0%, var(--ink) 55%);
+        color: #fff; padding: 6mm; display: flex; flex-direction: column; justify-content: space-between;
+        border-top: 3mm solid var(--red);
+      }
+      .dot-accent { position: absolute; top: 6mm; right: 6mm; width: 5mm; height: 5mm; border-radius: 999px; background: var(--yellow); box-shadow: 0 0 0 2mm rgba(255,196,0,.18); }
+      .front-top { display: flex; align-items: center; gap: 3mm; }
+      .front-top .logo { width: 46px; height: 46px; border-radius: 9px; object-fit: cover; }
+      .brand b { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; line-height: 1.04; display: block; }
+      .brand span { font-size: 0.78rem; color: var(--yellow); font-weight: 700; }
+      .claim { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; line-height: 1.05; margin: 0; }
+      .claim .hl { position: relative; white-space: nowrap; }
+      .claim .hl::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.05em; height: 0.28em; background: var(--red); z-index: -1; border-radius: 2px; }
+
+      /* Rückseite — weiß, rote Kante links */
+      .card-back {
+        background: #fff; color: var(--ink); padding: 5mm 5mm 4mm 7mm;
+        border-left: 2.5mm solid var(--red);
+        display: flex; flex-direction: column; justify-content: space-between;
+      }
+      .back-head { font-family: var(--font-display); font-weight: 800; font-size: 0.98rem; color: var(--ink); }
+      .back-grid { display: flex; gap: 4mm; align-items: center; }
+      .contact { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.6mm; flex: 1; }
+      .contact li { font-size: 0.72rem; line-height: 1.25; color: var(--ink); display: flex; gap: 1.8mm; align-items: flex-start; }
+      .contact i { font-style: normal; color: var(--red); flex: none; }
+      .qr { flex: none; text-align: center; }
+      .qr img { width: 92px; height: 92px; }
+      .qr span { display: block; margin-top: 1mm; font-size: 0.6rem; color: var(--muted); font-weight: 600; }
+      .back-foot { font-size: 0.6rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 2mm; }
+
+      .hint { color: var(--muted); font-size: 0.9rem; text-align: center; margin: 0; }
+
+      @page { size: auto; margin: 12mm; }
+      @media print {
+        .no-print { display: none !important; }
+        body { background: #fff; }
+        .stage { padding: 0; gap: 8mm; }
+        .card { box-shadow: none; border: 1px solid var(--line); }
+      }
+    </style>
+  </body>
+</html>

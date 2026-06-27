@@ -4,13 +4,17 @@
  *  - 1-Tap-Anruf (tel:) sichtbar auf Mobil
  *  - "Fahrzeug buchen" (für Mitglieder → Buchungssystem)
  *  - "Mitglied werden" (roter Primär-CTA)
+ *
+ * base = import.meta.env.BASE_URL (endet mit '/'): trägt den Pages-Unterordner,
+ * damit Logo + interne Links auch unter /<repo>/ korrekt aufgelöst werden.
  */
+const base = import.meta.env.BASE_URL;
 ---
 
 <header class="site-header">
   <div class="bar">
-    <a class="brand" href="/" aria-label="Auto-Teiler Grasbrunn e.V. – Startseite">
-      <img src="/img/atg-logo.jpg" width="46" height="46" alt="Logo Auto-Teiler Grasbrunn e.V." />
+    <a class="brand" href={base} aria-label="Auto-Teiler Grasbrunn e.V. – Startseite">
+      <img src={`${base}img/atg-logo.jpg`} width="46" height="46" alt="Logo Auto-Teiler Grasbrunn e.V." />
       <span class="brand-text">
         <b>Auto-Teiler Grasbrunn</b>
         <small>Carsharing dahoam</small>
@@ -18,10 +22,10 @@
     </a>
 
     <nav class="mainnav" aria-label="Hauptnavigation">
-      <a href="/#flotte">Flotte</a>
-      <a href="/#so-gehts">So geht's</a>
-      <a href="/#preise">Preise</a>
-      <a href="/#kontakt">Kontakt</a>
+      <a href={`${base}#flotte`}>Flotte</a>
+      <a href={`${base}#so-gehts`}>So geht's</a>
+      <a href={`${base}#preise`}>Preise</a>
+      <a href={`${base}#kontakt`}>Kontakt</a>
     </nav>
 
     <div class="actions">
@@ -31,7 +35,7 @@
         </svg>
       </a>
       <a class="btn btn-ghost only-desk" href="https://www.atg-grasbrunn.de/mitgliederbereich/" rel="noopener">Fahrzeug buchen</a>
-      <a class="btn btn-red" href="/#mitglied">Mitglied werden</a>
+      <a class="btn btn-red" href={`${base}#mitglied`}>Mitglied werden</a>
     </div>
   </div>
 

@@ -1,0 +1,70 @@
+# =============================================================================
+#  Deploy ATG-Vorschau → GitHub Pages
+#  Titel:        ATG Carsharing — Pages-Deploy
+#  Autor:        Grundke IT-Service
+#  Datum:        2026-06-27
+#  Beschreibung: Baut die Astro-Seite (Website + Vorschau-Hub + Flyer +
+#                Visitenkarte) statisch und veröffentlicht sie unter GitHub Pages.
+#                base = /atg-vorschau/ (Repo-Unterordner). Auf Linux kein MSYS-
+#                Pfad-Mangling — PUBLIC_BASE wird sauber übernommen.
+#  Hinweis:      Vorschau ist per <meta robots noindex> von Suchmaschinen
+#                ausgeschlossen. Geht die Seite später live (eigene Domain),
+#                base auf '/' und PUBLIC_SITE auf die Domain stellen.
+# =============================================================================
+name: Deploy ATG-Vorschau
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Nur ein Deploy gleichzeitig; laufende abbrechen.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (Vorschau-Konfiguration)
+        run: npm run build
+        env:
+          PUBLIC_SITE: https://andreasgrundke-ops.github.io
+          PUBLIC_BASE: /atg-vorschau/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

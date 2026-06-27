@@ -2,7 +2,10 @@
 /**
  * Footer — dunkle Ink-Fläche. NAP, Kontakt (Sofort-Aktionen), Partner VAT, Rechts-Links.
  * Impressum/Datenschutz/Barrierefreiheit verlinken später auf eigene Seiten (Phase 1 Pflicht).
+ *
+ * base = import.meta.env.BASE_URL: trägt den Pages-Unterordner für die internen Rechts-Links.
  */
+const base = import.meta.env.BASE_URL;
 ---
 
 <footer class="site-footer" id="kontakt">
@@ -34,9 +37,9 @@
 
     <div class="legal">
       <div class="legal-links">
-        <a href="/impressum/">Impressum</a>
-        <a href="/datenschutz/">Datenschutz</a>
-        <a href="/barrierefreiheit/">Barrierefreiheit</a>
+        <a href={`${base}impressum/`}>Impressum</a>
+        <a href={`${base}datenschutz/`}>Datenschutz</a>
+        <a href={`${base}barrierefreiheit/`}>Barrierefreiheit</a>
       </div>
       <span class="muted small">© 2026 Auto-Teiler Grasbrunn e.V. · VR 207138, AG München · „Carsharing dahoam“</span>
     </div>

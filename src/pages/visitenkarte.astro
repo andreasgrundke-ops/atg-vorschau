@@ -65,8 +65,8 @@ const base = import.meta.env.BASE_URL;
               <li><i>🌐</i> www.atg-grasbrunn.de</li>
             </ul>
             <div class="qr">
-              <img src={`${base}img/qr-vcard.svg`} width="92" height="92" alt="QR-Code mit Kontaktdaten (vCard)" />
-              <span>Kontakt speichern</span>
+              <img src={`${base}img/qr-website.svg`} width="96" height="96" alt="QR-Code zur Website atg-grasbrunn.de" />
+              <span>atg-grasbrunn.de</span>
             </div>
           </div>
           <div class="back-foot">VR 207138, AG München · gemeinnütziges Carsharing</div>
@@ -120,20 +120,20 @@ const base = import.meta.env.BASE_URL;
         box-shadow: 0 18px 50px -24px rgba(24,21,19,.6);
       }
 
-      /* Vorderseite — dunkel mit rotem Verlauf, gelber Punkt-Akzent */
+      /* Vorderseite — hell/weiß, roter Oberrand, gelber Punkt-Akzent (nicht schwarz) */
       .card-front {
-        background: radial-gradient(120% 130% at 100% 0%, #2c2620 0%, var(--ink) 55%);
-        color: #fff; padding: 6mm; display: flex; flex-direction: column; justify-content: space-between;
-        border-top: 3mm solid var(--red);
+        background: linear-gradient(160deg, #ffffff 0%, #f3f5f6 100%);
+        color: var(--ink); padding: 6mm; display: flex; flex-direction: column; justify-content: space-between;
+        border-top: 3.5mm solid var(--red);
       }
-      .dot-accent { position: absolute; top: 6mm; right: 6mm; width: 5mm; height: 5mm; border-radius: 999px; background: var(--yellow); box-shadow: 0 0 0 2mm rgba(255,196,0,.18); }
+      .dot-accent { position: absolute; top: 6mm; right: 6mm; width: 5mm; height: 5mm; border-radius: 999px; background: var(--yellow); box-shadow: 0 0 0 2mm rgba(255,196,0,.22); }
       .front-top { display: flex; align-items: center; gap: 3mm; }
-      .front-top .logo { width: 46px; height: 46px; border-radius: 9px; object-fit: cover; }
-      .brand b { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; line-height: 1.04; display: block; }
-      .brand span { font-size: 0.78rem; color: var(--yellow); font-weight: 700; }
-      .claim { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; line-height: 1.05; margin: 0; }
+      .front-top .logo { width: 46px; height: 46px; border-radius: 9px; object-fit: cover; box-shadow: 0 2px 6px rgba(24,21,19,.12); }
+      .brand b { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; line-height: 1.04; display: block; color: var(--ink); }
+      .brand span { font-size: 0.78rem; color: var(--red-deep); font-weight: 700; }
+      .claim { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; line-height: 1.05; margin: 0; color: var(--ink); }
       .claim .hl { position: relative; white-space: nowrap; }
-      .claim .hl::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.05em; height: 0.28em; background: var(--red); z-index: -1; border-radius: 2px; }
+      .claim .hl::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.05em; height: 0.3em; background: var(--yellow); z-index: -1; border-radius: 2px; }
 
       /* Rückseite — weiß, rote Kante links */
       .card-back {

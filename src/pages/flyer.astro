@@ -107,6 +107,17 @@ const steps = [
           <div class="t"><span>Versicherung</span><b>inklusive</b></div>
         </section>
 
+        <!-- MVV-Karten -->
+        <section class="mvv-box">
+          <div class="mvv-ic" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="14" rx="3"/><path d="M4 11h16"/><circle cx="8.5" cy="14" r="1"/><circle cx="15.5" cy="14" r="1"/><path d="m8 17-2 4M16 17l2 4"/></svg>
+          </div>
+          <div class="mvv-txt">
+            <b>Lieber Bus &amp; Bahn? MVV-Karten ab 4 €/Tag</b>
+            <p>MVV-Tageskarten M-1 bis M-5 über unseren Partner Vaterstetten — günstig ausleihen, Abholung &amp; Rückgabe am Bahnhof Vaterstetten.</p>
+          </div>
+        </section>
+
         <!-- Kontakt-Band + QR -->
         <footer class="contact">
           <div class="contact-info">
@@ -227,6 +238,12 @@ const steps = [
       .tariffs .t:nth-last-child(-n+2) { border-bottom: 0; }
       .tariffs .t span { color: var(--muted); font-size: 0.92rem; font-weight: 600; }
       .tariffs .t b { font-family: var(--font-display); font-weight: 800; color: var(--ink); }
+
+      /* MVV-Box */
+      .mvv-box { display: flex; gap: 4mm; align-items: center; margin: 5mm 14mm 0; background: var(--ink); color: #fff; border-radius: 14px; padding: 4.5mm 5mm; }
+      .mvv-ic { flex: none; width: 12mm; height: 12mm; display: grid; place-items: center; background: var(--yellow); color: var(--ink); border-radius: 10px; }
+      .mvv-txt b { font-family: var(--font-display); font-weight: 800; font-size: 1.02rem; display: block; color: var(--yellow); }
+      .mvv-txt p { margin: 1mm 0 0; font-size: 0.84rem; color: #e9e2d8; line-height: 1.4; }
 
       /* Kontakt-Band */
       .contact { margin-top: auto; background: linear-gradient(120deg, var(--red) 0%, var(--red-deep) 100%); color: #fff; padding: 9mm 14mm; display: flex; align-items: center; justify-content: space-between; gap: 8mm; }

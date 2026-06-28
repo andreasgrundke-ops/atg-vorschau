@@ -1,0 +1,244 @@
+---
+/**
+ * Flyer (A4 quer, gefaltet — 6 Panels) — Auto-Teiler Grasbrunn e.V.
+ *
+ * Titel:        ATG Carsharing — Falt-Flyer A4 quer
+ * Version:      1.0
+ * Autor:        Grundke IT-Service
+ * Datum:        2026-06-28
+ * Beschreibung: Gefalteter A4-Quer-Flyer (Wickel-/Zickzackfalz) in der Rot/Gelb-CI.
+ *               2 Blätter (Außen + Innen) à 3 Panels (je ~99 mm). Falzlinien gestrichelt.
+ *               Inkl. MVV-Karten-Thema. Bildschirm: zentriert; Druck: A4 quer randlos.
+ * Änderungshistorie:
+ *   2026-06-28  1.0  Erstausgabe (Flotte, Tarife, MVV, Schritte, Kontakt + QR).
+ */
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/hanken-grotesk';
+
+const base = import.meta.env.BASE_URL;
+const heroPhoto = 'https://www.atg-grasbrunn.de/wp-content/uploads/2024/09/WhatsApp-Bild-2024-09-01-um-12.45.09_ef67264d-1.jpg';
+
+const cars = [
+  { n: 'Renault ZOE', t: 'E-Auto · emissionsfrei' },
+  { n: 'Opel Corsa', t: 'Kleinwagen' },
+  { n: 'Dacia Sandero', t: 'Kleinwagen' },
+  { n: 'Renault Clio Grandtour', t: 'Kombi' },
+  { n: 'Renault Trafic', t: 'Transporter · bis 9 Sitze' },
+];
+const steps = [
+  { n: '1', h: 'Online melden', t: 'Kurzes Formular — wir melden uns persönlich.' },
+  { n: '2', h: 'Unterlagen & Einlage', t: '50 € Aufnahme + 600 € Einlage (zurück bei Austritt).' },
+  { n: '3', h: 'Einweisung & losfahren', t: 'Transponderkarte — ab dann buchst du selbst.' },
+];
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Falt-Flyer A4 quer — Auto-Teiler Grasbrunn e.V. (Vorschau)</title>
+    <meta name="theme-color" content="#d42a22" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d42a22'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-size='14' fill='%23ffc400' text-anchor='middle'%3EATG%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div class="toolbar no-print">
+      <a class="tb-back" href={`${base}vorschau/`}>← Zur Übersicht</a>
+      <span class="tb-title">Falt-Flyer · A4 quer · 6 Seiten · Vorschau</span>
+      <button class="tb-print" type="button" id="printBtn">Als PDF / drucken</button>
+    </div>
+
+    <main class="stage">
+      <p class="sheet-label no-print">Außenseite (gefaltet sichtbar: rechtes Panel = Titel)</p>
+      <!-- BLATT 1 — AUSSEN -->
+      <article class="sheet" aria-label="Falt-Flyer Außenseite">
+        <!-- Panel: Kontakt + QR (Rückseite wenn gefaltet) -->
+        <div class="panel panel-dark">
+          <h3>Jetzt Mitglied werden</h3>
+          <ul class="contact">
+            <li><span>🌐</span> www.atg-grasbrunn.de</li>
+            <li><span>✆</span> 089 21541339</li>
+            <li><span>✉</span> info@atg-grasbrunn.de</li>
+            <li><span>📍</span> Winklerring 12,<br />85630 Grasbrunn</li>
+          </ul>
+          <div class="qr-block">
+            <img src={`${base}img/qr-website.svg`} width="108" height="108" alt="QR-Code zur Website" />
+            <span>Scannen &amp; informieren</span>
+          </div>
+        </div>
+
+        <!-- Panel: Teaser + Kennzahlen (Innenfalz) -->
+        <div class="panel panel-teaser">
+          <p class="kicker"><span class="dot"></span> Carsharing dahoam</p>
+          <p class="teaser-lead">Teil dir ein Auto, statt eins zu besitzen — direkt um die Ecke in Grasbrunn, ohne Monatsbeitrag.</p>
+          <div class="stats">
+            <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag</span></div>
+            <div class="stat"><b>1&nbsp;€/h</b><span>tagsüber</span></div>
+            <div class="stat"><b>41</b><span>Fahrzeuge mit VAT</span></div>
+          </div>
+          <p class="imprint">VR 207138, AG München · Kooperation mit dem Vaterstettener Auto-Teiler e.V.</p>
+        </div>
+
+        <!-- Panel: TITEL (Cover) -->
+        <div class="panel panel-cover" style={`background-image:url(${heroPhoto})`}>
+          <div class="cover-scrim"></div>
+          <div class="cover-top">
+            <img class="logo" src={`${base}img/atg-logo.jpg`} width="50" height="50" alt="Logo ATG" />
+            <span>Auto-Teiler<br />Grasbrunn e.V.</span>
+          </div>
+          <div class="cover-claim">
+            <h1>Weniger Autos.<br /><span class="hl">Dennoch mobil.</span></h1>
+            <p>Carsharing für Grasbrunn &amp; Umgebung</p>
+          </div>
+        </div>
+      </article>
+
+      <p class="sheet-label no-print">Innenseite (aufgefaltet)</p>
+      <!-- BLATT 2 — INNEN -->
+      <article class="sheet" aria-label="Falt-Flyer Innenseite">
+        <!-- Panel: Flotte -->
+        <div class="panel">
+          <h3>Fünf Fahrzeuge</h3>
+          <p class="muted">Vom Stadtflitzer bis zum 9-Sitzer — an festen Stellplätzen.</p>
+          <ul class="cars">
+            {cars.map((c) => (
+              <li><b>{c.n}</b><span>{c.t}</span></li>
+            ))}
+          </ul>
+          <p class="plus">+ rund 36 Fahrzeuge in Vaterstetten (gemeinsame Flotte)</p>
+        </div>
+
+        <!-- Panel: Tarife + MVV -->
+        <div class="panel">
+          <h3>Was kostet das?</h3>
+          <table class="tariffs">
+            <tbody>
+              <tr><td>Tagsüber (8–20 Uhr)</td><td>1,00 €/h</td></tr>
+              <tr><td>Nachts (20–8 Uhr)</td><td>0,20 €/h</td></tr>
+              <tr><td>Kilometer ab</td><td>0,40 €/km</td></tr>
+              <tr><td>Aufnahme / Einlage</td><td>50 € / 600 €</td></tr>
+              <tr><td>Versicherung</td><td>inklusive</td></tr>
+            </tbody>
+          </table>
+          <div class="mvv-box">
+            <b>🚆 Auch MVV-Karten</b>
+            <p>M-1 bis M-5 ab 4 €/Tag über Partner Vaterstetten — Abholung am Bahnhof Vaterstetten.</p>
+          </div>
+        </div>
+
+        <!-- Panel: So geht's -->
+        <div class="panel">
+          <h3>In 3 Schritten Mitglied</h3>
+          <div class="steps">
+            {steps.map((s) => (
+              <div class="step"><div class="num">{s.n}</div><div><b>{s.h}</b><p>{s.t}</p></div></div>
+            ))}
+          </div>
+          <a class="cta" href="https://www.atg-grasbrunn.de/" rel="noopener">www.atg-grasbrunn.de</a>
+        </div>
+      </article>
+    </main>
+
+    <script>
+      document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+    </script>
+
+    <style is:global>
+      :root {
+        --red: #d42a22; --red-deep: #a81e18; --yellow: #ffc400; --ink: #181513;
+        --muted: #6b6258; --bg: #f3f5f6; --line: #e4e6e8;
+        --font-display: 'Bricolage Grotesque Variable', system-ui, sans-serif;
+        --font-body: 'Hanken Grotesk Variable', system-ui, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body { background: var(--bg); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+      img { display: block; max-width: 100%; }
+
+      .toolbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.7rem clamp(1rem, 4vw, 2rem); background: var(--ink); color: #fff; }
+      .tb-back { color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem; }
+      .tb-back:hover { color: var(--yellow); }
+      .tb-title { font-family: var(--font-display); font-weight: 700; color: #cfc7bb; font-size: 0.9rem; }
+      .tb-print { background: var(--yellow); color: var(--ink); border: 0; cursor: pointer; font-family: var(--font-body); font-weight: 800; font-size: 0.95rem; padding: 0.6rem 1.15rem; border-radius: 999px; min-height: 44px; }
+
+      .stage { padding: clamp(1rem, 3vw, 2rem); display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+      .sheet-label { font-size: 0.8rem; color: var(--muted); font-weight: 700; margin: 0.6rem 0 0; align-self: center; }
+
+      /* A4 quer, 3 Panels */
+      .sheet {
+        width: 297mm; max-width: 100%; height: 210mm;
+        background: #fff; box-shadow: 0 24px 64px -36px rgba(24,21,19,.55);
+        display: grid; grid-template-columns: repeat(3, 1fr); overflow: hidden;
+      }
+      .panel { padding: 11mm 9mm; position: relative; border-right: 1.5px dashed #c9cdd2; display: flex; flex-direction: column; }
+      .panel:last-child { border-right: 0; }
+      .panel h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; margin: 0 0 2mm; }
+      .muted { color: var(--muted); font-size: 0.92rem; }
+
+      /* Cover-Panel */
+      .panel-cover { background-size: cover; background-position: center; color: #fff; justify-content: space-between; isolation: isolate; }
+      .cover-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20,15,12,.55) 0%, rgba(20,15,12,.2) 40%, rgba(20,15,12,.82) 100%); }
+      .cover-top { display: flex; align-items: center; gap: 3mm; }
+      .cover-top .logo { border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,.4); }
+      .cover-top span { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; line-height: 1.05; }
+      .cover-claim h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; line-height: 1.04; margin: 0 0 2mm; }
+      .cover-claim .hl { position: relative; white-space: nowrap; }
+      .cover-claim .hl::after { content: ''; position: absolute; left: 0; right: 0; bottom: .05em; height: .28em; background: var(--yellow); z-index: -1; border-radius: 2px; }
+      .cover-claim p { color: rgba(255,255,255,.9); font-weight: 600; font-size: 0.9rem; }
+
+      /* Kontakt-Panel (dunkel) */
+      .panel-dark { background: var(--ink); color: #fff; justify-content: space-between; border-right-color: rgba(255,255,255,.18); }
+      .panel-dark h3 { color: var(--yellow); }
+      .contact { list-style: none; margin: 3mm 0; padding: 0; display: grid; gap: 2.5mm; }
+      .contact li { font-size: 0.92rem; display: flex; gap: 2.5mm; align-items: flex-start; }
+      .contact li span { color: var(--yellow); }
+      .qr-block { text-align: center; }
+      .qr-block img { width: 30mm; height: 30mm; background: #fff; border-radius: 8px; padding: 5px; margin: 0 auto; }
+      .qr-block span { display: block; margin-top: 2mm; font-size: 0.74rem; color: #cfc7bb; }
+
+      /* Teaser-Panel */
+      .kicker { display: inline-flex; align-items: center; gap: 2mm; font-weight: 800; font-size: 0.72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--red-deep); }
+      .kicker .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--yellow); }
+      .teaser-lead { font-size: 1rem; line-height: 1.5; margin: 3mm 0 5mm; }
+      .stats { display: grid; gap: 3mm; }
+      .stat { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 3mm 4mm; text-align: center; }
+      .stat b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; color: var(--red); line-height: 1; }
+      .stat span { font-size: 0.76rem; color: var(--muted); font-weight: 600; }
+      .imprint { margin-top: auto; font-size: 0.68rem; color: var(--muted); }
+
+      /* Flotte */
+      .cars { list-style: none; margin: 3mm 0; padding: 0; display: grid; gap: 2mm; }
+      .cars li { display: flex; justify-content: space-between; align-items: baseline; gap: 2mm; padding: 2mm 0; border-bottom: 1px solid var(--line); }
+      .cars b { font-family: var(--font-display); font-weight: 700; font-size: 0.96rem; }
+      .cars span { font-size: 0.78rem; color: var(--muted); text-align: right; }
+      .plus { margin-top: 2mm; font-size: 0.82rem; color: var(--red-deep); font-weight: 700; }
+
+      /* Tarife */
+      table.tariffs { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+      table.tariffs td { padding: 2.2mm 0; border-bottom: 1px solid var(--line); }
+      table.tariffs td:last-child { text-align: right; font-weight: 800; font-family: var(--font-display); }
+      .mvv-box { margin-top: 4mm; background: var(--ink); color: #fff; border-radius: 12px; padding: 4mm; }
+      .mvv-box b { font-family: var(--font-display); color: var(--yellow); font-size: 0.98rem; }
+      .mvv-box p { margin: 1.5mm 0 0; font-size: 0.8rem; color: #e9e2d8; line-height: 1.4; }
+
+      /* Schritte */
+      .steps { display: grid; gap: 3mm; margin-top: 2mm; }
+      .step { display: flex; gap: 3mm; align-items: flex-start; }
+      .step .num { flex: none; width: 9mm; height: 9mm; display: grid; place-items: center; background: var(--red); color: #fff; border-radius: 8px; font-family: var(--font-display); font-weight: 800; }
+      .step b { font-family: var(--font-display); font-weight: 700; font-size: 0.98rem; }
+      .step p { margin: 0.5mm 0 0; font-size: 0.8rem; color: var(--muted); line-height: 1.35; }
+      .cta { margin-top: auto; display: block; text-align: center; background: var(--red); color: #fff; font-weight: 800; padding: 3mm; border-radius: 999px; text-decoration: none; font-size: 0.92rem; }
+
+      @page { size: A4 landscape; margin: 0; }
+      @media print {
+        .no-print { display: none !important; }
+        body { background: #fff; }
+        .stage { padding: 0; gap: 0; }
+        .sheet { box-shadow: none; page-break-after: always; }
+        .sheet:last-child { page-break-after: auto; }
+        .panel { border-right: 1px dashed #bbb; }
+      }
+    </style>
+  </body>
+</html>

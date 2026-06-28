@@ -38,7 +38,7 @@ const heroSlides = [
     tag: 'Renault Clio Grandtour — Kombi für Einkauf & Ausflug',
   },
   {
-    kind: 'mvv', img: null, pos: 'center',
+    kind: 'mvv', img: `${base}img/mvv-foto.jpg`, pos: 'center 45%',
     h1a: 'Lieber Bus', h1b: '& Bahn?',
     lead: 'MVV-Tageskarten M-1 bis M-5 über unseren Partner Vaterstetten — <strong>ab 4 €/Tag</strong> ausleihen statt teuer kaufen.',
     tag: 'MVV-Tageskarte ab 4 €/Tag — Abholung am Bahnhof Vaterstetten',
@@ -478,6 +478,18 @@ const faqSchema = {
     .hero-inner.is-switching .hero-h1,
     .hero-inner.is-switching .hero-lead,
     .hero-inner.is-switching .hero-tag { opacity: 0; transform: translateY(10px); }
+
+    /* Mobile: Fahrzeug groß & erkennbar — cover mit Bildmitte (Auto sitzt mittig),
+       KEIN Ken-Burns-Zoom (sonst zu stark herangezoomt/abgeschnitten). Text unten. */
+    @media (max-width: 640px) {
+      .hero { min-height: 82svh; align-items: end; }
+      .hero-slide { background-size: cover; background-position: center center !important; }
+      .hero-slide.is-active { animation: none; transform: none; }
+      .hero-scrim {
+        background: linear-gradient(180deg, rgba(20,15,12,.25) 0%, rgba(20,15,12,.2) 30%, rgba(20,15,12,.72) 66%, rgba(20,15,12,.94) 100%);
+      }
+      .hero-inner { padding-top: 0; padding-bottom: 2.2rem; }
+    }
     .hero-scrim {
       position: absolute; inset: 0; z-index: -1;
       background:

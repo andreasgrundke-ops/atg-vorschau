@@ -51,7 +51,10 @@ const base = import.meta.env.BASE_URL;
               <span>Carsharing dahoam</span>
             </div>
           </div>
-          <p class="claim">Weniger Autos.<br /><span class="hl">Dennoch mobil.</span></p>
+          <div class="claim-group">
+            <p class="claim">Weniger Autos.<br /><span class="hl">Dennoch mobil.</span></p>
+            <p class="vk-sub">Auto &amp; MVV-Karten · gemeinsam mit Vaterstetten</p>
+          </div>
         </article>
 
         <!-- RÜCKSEITE -->
@@ -134,6 +137,8 @@ const base = import.meta.env.BASE_URL;
       .claim { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; line-height: 1.05; margin: 0; color: var(--ink); }
       .claim .hl { position: relative; white-space: nowrap; }
       .claim .hl::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.05em; height: 0.3em; background: var(--yellow); z-index: -1; border-radius: 2px; }
+      .claim-group { display: grid; gap: 1.6mm; }
+      .vk-sub { margin: 0; font-size: 0.62rem; color: var(--muted); font-weight: 700; }
 
       /* Rückseite — weiß, rote Kante links */
       .card-back {

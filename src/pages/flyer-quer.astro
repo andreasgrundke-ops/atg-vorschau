@@ -77,6 +77,10 @@ const steps = [
             <div class="stat"><b>1&nbsp;€/h</b><span>tagsüber</span></div>
             <div class="stat"><b>41</b><span>Fahrzeuge mit VAT</span></div>
           </div>
+          <div class="mvv-mini">
+            <b>🚆 Auch MVV-Karten</b>
+            <span>M-1 bis M-5 ab 4 €/Tag — Bus &amp; Bahn über Partner Vaterstetten</span>
+          </div>
           <p class="imprint">VR 207138, AG München · Kooperation mit dem Vaterstettener Auto-Teiler e.V.</p>
         </div>
 
@@ -187,15 +191,15 @@ const steps = [
       .cover-claim .hl::after { content: ''; position: absolute; left: 0; right: 0; bottom: .05em; height: .28em; background: var(--yellow); z-index: -1; border-radius: 2px; }
       .cover-claim p { color: rgba(255,255,255,.9); font-weight: 600; font-size: 0.9rem; }
 
-      /* Kontakt-Panel (dunkel) */
-      .panel-dark { background: var(--ink); color: #fff; justify-content: space-between; border-right-color: rgba(255,255,255,.18); }
-      .panel-dark h3 { color: var(--yellow); }
+      /* Kontakt-Panel (rot — wie das Kontakt-Band im Hochformat-Flyer) */
+      .panel-dark { background: linear-gradient(165deg, var(--red) 0%, var(--red-deep) 100%); color: #fff; justify-content: space-between; border-right-color: rgba(255,255,255,.3); }
+      .panel-dark h3 { color: #fff; }
       .contact { list-style: none; margin: 3mm 0; padding: 0; display: grid; gap: 2.5mm; }
       .contact li { font-size: 0.92rem; display: flex; gap: 2.5mm; align-items: flex-start; }
       .contact li span { color: var(--yellow); }
       .qr-block { text-align: center; }
       .qr-block img { width: 30mm; height: 30mm; background: #fff; border-radius: 8px; padding: 5px; margin: 0 auto; }
-      .qr-block span { display: block; margin-top: 2mm; font-size: 0.74rem; color: #cfc7bb; }
+      .qr-block span { display: block; margin-top: 2mm; font-size: 0.74rem; color: #ffe7e3; }
 
       /* Teaser-Panel */
       .kicker { display: inline-flex; align-items: center; gap: 2mm; font-weight: 800; font-size: 0.72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--red-deep); }
@@ -205,6 +209,9 @@ const steps = [
       .stat { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 3mm 4mm; text-align: center; }
       .stat b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; color: var(--red); line-height: 1; }
       .stat span { font-size: 0.76rem; color: var(--muted); font-weight: 600; }
+      .mvv-mini { margin-top: 3mm; background: var(--ink); color: #fff; border-radius: 10px; padding: 3mm 3.5mm; }
+      .mvv-mini b { display: block; font-family: var(--font-display); color: var(--yellow); font-size: 0.92rem; }
+      .mvv-mini span { display: block; margin-top: 1mm; font-size: 0.74rem; color: #e9e2d8; line-height: 1.35; }
       .imprint { margin-top: auto; font-size: 0.68rem; color: var(--muted); }
 
       /* Flotte */

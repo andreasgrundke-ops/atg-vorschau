@@ -1,0 +1,100 @@
+---
+/**
+ * AppBarV2 — schwebende, abgerundete Top-Navigation (V2).
+ * Desktop: Logo + Links + Buchen-CTA als „floating pill". Mobile: Logo + Buchen
+ * (Hauptnavigation läuft über die Bottom-Tab-Bar). Versteckt sich beim Runter-,
+ * erscheint beim Hochscrollen (rAF-throttled). Teil des V2-Redesigns.
+ *
+ * Version: 2.0 · Autor: Grundke IT-Service · Datum: 2026-06-29
+ */
+const base = import.meta.env.BASE_URL;
+const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+const links = [
+  { href: `${base}v2/#so-gehts`, label: "So geht's" },
+  { href: `${base}v2/#flotte`, label: 'Flotte' },
+  { href: `${base}v2/#mvv`, label: 'MVV' },
+  { href: `${base}v2/#preise`, label: 'Preise' },
+  { href: `${base}v2/#kontakt`, label: 'Kontakt' },
+];
+---
+
+<header class="appbar" id="appbar">
+  <div class="bar">
+    <a class="brand" href={`${base}v2/`} aria-label="ATG Carsharing — Startseite">
+      <img src={`${base}img/atg-logo.jpg`} alt="" width="36" height="36" />
+      <span class="brand-txt">ATG <i>Carsharing</i></span>
+    </a>
+
+    <nav class="nav" aria-label="Hauptnavigation">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+
+    <a class="btn btn-red book" href={BOOK} rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+      Fahrzeug buchen
+    </a>
+  </div>
+</header>
+
+<style>
+  .appbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-appbar);
+    padding: clamp(.5rem, 1.5vw, .85rem) clamp(.7rem, 3vw, 1.2rem);
+    transition: transform var(--dur) var(--ease-out);
+  }
+  .appbar.is-hidden { transform: translateY(-130%); }
+  .bar {
+    max-width: 1180px; margin: 0 auto;
+    display: flex; align-items: center; gap: 1rem;
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+    border-radius: var(--r-pill);
+    box-shadow: var(--sh-2);
+    padding: .5rem .6rem .5rem .9rem;
+  }
+  .brand { display: inline-flex; align-items: center; gap: .55rem; margin-right: auto; }
+  .brand img { border-radius: 10px; box-shadow: var(--sh-1); }
+  .brand-txt { font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; letter-spacing: -.01em; }
+  .brand-txt i { color: var(--red-deep); font-style: normal; }
+
+  .nav { display: none; gap: .25rem; }
+  .nav a {
+    font-family: var(--font-display); font-weight: 500; font-size: .98rem;
+    color: var(--ink); padding: .5rem .8rem; border-radius: var(--r-pill);
+    transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+  }
+  .nav a:hover { background: var(--red-soft); color: var(--red-deep); }
+
+  .book { min-height: 44px; padding: .55rem 1.1rem; font-size: .95rem; }
+  .book svg { width: 18px; height: 18px; }
+
+  /* Auf sehr kleinen Screens nur Icon im CTA, Text raus → kompakter */
+  @media (max-width: 380px) {
+    .book { font-size: 0; gap: 0; padding: .6rem; }
+    .book svg { width: 20px; height: 20px; }
+  }
+  @media (min-width: 860px) {
+    .nav { display: flex; }
+  }
+</style>
+
+<script>
+  // Auto-Hide: beim Runterscrollen verstecken, beim Hochscrollen zeigen.
+  const bar = document.getElementById('appbar');
+  if (bar) {
+    let last = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y > last && y > 140) bar.classList.add('is-hidden');
+      else bar.classList.remove('is-hidden');
+      last = y;
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+    }, { passive: true });
+  }
+</script>

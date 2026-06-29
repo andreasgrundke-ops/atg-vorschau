@@ -24,6 +24,13 @@ import '@fontsource-variable/jetbrains-mono';
 
 const base = import.meta.env.BASE_URL;
 
+// Zwei Design-Entwürfe zum direkten Vergleich. V1 ist eingefroren, V2 ist neu
+// (modern/App-Feeling). Der Kunde entscheidet am Ende, welcher veröffentlicht wird.
+const versions = [
+  { key: 'v1', label: 'Entwurf 1', sub: 'Klassisch · Kino-Hero', src: base },
+  { key: 'v2', label: 'Entwurf 2', sub: 'Modern · App-Feeling', src: `${base}v2/` },
+];
+
 const tiles = [
   { key: 'desktop', kind: 'web', badge: 'Ansicht 01', title: 'Web am PC', desc: 'Die komplette Seite für den großen Bildschirm — Aufbau, Texte, Bildwelt und Farbkonzept.', go: 'Am PC ansehen' },
   { key: 'tablet', kind: 'web', badge: 'Ansicht 02', title: 'Web am Tablet', desc: 'Mittlere Breite — so wirkt die Seite auf dem Tablet, gestapelt und gut lesbar.', go: 'Am Tablet ansehen' },
@@ -122,32 +129,40 @@ const icons = {
         <p class="s-label">Entwurfspaket zur Ansicht</p>
         <h1>Ihr neuer Webauftritt für<br /><span class="cyan">Auto-Teiler Grasbrunn e.V.</span></h1>
         <p class="lead">
-          Hallo Herr Böhme, hier ist mein Entwurf für den neuen Auftritt der Auto-Teiler
-          Grasbrunn e.V. — als Nachfolger der bestehenden Seite. Schauen Sie die Website gleich hier
-          in der <b>PC-, Tablet- und Handy-Ansicht</b> an und werfen Sie einen Blick auf
-          <b>Flyer</b> und <b>Visitenkarte</b>.
+          Hallo Herr Böhme, hier sind <b>zwei Design-Entwürfe</b> für den neuen Auftritt der
+          Auto-Teiler Grasbrunn e.V. — als Nachfolger der bestehenden Seite. <b>Entwurf 1</b>
+          (klassisch, mit großem Kino-Hero) und <b>Entwurf 2</b> (moderner, mit App-Feeling fürs
+          Handy). Schalten Sie in der Vorschau einfach zwischen beiden um und schauen Sie jede
+          Variante in der <b>PC-, Tablet- und Handy-Ansicht</b> an — dazu <b>Flyer</b> und <b>Visitenkarte</b>.
         </p>
         <div class="hero-cta">
           <button class="btn-p" type="button" id="toPreview">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            Vorschau ansehen
+            Entwürfe vergleichen
           </button>
-          <a class="btn-g" href={base} target="_blank" rel="noopener">Website in voller Größe ↗</a>
+          <a class="btn-g" id="heroFull" href={base} target="_blank" rel="noopener">Aktuellen Entwurf in voller Größe ↗</a>
         </div>
       </div>
     </header>
 
     <main class="inner">
       <div class="note">
-        <b>Das ist ein Entwurf (Mockup).</b> Texte, Fotos, Farben und Kontaktdaten lassen sich noch
-        frei anpassen. Schauen Sie in Ruhe rein und sagen Sie mir, was Ihnen gefällt und was wir
-        ändern. Die Seite geht erst nach Ihrer Freigabe online — und ist aktuell nur über diesen Link erreichbar.
+        <b>Zwei Entwürfe zur Auswahl (Mockups).</b> Oben in der Vorschau schalten Sie zwischen
+        <b>Entwurf 1</b> und <b>Entwurf 2</b> um. Texte, Fotos, Farben und Kontaktdaten lassen sich
+        bei beiden noch frei anpassen — sagen Sie mir einfach, welche Richtung Ihnen besser gefällt
+        und was wir ändern. Die Seite geht erst nach Ihrer Freigabe online und ist aktuell nur über diesen Link erreichbar.
       </div>
 
       <!-- Geräte-Vorschau -->
       <section class="preview" id="preview" aria-label="Geräte-Vorschau der Website">
         <div class="preview-bar">
-          <p class="s-label nomargin">Live-Vorschau</p>
+          <div class="vtabs" role="tablist" aria-label="Entwurf wählen">
+            {versions.map((v) => (
+              <button class="vtab" data-ver={v.key} data-src={v.src} role="tab" type="button">
+                <b>{v.label}</b><span>{v.sub}</span>
+              </button>
+            ))}
+          </div>
           <div class="tabs" role="tablist" aria-label="Gerät wählen">
             <button class="tab" data-mode="desktop" role="tab" type="button">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> PC
@@ -159,7 +174,7 @@ const icons = {
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg> Handy
             </button>
           </div>
-          <a class="open-real" href={base} target="_blank" rel="noopener">Neuer Tab ↗</a>
+          <a class="open-real" id="openReal" href={base} target="_blank" rel="noopener">Neuer Tab ↗</a>
         </div>
 
         <div class="stage" id="stage">
@@ -256,6 +271,35 @@ const icons = {
       const tiles = Array.from(document.querySelectorAll<HTMLButtonElement>('.tile[data-mode]'));
 
       let mode = 'desktop';
+      let ver = 'v2'; // Default: neuer Entwurf zuerst zeigen
+
+      // Versions-Umschalter: iframe-Quelle zwischen Entwurf 1 (/) und Entwurf 2 (/v2/) wechseln.
+      const frame = document.getElementById('frame') as HTMLIFrameElement;
+      const openReal = document.getElementById('openReal') as HTMLAnchorElement | null;
+      const heroFull = document.getElementById('heroFull') as HTMLAnchorElement | null;
+      const vtabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.vtab'));
+      const SRC: Record<string, string> = {};
+      vtabs.forEach((t) => { if (t.dataset.ver && t.dataset.src) SRC[t.dataset.ver] = t.dataset.src; });
+      const VALIDV = Object.keys(SRC);
+
+      function updateURL() {
+        try { history.replaceState(null, '', `?v=${ver}&d=${mode}`); } catch {}
+      }
+
+      function setVer(next: string) {
+        if (!VALIDV.includes(next)) next = VALIDV.includes('v2') ? 'v2' : VALIDV[0];
+        ver = next;
+        const src = SRC[ver];
+        if (frame && frame.getAttribute('src') !== src) frame.setAttribute('src', src);
+        vtabs.forEach((t) => {
+          const on = t.dataset.ver === ver;
+          t.classList.toggle('is-on', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        if (openReal) openReal.setAttribute('href', src);
+        if (heroFull) heroFull.setAttribute('href', src);
+        updateURL();
+      }
 
       // Verfügbare Breite am Eltern-Container messen (konstant) — NICHT an der Stage
       // selbst, deren Breite wir gleich setzen (sonst Rückkopplung → Rand-Flackern).
@@ -285,18 +329,20 @@ const icons = {
         });
         note.textContent = STAGES[mode].label;
         fit();
-        try { history.replaceState(null, '', '?d=' + mode); } catch {}
+        updateURL();
         if (scroll) document.getElementById('preview')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
       tabs.forEach((t) => t.addEventListener('click', () => setMode(t.dataset.mode || 'desktop')));
       tiles.forEach((t) => t.addEventListener('click', () => setMode(t.dataset.mode || 'desktop', true)));
+      vtabs.forEach((t) => t.addEventListener('click', () => setVer(t.dataset.ver || 'v2')));
       document.getElementById('toPreview')?.addEventListener('click', () =>
         document.getElementById('preview')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
       window.addEventListener('resize', fit, { passive: true });
 
-      const param = new URLSearchParams(location.search).get('d') || 'desktop';
-      setMode(param);
+      const params = new URLSearchParams(location.search);
+      setVer(params.get('v') || 'v2');
+      setMode(params.get('d') || 'desktop');
     </script>
 
     <style is:global>
@@ -370,6 +416,15 @@ const icons = {
       .tab.is-on svg { opacity: 1; }
       .open-real { color: var(--cyan); font-weight: 700; font-size: .85rem; }
       .open-real:hover { text-decoration: underline; }
+
+      /* Versions-Umschalter (Entwurf 1 / Entwurf 2) — prominent, da Kernentscheidung */
+      .vtabs { display: inline-flex; gap: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 5px; }
+      .vtab { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; border: 0; background: transparent; color: var(--text2); font-family: var(--fb); text-align: left; padding: 8px 16px; border-radius: 10px; min-height: 44px; transition: background .18s ease, color .18s ease; }
+      .vtab b { font-family: var(--fh); font-weight: 700; font-size: .95rem; line-height: 1.1; }
+      .vtab span { font-family: var(--fm); font-size: .62rem; letter-spacing: .03em; color: var(--text3); }
+      .vtab:hover { color: var(--text); }
+      .vtab.is-on { background: var(--accent); color: #fff; box-shadow: 0 6px 16px rgba(12,77,162,.4); }
+      .vtab.is-on span { color: rgba(255,255,255,.8); }
 
       /* Stage exakt = skalierte Frame-Größe (kein Flexbox-Overflow → kein Rand-Flackern beim Repaint des animierten iframes) */
       .stage { position: relative; margin: 0 auto; max-width: 100%; overflow: hidden; background: var(--bg); border-radius: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.45); }

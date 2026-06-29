@@ -1,0 +1,239 @@
+/* =====================================================================================
+   ATG Carsharing — V2 Design-System ("soft/clay", modern & abgerundet)
+   ---------------------------------------------------------------------------------
+   Titel:        v2.css — Design-Tokens + Basis + Utilities für das V2-Redesign
+   Version:      2.0
+   Autor:        Grundke IT-Service
+   Datum:        2026-06-29
+   Beschreibung: Eigenständiges, von V1 getrenntes Stylesheet. Markenfarben Rot/Gelb
+                 (ATG-CI) in einer weichen, abgerundeten, taktilen Oberfläche
+                 (Claymorphism-Anleihen: große Radien, mehrschichtige weiche Schatten,
+                 Spring-Press, sanft driftende Blobs). Zielgruppe 17–70, mobile-first,
+                 App-Anmutung. Kein Kino-Hero. Respektiert prefers-reduced-motion.
+   Änderungshistorie:
+                 2.0 (2026-06-29) Erstanlage V2 — Tokens, Reset, Buttons, Motion, App-Shell-Hilfen
+   ===================================================================================== */
+
+/* ===== Design-Tokens =============================================================== */
+:root {
+  /* Marke (ATG-CI, treu zu V1) + frische Verlaufstöne für V2 */
+  --red:        #d42a22;   /* Logo-/Fahrzeugrot — primäre CTAs, Akzent */
+  --red-deep:   #a81e18;   /* Text/Hover auf Hell (WCAG AA mit Weiß) */
+  --red-bright: #f0463b;   /* heller Rot-Ton nur für Verläufe/Glows */
+  --red-soft:   #fdeeec;   /* sehr helle rote Tönung — Chips, Flächen */
+  --yellow:     #ffc400;   /* Logo-Gelb — Highlights, Zahlen, Akzent */
+  --yellow-deep:#e0a400;   /* Gelb dunkler für feine Linien auf hell */
+  --yellow-soft:#fff6da;   /* helle gelbe Tönung — Flächen */
+
+  /* Neutral (hell, frisch, soft — kein Creme) */
+  --ink:        #1a1714;   /* warmes Fast-Schwarz — Fließtext, dunkle Flächen */
+  --ink-soft:   #2c2620;   /* dunkle Karten in Ink-Sektionen */
+  --muted:      #6a6258;   /* Sekundärtext (AA auf bg) */
+  --bg:         #f5f6f8;   /* heller, sauberer Seitenhintergrund */
+  --bg-warm:    #fbf3ee;   /* sehr soft-warme Wechselfläche (Hauch, kein Creme) */
+  --surface:    #ffffff;   /* Cards */
+  --surface-2:  #fbfbfc;   /* leicht abgesetzte Cards */
+  --line:       #e8e6e9;   /* Trennlinien/Rahmen */
+
+  /* Funktionsfarben */
+  --ok:    #1a7a5e;
+  --warn:  #cc8800;
+  --danger:#c0392b;
+
+  /* Schrift */
+  --font-display: "Fredoka Variable", "Fredoka", system-ui, sans-serif;
+  --font-body:    "Hanken Grotesk Variable", "Hanken Grotesk", system-ui, sans-serif;
+
+  /* Radien — das „abgerundet". Großzügig & konsistent. */
+  --r-xs:  10px;
+  --r-sm:  14px;
+  --r-md:  20px;
+  --r-lg:  28px;
+  --r-xl:  36px;
+  --r-2xl: 44px;
+  --r-pill:999px;
+
+  /* Weiche, mehrschichtige Schatten (clay-Tiefe) */
+  --sh-1: 0 1px 2px rgba(26,23,20,.04), 0 6px 16px -10px rgba(26,23,20,.18);
+  --sh-2: 0 2px 6px rgba(26,23,20,.05), 0 18px 40px -22px rgba(26,23,20,.28);
+  --sh-3: 0 4px 10px rgba(26,23,20,.06), 0 30px 60px -28px rgba(26,23,20,.40);
+  --sh-pop: 0 10px 24px -10px rgba(212,42,34,.45);             /* roter Lift */
+  --sh-pop-y: 0 10px 24px -10px rgba(224,164,0,.55);           /* gelber Lift */
+  /* clay: weiche Außen-Tiefe + heller Innen-Top-Rand für „aufgeblasenen" Look */
+  --sh-clay: 0 2px 6px rgba(26,23,20,.05), 0 22px 46px -26px rgba(26,23,20,.32),
+             inset 0 2px 0 rgba(255,255,255,.7);
+
+  /* Motion */
+  --dur-fast: 150ms;
+  --dur:      260ms;
+  --dur-slow: 420ms;
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);   /* leichter Überschwung */
+
+  /* z-index-Skala (semantisch) */
+  --z-blob:   0;
+  --z-base:   1;
+  --z-appbar: 50;
+  --z-fab:    60;
+  --z-tabbar: 70;
+  --z-sheet-backdrop: 90;
+  --z-sheet:  100;
+  --z-skip:   200;
+}
+
+/* ===== Reset (schlank, eigenständig — kein Tailwind in V2) ========================= */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: clip; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; }
+ul { margin: 0; }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; border-radius: 8px; }
+
+/* Platz unten für die feste Mobile-App-Tab-Bar */
+@media (max-width: 859px) {
+  body { padding-bottom: calc(74px + env(safe-area-inset-bottom)); }
+}
+
+/* ===== Layout-Hilfen ============================================================== */
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(1.1rem, 4vw, 2rem); }
+.wrap-narrow { max-width: 820px; }
+.sec { padding: clamp(3rem, 7vw, 5.5rem) 0; position: relative; }
+.sec-tight { padding: clamp(2rem, 5vw, 3.5rem) 0; }
+
+/* Sektions-Kopf */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: .82rem; letter-spacing: .02em;
+  color: var(--red-deep);
+  background: var(--red-soft);
+  padding: .4rem .9rem; border-radius: var(--r-pill);
+  margin-bottom: 1rem;
+}
+.eyebrow .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--yellow); }
+.sec-head { max-width: 56ch; margin: 0 auto 2.4rem; text-align: center; }
+.sec-head.left { margin-left: 0; text-align: left; }
+.sec-head h2 { font-size: clamp(1.9rem, 4.6vw, 3rem); }
+.sec-head p { color: var(--muted); font-size: 1.1rem; margin-top: .7rem; }
+
+/* ===== Cards (clay) =============================================================== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: clamp(1.3rem, 3vw, 1.8rem);
+  box-shadow: var(--sh-2);
+}
+.card-clay { box-shadow: var(--sh-clay); border-color: color-mix(in srgb, var(--line) 60%, transparent); }
+.card-dark { background: var(--ink); color: #fff; border-color: rgba(255,255,255,.08); }
+.card-dark h3 { color: #fff; }
+
+/* ===== Buttons =================================================================== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 1rem;
+  padding: .85rem 1.5rem; border-radius: var(--r-pill); min-height: 52px;
+  border: 2px solid transparent; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dur-fast) var(--ease-spring),
+              box-shadow var(--dur) var(--ease-out),
+              background var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+.btn:active { transform: scale(.96); }
+.btn-lg { padding: 1rem 1.8rem; min-height: 58px; font-size: 1.08rem; }
+.btn-red { background: linear-gradient(180deg, var(--red-bright), var(--red)); color: #fff; box-shadow: var(--sh-pop); }
+.btn-red:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -12px rgba(212,42,34,.6); }
+.btn-yellow { background: linear-gradient(180deg, #ffd23f, var(--yellow)); color: var(--ink); box-shadow: var(--sh-pop-y); }
+.btn-yellow:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -12px rgba(224,164,0,.6); }
+.btn-ghost { background: var(--surface); color: var(--ink); border-color: var(--line); box-shadow: var(--sh-1); }
+.btn-ghost:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--ink) 30%, var(--line)); box-shadow: var(--sh-2); }
+.btn-on-dark { background: #fff; color: var(--ink); }
+.btn-on-dark:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -12px rgba(0,0,0,.5); }
+.btn-outline-light { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.4); }
+.btn-outline-light:hover { transform: translateY(-2px); border-color: #fff; }
+
+/* ===== Chips / Pills ============================================================= */
+.chip {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-weight: 700; font-size: .86rem;
+  padding: .5rem .9rem; border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-1);
+}
+.chip svg { width: 18px; height: 18px; }
+.chip-yellow { background: var(--yellow-soft); border-color: color-mix(in srgb, var(--yellow) 40%, var(--line)); }
+.chip-red { background: var(--red-soft); border-color: color-mix(in srgb, var(--red) 25%, var(--line)); color: var(--red-deep); }
+
+/* ===== Floating Blobs (sanfte Atmosphäre, hinter Inhalten) ======================== */
+.blob {
+  position: absolute; z-index: var(--z-blob);
+  border-radius: 50%;
+  filter: blur(46px); opacity: .5;
+  pointer-events: none;
+  will-change: transform;
+}
+.blob-red { background: radial-gradient(circle at 35% 35%, var(--red-bright), transparent 70%); }
+.blob-yellow { background: radial-gradient(circle at 35% 35%, var(--yellow), transparent 70%); }
+@media (prefers-reduced-motion: no-preference) {
+  .blob { animation: blobdrift 18s ease-in-out infinite alternate; }
+  .blob:nth-of-type(2) { animation-duration: 24s; animation-direction: alternate-reverse; }
+  @keyframes blobdrift {
+    from { transform: translate3d(0,0,0) scale(1); }
+    to   { transform: translate3d(26px,-22px,0) scale(1.08); }
+  }
+}
+
+/* ===== Scroll-Reveal (nur mit JS aktiv → A11y/SEO ohne JS sichtbar) =============== */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 75ms);
+    will-change: opacity, transform;
+  }
+  html.js .reveal.in-view { opacity: 1; transform: none; }
+}
+
+/* ===== Tactile press (Cards/Tiles, die wie Tasten reagieren) ====================== */
+.tap { transition: transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur) var(--ease-out); }
+.tap:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) {
+  .btn:active, .tap:active { transform: none; }
+}
+
+/* ===== Lenis Smooth-Scroll (self-hosted, DSGVO) =================================== */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* ===== Skip-Link ================================================================= */
+.skip-link {
+  position: absolute; left: -999px; top: 0; z-index: var(--z-skip);
+  background: var(--ink); color: #fff; padding: .7rem 1rem;
+  border-radius: 0 0 var(--r-sm) 0; font-weight: 700;
+}
+.skip-link:focus { left: 0; }
+
+/* Tabular-Zahlen überall, wo Preise/Werte stehen */
+.tnum { font-variant-numeric: tabular-nums; }

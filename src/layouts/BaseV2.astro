@@ -1,0 +1,136 @@
+---
+/**
+ * BaseV2 — HTML-Shell für das V2-Redesign (komplett getrennt von V1/Base.astro).
+ * Lädt V2-Fonts (Fredoka + Hanken Grotesk, lokal/DSGVO) + v2.css, bindet die
+ * schwebende AppBar, Bottom-Tab-Bar und Footer ein. Enthält die globale Motion-
+ * Logik (Lenis Smooth-Scroll, Scroll-Reveal, Zahlen-Counter). Immer noindex —
+ * V2 ist ein Vergleichs-Entwurf und darf nie mit der echten Seite konkurrieren.
+ *
+ * Version: 2.0 · Autor: Grundke IT-Service · Datum: 2026-06-29
+ */
+import '@fontsource-variable/fredoka';
+import '@fontsource-variable/hanken-grotesk';
+import '../styles/v2.css';
+import AppBarV2 from '../components/v2/AppBarV2.astro';
+import FooterV2 from '../components/v2/FooterV2.astro';
+import TabBarV2 from '../components/v2/TabBarV2.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'ATG Carsharing — Entwurf V2 · Auto teilen in Grasbrunn',
+  description = 'V2-Designentwurf: Carsharing in Grasbrunn — Auto teilen statt besitzen. Kein Monatsbeitrag, E-Auto, Transporter & MVV-Karten. Modern, mobil, einfach Mitglied werden.',
+} = Astro.props;
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Auto-Teiler Grasbrunn e.V.',
+  alternateName: 'ATG',
+  slogan: 'Carsharing dahoam — weniger Autos, dennoch mobil.',
+  url: 'https://www.atg-grasbrunn.de/',
+  email: 'info@atg-grasbrunn.de',
+  telephone: '+49 89 21541339',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Winklerring 12',
+    postalCode: '85630',
+    addressLocality: 'Grasbrunn',
+    addressRegion: 'Bayern',
+    addressCountry: 'DE',
+  },
+  areaServed: ['Grasbrunn', 'Neukeferloh', 'Harthausen', 'Möschenfeld', 'Keferloh', 'Landkreis München'],
+  sameAs: ['https://www.carsharing-vaterstetten.de/'],
+};
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!-- V2 ist ein Entwurf → niemals indexieren -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#d42a22" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23d42a22'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-size='14' fill='%23ffc400' text-anchor='middle'%3EATG%3C/text%3E%3C/svg%3E"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="de_DE" />
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} is:inline />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <AppBarV2 />
+    <main id="main"><slot /></main>
+    <FooterV2 />
+    <TabBarV2 />
+
+    <script>
+      // Lenis Smooth-Scroll (self-hosted, DSGVO). Bei reduced-motion: nativ scrollen.
+      import Lenis from 'lenis';
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!reduce) {
+        const lenis = new Lenis({
+          duration: 1.1,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+        (window as any).lenis = lenis;
+        const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
+        requestAnimationFrame(raf);
+
+        // Interne Anker-Links geschmeidig anspringen, mit Offset für die schwebende AppBar.
+        document.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => {
+          const href = a.getAttribute('href') || '';
+          const hash = href.includes('#') ? '#' + href.split('#')[1] : '';
+          if (!hash || hash === '#') return;
+          a.addEventListener('click', (e) => {
+            const target = document.querySelector(hash);
+            if (target) { e.preventDefault(); lenis.scrollTo(target as HTMLElement, { offset: -80 }); }
+          });
+        });
+      }
+
+      // Scroll-Reveal: .reveal beim Sichtbarwerden einblenden (sonst sofort sichtbar).
+      const revealEls = document.querySelectorAll<HTMLElement>('.reveal');
+      if (revealEls.length && !reduce) {
+        const ro = new IntersectionObserver((entries) => {
+          entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in-view'); ro.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -8% 0px' });
+        revealEls.forEach((el) => ro.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('in-view'));
+      }
+
+      // Zahlen hochzählen (Elemente mit data-count) beim Sichtbarwerden.
+      const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+      if (counters.length) {
+        const run = (el: HTMLElement) => {
+          const target = parseFloat(el.getAttribute('data-count') || '0');
+          const suffix = el.getAttribute('data-suffix') || '';
+          if (reduce) { el.textContent = target.toLocaleString('de-DE') + suffix; return; }
+          const dur = 1100; const t0 = performance.now();
+          const step = (t: number) => {
+            const p = Math.min(1, (t - t0) / dur);
+            el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString('de-DE') + suffix;
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        };
+        const co = new IntersectionObserver((entries) => {
+          entries.forEach((e) => { if (e.isIntersecting) { run(e.target as HTMLElement); co.unobserve(e.target); } });
+        }, { threshold: 0.6 });
+        counters.forEach((el) => co.observe(el));
+      }
+    </script>
+  </body>
+</html>

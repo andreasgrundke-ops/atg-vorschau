@@ -1,0 +1,77 @@
+---
+/**
+ * FooterV2 — Fußzeile für das V2-Redesign.
+ * ATG-Kontaktdaten, schnelle Links, rechtliche Platzhalter (Impressum/Datenschutz
+ * folgen in Phase 2), Hinweis Grundke IT-Service + Bildnachweis (MVV-Foto).
+ *
+ * Version: 2.0 · Autor: Grundke IT-Service · Datum: 2026-06-29
+ */
+const base = import.meta.env.BASE_URL;
+const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+const year = 2026;
+---
+
+<footer class="ftr">
+  <div class="wrap ftr-grid">
+    <div class="ftr-brand">
+      <a class="brand" href={`${base}v2/`} aria-label="ATG Carsharing">
+        <img src={`${base}img/atg-logo.jpg`} alt="" width="40" height="40" />
+        <span>Auto-Teiler Grasbrunn e.V.</span>
+      </a>
+      <p class="claim">Carsharing dahoam — weniger Autos, dennoch mobil. Gemeinnütziger Verein in Grasbrunn, gemeinsam mit den Vaterstettener Auto-Teilern.</p>
+    </div>
+
+    <nav class="ftr-col" aria-label="Schnellzugriff">
+      <h3>Schnellzugriff</h3>
+      <a href={`${base}v2/#flotte`}>Fahrzeugflotte</a>
+      <a href={`${base}v2/#mvv`}>MVV-Karten</a>
+      <a href={`${base}v2/#preise`}>Preise &amp; Rechner</a>
+      <a href={BOOK} rel="noopener">Fahrzeug buchen ↗</a>
+    </nav>
+
+    <div class="ftr-col">
+      <h3>Kontakt</h3>
+      <a href="tel:+498921541339">089 21541339</a>
+      <a href="mailto:info@atg-grasbrunn.de">info@atg-grasbrunn.de</a>
+      <p class="adr">Winklerring 12<br />85630 Grasbrunn</p>
+    </div>
+
+    <nav class="ftr-col" aria-label="Rechtliches">
+      <h3>Rechtliches</h3>
+      <a href={`${base}v2/#kontakt`}>Impressum <small>(folgt)</small></a>
+      <a href={`${base}v2/#kontakt`}>Datenschutz <small>(folgt)</small></a>
+      <a href="https://www.carsharing-vaterstetten.de/" rel="noopener">Partner Vaterstetten ↗</a>
+    </nav>
+  </div>
+
+  <div class="wrap ftr-base">
+    <p>© {year} Auto-Teiler Grasbrunn e.V. · <span class="dot">·</span> Entwurf V2 (Vorschau)</p>
+    <p class="credit">Webauftritt mit technischer Unterstützung von <a href="https://www.grundke-it.de" rel="noopener">Grundke IT-Service</a> · Bildnachweis MVV-Foto: Jivee Blau, CC BY-SA 3.0 (Platzhalter)</p>
+  </div>
+</footer>
+
+<style>
+  .ftr { background: var(--ink); color: #cfc7bb; margin-top: 2rem; }
+  .ftr-grid {
+    display: grid; gap: 2rem 1.5rem; grid-template-columns: 1fr;
+    padding: clamp(2.4rem, 5vw, 3.4rem) clamp(1.1rem, 4vw, 2rem) 1.6rem;
+  }
+  @media (min-width: 680px) { .ftr-grid { grid-template-columns: 1.6fr 1fr 1fr 1fr; } }
+  .brand { display: inline-flex; align-items: center; gap: .6rem; color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; }
+  .brand img { border-radius: 10px; }
+  .claim { margin-top: .8rem; font-size: .95rem; max-width: 42ch; line-height: 1.55; }
+  .ftr-col h3 { color: #fff; font-size: .82rem; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .9rem; }
+  .ftr-col a { display: block; color: #cfc7bb; padding: .28rem 0; font-size: .96rem; transition: color var(--dur-fast) ease; }
+  .ftr-col a:hover { color: var(--yellow); }
+  .ftr-col small { color: #8c8378; font-size: .78rem; }
+  .adr { margin-top: .3rem; font-size: .95rem; line-height: 1.5; }
+  .ftr-base {
+    border-top: 1px solid rgba(255,255,255,.08);
+    padding: 1.1rem clamp(1.1rem, 4vw, 2rem) calc(1.6rem + env(safe-area-inset-bottom));
+    display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; justify-content: space-between;
+    font-size: .82rem; color: #8c8378;
+  }
+  .ftr-base a { color: #b3a99c; }
+  .ftr-base a:hover { color: var(--yellow); }
+  .credit { max-width: 60ch; }
+</style>

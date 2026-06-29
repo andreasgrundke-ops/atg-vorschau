@@ -14,6 +14,7 @@ import '../styles/v2.css';
 import AppBarV2 from '../components/v2/AppBarV2.astro';
 import FooterV2 from '../components/v2/FooterV2.astro';
 import TabBarV2 from '../components/v2/TabBarV2.astro';
+import StickyCta from '../components/StickyCta.astro';
 
 interface Props {
   title?: string;
@@ -73,6 +74,7 @@ const orgSchema = {
     <main id="main"><slot /></main>
     <FooterV2 />
     <TabBarV2 />
+    <StickyCta route="v2" />
 
     <script>
       // Lenis Smooth-Scroll (self-hosted, DSGVO). Bei reduced-motion: nativ scrollen.

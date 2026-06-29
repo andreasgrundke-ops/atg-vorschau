@@ -1,0 +1,111 @@
+---
+/**
+ * StickyCta — persistente, schwebende CTA-Schnellaktionen (gemeinsam für V2 & V3).
+ * -------------------------------------------------------------------------------------
+ * Version: 1.0 · Autor: Grundke IT-Service · Datum: 2026-06-29
+ * Beschreibung: Immer erreichbarer Handlungsaufruf, der nach dem Hero einblendet.
+ *   Erbt Design-Tokens aus dem geladenen v2.css/v3.css (Farben + Fonts daher automatisch
+ *   passend zum jeweiligen Entwurf). Prop `route` steuert den internen #mitglied-Sprung.
+ *
+ * Layout:
+ *   - PC / Tablet-quer (≥860px): vertikale Pill-Gruppe rechts unten
+ *     (Mitglied werden · Fahrzeug buchen · Anrufen) + Scroll-nach-oben.
+ *   - Handy / Tablet-hoch (<860px): schmale Leiste direkt über der Bottom-Tab-Bar
+ *     (Mitglied werden breit + Anrufen-Icon) — „Buchen" steckt dort bereits im Tab.
+ *   Respektiert prefers-reduced-motion.
+ */
+interface Props { route?: string; }
+const { route = 'v2' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const TEL = 'tel:+498921541339';
+const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+const MEMBER = `${base}${route}/#mitglied`;
+---
+
+<div class="sticky-cta" id="sticky-cta">
+  <a class="sc-btn sc-red" href={MEMBER}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+    <span>Mitglied werden</span>
+  </a>
+  <a class="sc-btn sc-yellow sc-desk" href={BOOK} rel="noopener">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+    <span>Fahrzeug buchen</span>
+  </a>
+  <a class="sc-btn sc-line sc-call" href={TEL} aria-label="Jetzt anrufen: 089 21541339">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    <span class="sc-calltext">Anrufen</span>
+  </a>
+  <button class="sc-top sc-desk" id="sc-top" type="button" aria-label="Nach oben scrollen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+  </button>
+</div>
+
+<style>
+  .sticky-cta {
+    position: fixed; z-index: var(--z-fab, 60);
+    opacity: 0; visibility: hidden; transform: translateY(14px);
+    transition: opacity .4s ease, transform .4s var(--ease-out), visibility .4s;
+  }
+  .sticky-cta.is-visible { opacity: 1; visibility: visible; transform: none; }
+
+  .sc-btn {
+    display: inline-flex; align-items: center; gap: .55rem;
+    font-family: var(--font-display); font-weight: 600; font-size: .95rem;
+    padding: .7rem 1.15rem; border-radius: var(--r-pill); min-height: 50px;
+    border: 2px solid transparent; white-space: nowrap; box-shadow: var(--sh-3);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .18s var(--ease-spring), box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .sc-btn svg { width: 20px; height: 20px; flex: none; }
+  .sc-red { background: linear-gradient(180deg, var(--red-bright), var(--red)); color: #fff; }
+  .sc-yellow { background: linear-gradient(180deg, #ffd23f, var(--yellow)); color: var(--ink); }
+  .sc-line { background: var(--surface); color: var(--ink); border-color: var(--line); }
+  .sc-line:hover { border-color: var(--ink); }
+  .sc-btn:active { transform: scale(.96); }
+
+  .sc-top {
+    display: inline-grid; place-items: center; width: 50px; height: 50px; border-radius: var(--r-pill);
+    background: var(--ink); color: var(--yellow); border: 0; cursor: pointer; box-shadow: var(--sh-3);
+    transition: transform .18s var(--ease-spring), background .18s ease;
+  }
+  .sc-top svg { width: 22px; height: 22px; }
+
+  /* ===== PC / Tablet-quer (≥860px): vertikale Pills rechts unten ===== */
+  @media (min-width: 860px) {
+    .sticky-cta { right: clamp(.9rem, 2vw, 1.5rem); bottom: clamp(1rem, 3vw, 1.7rem); display: flex; flex-direction: column; align-items: flex-end; gap: .55rem; }
+    .sc-btn:hover { transform: translateX(-3px); box-shadow: 0 16px 32px -14px rgba(0,0,0,.5); }
+    .sc-top:hover { transform: translateY(-3px); background: #000; }
+  }
+
+  /* ===== Handy / Tablet-hoch (<860px): kompakter Pill rechts über der Tab-Bar =====
+     Rechts platziert, damit es nicht mit dem zentral herausragenden „Buchen"-Button
+     der Tab-Bar kollidiert. „Buchen" steckt bereits im Tab. */
+  @media (max-width: 859px) {
+    .sticky-cta {
+      right: .7rem; bottom: calc(116px + env(safe-area-inset-bottom));
+      display: flex; flex-direction: row; gap: .5rem; align-items: center;
+    }
+    .sc-desk { display: none; }            /* Buchen + Scroll-Top entfallen */
+    .sc-call { padding: .7rem; }
+    .sc-calltext { display: none; }         /* Anrufen nur als Icon */
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-cta, .sticky-cta.is-visible { transition: opacity .2s ease, visibility .2s; transform: none; }
+    .sc-btn:active, .sc-btn:hover, .sc-top:hover { transform: none; }
+  }
+</style>
+
+<script>
+  // Einblenden nach ~70 % Viewport-Scroll.
+  const cta = document.getElementById('sticky-cta');
+  if (cta) {
+    let ticking = false;
+    const update = () => { cta.classList.toggle('is-visible', window.scrollY > window.innerHeight * 0.7); ticking = false; };
+    window.addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(update); ticking = true; } }, { passive: true });
+    update();
+  }
+  // Scroll-nach-oben (Lenis bevorzugt).
+  const top = document.getElementById('sc-top');
+  if (top) top.addEventListener('click', () => { const l = (window as any).lenis; if (l) l.scrollTo(0); else window.scrollTo({ top: 0, behavior: 'smooth' }); });
+</script>

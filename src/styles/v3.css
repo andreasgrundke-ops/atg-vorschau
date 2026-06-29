@@ -82,8 +82,9 @@ button { font: inherit; }
 ul { margin: 0; }
 :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; border-radius: 8px; }
 
+/* Platz unten für die feste Mobile-App-Tab-Bar + schwebende Sticky-CTA-Leiste */
 @media (max-width: 859px) {
-  body { padding-bottom: calc(74px + env(safe-area-inset-bottom)); }
+  body { padding-bottom: calc(170px + env(safe-area-inset-bottom)); }
 }
 
 /* ===== Layout-Hilfen ============================================================== */

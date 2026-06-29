@@ -1,0 +1,77 @@
+---
+/**
+ * TabBarV3 — schwebende Insel-Bottom-Tab-Bar (Mobile <860px) für den Bento-Entwurf.
+ * Struktur wie V2, /v3/-Links + ScrollSpy + zentral erhöhter Buchen-CTA.
+ *
+ * Version: 3.0 · Autor: Grundke IT-Service · Datum: 2026-06-29
+ */
+const base = import.meta.env.BASE_URL;
+const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+---
+
+<nav class="tabbar" aria-label="App-Navigation">
+  <a class="tab" href={`${base}v3/#top`} data-spy="top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+    <span>Start</span>
+  </a>
+  <a class="tab" href={`${base}v3/#flotte`} data-spy="flotte">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 1 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+    <span>Flotte</span>
+  </a>
+  <a class="tab tab-cta" href={BOOK} rel="noopener" aria-label="Fahrzeug buchen">
+    <span class="cta-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+    </span>
+    <span>Buchen</span>
+  </a>
+  <a class="tab" href={`${base}v3/#mvv`} data-spy="mvv">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="14" rx="3"/><path d="M4 11h16"/><circle cx="8.5" cy="14" r="1"/><circle cx="15.5" cy="14" r="1"/><path d="m8 17-2 4M16 17l2 4"/></svg>
+    <span>MVV</span>
+  </a>
+  <a class="tab" href={`${base}v3/#kontakt`} data-spy="kontakt">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+    <span>Kontakt</span>
+  </a>
+</nav>
+
+<style>
+  .tabbar {
+    position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(.6rem + env(safe-area-inset-bottom));
+    z-index: var(--z-tabbar); display: none; width: min(440px, calc(100vw - 1.2rem));
+    grid-template-columns: repeat(5, 1fr); align-items: center;
+    background: color-mix(in srgb, var(--surface) 90%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
+    border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+    border-radius: 26px; padding: .4rem .35rem; box-shadow: var(--sh-3);
+  }
+  .tab { display: grid; justify-items: center; gap: 3px; padding: .5rem .15rem; border-radius: 14px; color: var(--muted); font-size: .66rem; font-weight: 700; -webkit-tap-highlight-color: transparent; transition: color var(--dur-fast) ease, background var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring); }
+  .tab svg { width: 23px; height: 23px; }
+  .tab:active { transform: scale(.9); }
+  .tab.is-active { color: var(--red-deep); background: var(--red-soft); }
+  .tab-cta { color: var(--ink); }
+  .tab-cta .cta-circle { display: grid; place-items: center; width: 54px; height: 54px; border-radius: var(--r-pill); background: linear-gradient(180deg, var(--red-bright), var(--red)); color: #fff; margin-top: -26px; margin-bottom: 1px; box-shadow: 0 10px 22px -6px rgba(212,42,34,.65); border: 4px solid var(--surface); }
+  .tab-cta .cta-circle svg { width: 24px; height: 24px; }
+  .tab-cta:active .cta-circle { transform: scale(.92); }
+  @media (max-width: 859px) { .tabbar { display: grid; } }
+  @media (prefers-reduced-motion: reduce) { .tab:active, .tab-cta:active .cta-circle { transform: none; } }
+</style>
+
+<script>
+  const tabs = Array.from(document.querySelectorAll<HTMLAnchorElement>('.tab[data-spy]'));
+  const byId: Record<string, HTMLAnchorElement> = {};
+  tabs.forEach((t) => { const id = t.dataset.spy; if (id) byId[id] = t; });
+  const ids = ['top', 'flotte', 'mvv', 'kontakt'];
+  const sections = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+  if (sections.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          tabs.forEach((t) => t.classList.remove('is-active'));
+          const id = (e.target as HTMLElement).id;
+          if (byId[id]) byId[id].classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    sections.forEach((s) => io.observe(s));
+  }
+</script>

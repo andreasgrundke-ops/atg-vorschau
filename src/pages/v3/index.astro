@@ -1,0 +1,493 @@
+---
+/**
+ * =====================================================================================
+ * ATG Carsharing — Startseite V3 (Designentwurf, Bento-Grid)
+ * -------------------------------------------------------------------------------------
+ * Titel:        v3/index.astro — V3-Startseite (Bento)
+ * Version:      3.0
+ * Autor:        Grundke IT-Service
+ * Datum:        2026-06-29
+ * Beschreibung: Dritter Designentwurf als modulare Bento-Kachel-Komposition
+ *               (App-Dashboard-Anmutung). Jede Sektion ist ein Kachel-Raster mit
+ *               unterschiedlich großen Tiles. Technischere Optik (Space Grotesk),
+ *               kräftige Farbkacheln, Scroll-Reveal, Counter, DSGVO-Karte + Rechner.
+ *               Inhalte/Fakten 1:1 aus V1/V2; nur Form/Aufbau sind neu.
+ * Änderungshistorie:
+ *   2026-06-29  3.0  Erstanlage V3 (parallel zu V1/V2).
+ * =====================================================================================
+ */
+import BaseV3 from '../../layouts/BaseV3.astro';
+
+const base = import.meta.env.BASE_URL;
+const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+const FLEET_TOTAL = 41;
+const heroPhoto = 'https://www.atg-grasbrunn.de/wp-content/uploads/2024/09/WhatsApp-Bild-2024-09-01-um-12.45.09_ef67264d-1.jpg';
+
+const cars = [
+  { name: 'Renault ZOE', type: 'Elektro · emissionsfrei', badge: 'E-Auto', loc: 'Am Rathaus, Neukeferloh', seats: '5 Sitze', tarif: 'ab 0,45 €/km', img: heroPhoto, lead: true },
+  { name: 'Opel Corsa', type: 'Wendiger Stadtflitzer', badge: 'Kleinwagen', loc: 'Finkenstraße, hinter der Kirche', seats: '5 Sitze', tarif: 'ab 0,40 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Opel-Corsa-NEU.jpg' },
+  { name: 'Dacia Sandero', type: 'Günstig & praktisch', badge: 'Kleinwagen', loc: 'Ecke Waldstraße / Saarlandstraße', seats: '5 Sitze', tarif: 'ab 0,40 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Dacia-Sandero-NEU-1.jpg' },
+  { name: 'Renault Clio Grandtour', type: 'Kombi mit großem Kofferraum', badge: 'Kombi', loc: 'Standort wird ergänzt', seats: '5 Sitze · XL', tarif: 'ab 0,45 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg' },
+  { name: 'Renault Trafic', type: 'Transporter — bis 9 Sitze', badge: 'Transporter', loc: 'Standort wird ergänzt', seats: 'bis 9 Sitze', tarif: 'ab 0,60 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg' },
+];
+
+const steps = [
+  { n: '01', h: 'Online melden', t: 'Kurzes Formular ausfüllen. Wir melden uns mit allen Infos zum Verein und zur Carsharing-Teilnahme.' },
+  { n: '02', h: 'Unterlagen & Einlage', t: 'Ausweis und Führerschein nachreichen, einmalig 50 € Aufnahme und 600 € Einlage (bei Austritt zurück).' },
+  { n: '03', h: 'Einweisung & losfahren', t: 'Kurze Einweisung vor Ort, Transponderkarte erhalten — ab dann buchst du jedes freie Fahrzeug selbst.' },
+];
+
+const mvvZones = [
+  { id: 'M-1', label: 'M-1 · München Innenraum + Zone 1', normal: 9.9 },
+  { id: 'M-2', label: 'M-2 · bis Zone 2', normal: 11.6 },
+  { id: 'M-3', label: 'M-3 · bis Zone 3', normal: 13.3 },
+  { id: 'M-5', label: 'M-5 · bis Zone 5 (z. B. Flughafen)', normal: 16.7 },
+];
+
+const faqs = [
+  { q: 'Was kostet Carsharing bei ATG?', a: 'Tagsüber 1,00 €/Std., nachts 0,20 €/Std., dazu Kilometer ab 0,40 €/km je nach Fahrzeug. Einmalig 50 € Aufnahme und 600 € Einlage (bei Austritt zurück). Kein Monatsbeitrag.' },
+  { q: 'Wie werde ich Mitglied?', a: 'Online melden, Ausweis und Führerschein nachreichen, Einlage zahlen, kurze Einweisung vor Ort — dann buchst du selbstständig.' },
+  { q: 'Wo stehen die Fahrzeuge?', a: 'An festen Stellplätzen in Grasbrunn (u.a. Rathaus, Finkenstraße, Waldstraße/Saarlandstraße). Über die Kooperation mit Vaterstetten stehen weitere Fahrzeuge bereit.' },
+  { q: 'Was sind die MVV-Karten?', a: 'Über die Kooperation mit Vaterstetten nutzbare Karten für Bus & Bahn. Abhol- und Rückgabestandort ist der Bahnhof Vaterstetten.' },
+  { q: 'Gibt es einen Monatsbeitrag?', a: 'Nein. Nur die einmalige Einlage (rückzahlbar) und der Aufnahmebeitrag. Bezahlt wird nur, was gefahren wird.' },
+];
+const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+
+// Geo-Daten DSGVO-Karte (gespiegelt aus components/StandorteKarte.astro)
+const geo = {
+  atg: [
+    { name: 'Renault ZOE (E-Auto)', loc: 'Am Rathaus, Neukeferloh', lat: 48.09617, lng: 11.76036 },
+    { name: 'Opel Corsa', loc: 'Finkenstraße, hinter der Kirche', lat: 48.09781, lng: 11.75959 },
+    { name: 'Dacia Sandero', loc: 'Ecke Waldstraße / Saarlandstraße', lat: 48.0956, lng: 11.76071 },
+  ],
+  mvv: { name: 'MVV-Karten (M-1 & M-5)', loc: 'Bahnhof Vaterstetten — Abholung & Rückgabe', lat: 48.10801, lng: 11.77005 },
+  vat: [
+    [48.097018,11.77617],[48.105773,11.774258],[48.107108,11.781472],[48.0968,11.784017],
+    [48.105881,11.779309],[48.109311,11.774063],[48.106881,11.764723],[48.095739,11.794837],
+    [48.10267,11.780366],[48.111574,11.770139],[48.09386,11.78253],[48.0971,11.78709],
+    [48.101712,11.770523],[48.105736,11.770696],[48.103934,11.786099],[48.112606,11.768162],
+    [48.09937,11.77237],[48.098421,11.767818],[48.098593,11.803076],[48.104753,11.793293],
+    [48.091317,11.793075],[48.10573,11.77059],[48.099385,11.796254],[48.100786,11.786774],
+    [48.097226,11.775026],[48.106483,11.76578],[48.10214,11.79412],[48.100814,11.788168],
+    [48.095624,11.780117],[48.099235,11.780905],[48.110466,11.775553],[48.104648,11.787921],
+  ],
+};
+
+const ICONS: Record<string, string> = {
+  car: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 1 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
+  bolt: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+  truck: '<path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+  train: '<rect x="4" y="3" width="16" height="14" rx="3"/><path d="M4 11h16"/><circle cx="8.5" cy="14" r="1"/><circle cx="15.5" cy="14" r="1"/><path d="m8 17-2 4M16 17l2 4"/>',
+  seat: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
+  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+};
+---
+
+<BaseV3>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+
+  <!-- ===================== HERO-BENTO ===================== -->
+  <section class="sec hero-sec" id="top" aria-label="Carsharing in Grasbrunn">
+    <div class="wrap">
+      <div class="bento hero-bento">
+        <!-- Claim-Kachel -->
+        <article class="tile claim b-4">
+          <p class="eyebrow"><span class="dot"></span> Carsharing dahoam · Grasbrunn &amp; Umgebung</p>
+          <h1>Auto teilen.<br /><span class="hl">Statt besitzen.</span></h1>
+          <p class="claim-lead">Vom E-Auto bis zum 9-Sitzer — direkt um die Ecke, gemeinsam mit Vaterstetten. Ohne Monatsbeitrag, du zahlst nur, was du fährst.</p>
+          <div class="cta-row">
+            <a class="btn btn-red" href="#mitglied">Mitglied werden</a>
+            <a class="btn btn-ghost" href={BOOK} rel="noopener">Fahrzeug buchen</a>
+          </div>
+          <div class="quick">
+            <a class="chip" href="#flotte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICONS.car} /> Kleinwagen</a>
+            <a class="chip" href="#flotte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICONS.bolt} /> E-Auto</a>
+            <a class="chip" href="#flotte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICONS.truck} /> Transporter</a>
+            <a class="chip" href="#mvv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICONS.train} /> MVV-Karte</a>
+          </div>
+        </article>
+
+        <!-- Foto-Kachel -->
+        <article class="tile photo b-2">
+          <img src={heroPhoto} alt="Renault ZOE — E-Carsharing-Fahrzeug der ATG in Grasbrunn" width="520" height="640" fetchpriority="high" />
+          <span class="photo-tag chip chip-ghost">Renault ZOE · E-Auto</span>
+        </article>
+
+        <!-- Info-Kacheln -->
+        <article class="tile tile-ink stat b-2 m-1 tap reveal">
+          <span class="live"><span class="pulse"></span> Jetzt verfügbar</span>
+          <b>E-Auto</b>
+          <small>am Rathaus, Neukeferloh</small>
+        </article>
+        <article class="tile tile-red stat b-2 m-1 tap reveal" style="--i:1">
+          <b class="big tnum" data-count={FLEET_TOTAL}>41</b>
+          <small>Fahrzeuge mit Vaterstetten</small>
+        </article>
+        <article class="tile tile-yellow stat b-2 tap reveal" style="--i:2">
+          <b class="big">ab 1 €/h</b>
+          <small>tagsüber fahren · 0 € Monatsbeitrag</small>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SO GEHT'S ===================== -->
+  <section class="sec" id="so-gehts">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow"><span class="dot"></span> In 3 Schritten</p>
+        <h2>Mitglied werden — und losfahren</h2>
+      </header>
+      <div class="bento">
+        {steps.map((s, i) => (
+          <article class="tile b-2 tap reveal" style={`--i:${i}`}>
+            <span class="step-n">{s.n}</span>
+            <h3>{s.h}</h3>
+            <p class="muted-p">{s.t}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FLOTTE-BENTO ===================== -->
+  <section class="sec" id="flotte">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow"><span class="dot"></span> Die Flotte</p>
+        <h2>Fünf Fahrzeuge für jeden Zweck</h2>
+        <p>Vom Stadtflitzer übers E-Auto bis zum Transporter — alle an festen Stellplätzen.</p>
+      </header>
+      <div class="bento">
+        {cars.map((c, i) => (
+          <article class:list={['tile', 'car', c.lead ? 'b-4' : 'b-2', !c.lead ? 'm-1' : '', 'tap', 'reveal']} style={`--i:${i}`}>
+            <div class="car-photo">
+              <img src={c.img} alt={`${c.name} — Carsharing-Fahrzeug der ATG`} width="420" height="280" loading="lazy" />
+              <span class="car-badge chip chip-yellow">{c.badge}</span>
+            </div>
+            <div class="car-body">
+              <h3>{c.name}</h3>
+              <p class="car-type">{c.type}</p>
+              <div class="car-meta">
+                <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICONS.seat} /> {c.seats}</span>
+                <span class="chip chip-red tnum">{c.tarif}</span>
+              </div>
+              <p class="car-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICONS.pin} /> {c.loc}</p>
+            </div>
+          </article>
+        ))}
+        <article class="tile tile-ink coop b-6 tap reveal">
+          <div class="coop-grid">
+            <div>
+              <span class="coop-plus">+36</span>
+              <h3>Fahrzeuge nebenan in Vaterstetten</h3>
+              <p>Über die Kooperation nutzt du eine gemeinsame Flotte — beidseitig. Als Mitglied buchst du auf beiden Seiten.</p>
+            </div>
+            <a class="btn btn-yellow" href="https://www.carsharing-vaterstetten.de/" rel="noopener">Zu den Vaterstettenern ↗</a>
+          </div>
+        </article>
+      </div>
+      <p class="note">Phase 2: echte Fotos der Fahrzeuge an ihren realen Standorten + Detailseiten je Fahrzeug.</p>
+    </div>
+  </section>
+
+  <!-- ===================== STANDORTE ===================== -->
+  <section class="sec" id="standorte">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow"><span class="dot"></span> Standorte</p>
+        <h2>Direkt vor der Haustür</h2>
+      </header>
+      <div class="bento">
+        <article class="tile tile-2 b-2 m-1 legend-tile reveal">
+          <p class="tile-label">Legende</p>
+          <ul class="legend">
+            <li><i class="lg-atg"></i> ATG Grasbrunn (3 Standorte)</li>
+            <li><i class="lg-vat"></i> Partner Vaterstetten (~36)</li>
+            <li><i class="lg-mvv">S</i> MVV-Karten · Bahnhof Vaterstetten</li>
+          </ul>
+          <p class="fine">© OpenStreetMap · datensparsam, ohne Google-Tracking. Standorte ungefähr.</p>
+        </article>
+        <article class="tile b-4 map-tile reveal" style="--i:1">
+          <div id="v3-map" class="map" role="img" aria-label="Karte mit Carsharing-Standorten in Grasbrunn und Vaterstetten"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MVV ===================== -->
+  <section class="sec" id="mvv">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow"><span class="dot"></span> Nicht nur Autos</p>
+        <h2>Lieber Bus &amp; Bahn? Die MVV-Karten</h2>
+      </header>
+      <div class="bento">
+        <article class="tile b-3 reveal">
+          <p>Über unseren Partner Vaterstetten leihst du günstig MVV-Tageskarten — ideal für die Fahrt nach München.</p>
+          <ul class="ticks">
+            <li><b>Ab 4 €/Tag</b> — günstiger als ein normales MVV-Tagesticket</li>
+            <li><b>M-1 bis M-5</b> — Innenraum bis Umland (z. B. Flughafen)</li>
+            <li><b>Abholung</b> am Bahnhof Vaterstetten</li>
+          </ul>
+          <a class="btn btn-red" href={BOOK} rel="noopener">MVV-Karte buchen</a>
+        </article>
+        <article class="tile tile-ink b-3 reveal" style="--i:1">
+          <p class="tile-label">Sparrechner</p>
+          <label for="mvv-zone">MVV-Bereich</label>
+          <select id="mvv-zone">
+            {mvvZones.map((z, i) => (<option value={z.normal} selected={i === 0}>{z.label} — ca. {z.normal.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Tag</option>))}
+          </select>
+          <label for="mvv-days">Dauer: <span id="mvv-dv" class="val">1 Tag</span></label>
+          <input id="mvv-days" type="range" min="1" max="14" value="1" step="1" />
+          <div class="cmp">
+            <div class="cmp-col"><span>Selbst kaufen</span><b id="mvv-normal" class="tnum">9,90 €</b></div>
+            <div class="cmp-arrow">→</div>
+            <div class="cmp-col"><span>Über ATG/VAT</span><b id="mvv-atg" class="good tnum">4,00 €</b></div>
+          </div>
+          <div class="save">Ersparnis: <b id="mvv-save" class="tnum">5,90 €</b></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PREISE ===================== -->
+  <section class="sec" id="preise">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow"><span class="dot"></span> Preise</p>
+        <h2>Was kostet mich das?</h2>
+        <p>Nur Zeit plus Kilometer. Kein Monatsbeitrag, keine versteckten Gebühren.</p>
+      </header>
+      <div class="bento">
+        <article class="tile b-3 reveal">
+          <p class="tile-label">Tarife</p>
+          <dl class="prices">
+            <div><dt>Tagsüber (8–20 Uhr)</dt><dd class="tnum">1,00 €/h</dd></div>
+            <div><dt>Nachts (20–8 Uhr)</dt><dd class="tnum">0,20 €/h</dd></div>
+            <div><dt>km Kleinwagen</dt><dd class="tnum">ab 0,40 €/km</dd></div>
+            <div><dt>km E-Auto / größer</dt><dd class="tnum">ab 0,45 €/km</dd></div>
+            <div><dt>km Transporter</dt><dd class="tnum">ab 0,60 €/km</dd></div>
+            <div><dt>Aufnahme (einmalig)</dt><dd class="tnum">50 €</dd></div>
+            <div><dt>Einlage (zurück bei Austritt)</dt><dd class="tnum">600 €</dd></div>
+            <div><dt>Monatsbeitrag</dt><dd><span class="free">0 €</span></dd></div>
+          </dl>
+          <p class="fine">Stand 04/2026. Versicherung inkl. (SB Haftpflicht 200 € / Kasko 600 €).</p>
+        </article>
+        <article class="tile tile-ink b-3 reveal" style="--i:1">
+          <p class="tile-label">Kostenrechner</p>
+          <label for="calc-h">Dauer: <span id="calc-hv" class="val">3 Std.</span> tagsüber</label>
+          <input id="calc-h" type="range" min="1" max="24" value="3" step="1" />
+          <label for="calc-km">Strecke: <span id="calc-kmv" class="val">30 km</span></label>
+          <input id="calc-km" type="range" min="5" max="300" value="30" step="5" />
+          <label for="calc-cls">Fahrzeug</label>
+          <select id="calc-cls">
+            <option value="0.40">Kleinwagen (Corsa / Sandero) – 0,40 €/km</option>
+            <option value="0.45">E-Auto / Clio – 0,45 €/km</option>
+            <option value="0.60">Transporter (Trafic) – 0,60 €/km</option>
+          </select>
+          <div class="calc-result"><span>Beispielpreis</span><b id="calc-total" class="tnum">7,50 €</b></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="sec" id="faq">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow"><span class="dot"></span> Gut zu wissen</p>
+        <h2>Häufige Fragen</h2>
+      </header>
+      <div class="faq">
+        {faqs.map((f, i) => (
+          <details class="faq-item reveal" open={i === 0} style={`--i:${i}`}>
+            <summary>{f.q}<span class="faq-x" aria-hidden="true"></span></summary>
+            <div class="faq-a">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== KONTAKT / CTA ===================== -->
+  <section class="sec" id="kontakt">
+    <div class="wrap">
+      <article class="tile tile-red cta b-6" id="mitglied">
+        <h2>Möchtest du Mitglied werden?</h2>
+        <p>Werd Teil von Carsharing dahoam in Grasbrunn. Wir melden uns persönlich — einfach und unverbindlich.</p>
+        <div class="cta-row center">
+          <a class="btn btn-on-dark btn-lg" href="mailto:info@atg-grasbrunn.de?subject=Mitglied%20werden%20bei%20ATG">E-Mail schreiben</a>
+          <a class="btn btn-yellow btn-lg" href="tel:+498921541339">089 21541339 anrufen</a>
+          <a class="btn btn-on-red btn-lg" href="mailto:info@atg-grasbrunn.de?subject=R%C3%BCckruf%20gew%C3%BCnscht&body=Bitte%20ruft%20mich%20zu%20folgender%20Zeit%20an%3A%20">Rückruf anfordern</a>
+        </div>
+        <p class="cta-fine">Phase 2: sicheres Online-Antragsformular (DSGVO-konform, verschlüsselt) mit Dokumenten-Upload.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <script>
+    const h = document.getElementById('calc-h') as HTMLInputElement | null;
+    const km = document.getElementById('calc-km') as HTMLInputElement | null;
+    const cls = document.getElementById('calc-cls') as HTMLSelectElement | null;
+    const hv = document.getElementById('calc-hv'); const kmv = document.getElementById('calc-kmv'); const total = document.getElementById('calc-total');
+    if (h && km && cls && hv && kmv && total) {
+      const eur = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+      const calc = () => { const hours = parseInt(h.value, 10); const dist = parseInt(km.value, 10); const perKm = parseFloat(cls.value); hv.textContent = hours + ' Std.'; kmv.textContent = dist + ' km'; total.textContent = eur(hours * 1.0 + dist * perKm); };
+      [h, km, cls].forEach((el) => el.addEventListener('input', calc)); calc();
+    }
+  </script>
+  <script>
+    const mz = document.getElementById('mvv-zone') as HTMLSelectElement | null;
+    const md = document.getElementById('mvv-days') as HTMLInputElement | null;
+    const mdv = document.getElementById('mvv-dv'); const mnrm = document.getElementById('mvv-normal'); const matg = document.getElementById('mvv-atg'); const msv = document.getElementById('mvv-save');
+    const ATG_DAY = 4;
+    if (mz && md && mdv && mnrm && matg && msv) {
+      const eur = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+      const calc = () => { const d = parseInt(md.value, 10); const normalDay = parseFloat(mz.value); mdv.textContent = d + (d === 1 ? ' Tag' : ' Tage'); const nt = normalDay * d; const at = ATG_DAY * d; mnrm.textContent = eur(nt); matg.textContent = eur(at); msv.textContent = eur(Math.max(0, nt - at)); };
+      [mz, md].forEach((el) => el.addEventListener('input', calc)); calc();
+    }
+  </script>
+  <script type="application/json" id="v3-map-data" set:html={JSON.stringify(geo)}></script>
+  <script>
+    import 'leaflet/dist/leaflet.css';
+    const dataEl = document.getElementById('v3-map-data');
+    const geo = dataEl ? JSON.parse(dataEl.textContent || '{}') : { atg: [], vat: [], mvv: null };
+    const mapEl = document.getElementById('v3-map');
+    let loaded = false;
+    async function initMap() {
+      if (loaded || !mapEl) return; loaded = true;
+      const L = (await import('leaflet')).default;
+      const map = L.map('v3-map', { scrollWheelZoom: false });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(map);
+      const dot = (cls: string, label = '') => L.divIcon({ className: '', html: `<span class="v3pin ${cls}">${label}</span>`, iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] });
+      const pts: [number, number][] = [];
+      geo.vat.forEach((c: number[]) => { L.marker([c[0], c[1]], { icon: dot('v3pin-vat'), keyboard: false }).addTo(map).bindPopup('<b>Partner-Flotte Vaterstetten</b><br>Gemeinsam nutzbar über die Kooperation.'); pts.push([c[0], c[1]]); });
+      L.marker([geo.mvv.lat, geo.mvv.lng], { icon: dot('v3pin-mvv', 'S') }).addTo(map).bindPopup(`<b>${geo.mvv.name}</b><br>${geo.mvv.loc}`); pts.push([geo.mvv.lat, geo.mvv.lng]);
+      geo.atg.forEach((p: any) => { L.marker([p.lat, p.lng], { icon: dot('v3pin-atg') }).addTo(map).bindPopup(`<b>${p.name}</b><br>${p.loc}`); pts.push([p.lat, p.lng]); });
+      map.fitBounds(pts, { padding: [40, 40] }); setTimeout(() => map.invalidateSize(), 200);
+    }
+    if (mapEl) {
+      if ('IntersectionObserver' in window) { const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) { initMap(); io.disconnect(); } }, { rootMargin: '250px' }); io.observe(mapEl); }
+      else { initMap(); }
+    }
+  </script>
+
+  <style>
+    /* ===== HERO-BENTO ===== */
+    .hero-sec { padding-top: clamp(6rem, 13vh, 8.5rem); }
+    .hero-bento { grid-auto-rows: auto; }
+    .claim { justify-content: center; gap: .2rem; }
+    .claim h1 { font-size: clamp(2.3rem, 5.5vw, 4rem); margin: .3rem 0 .7rem; }
+    .claim h1 .hl { color: var(--red-deep); background-image: linear-gradient(transparent 58%, rgba(255,196,0,.85) 58%, rgba(255,196,0,.85) 92%, transparent 92%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+    .claim-lead { color: var(--muted); font-size: 1.08rem; max-width: 46ch; margin-bottom: 1.2rem; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: .7rem; }
+    .cta-row.center { justify-content: center; }
+    .quick { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
+    .quick .chip { color: var(--ink); }
+    .quick .chip:hover { border-color: color-mix(in srgb, var(--red) 35%, var(--line)); color: var(--red-deep); }
+
+    .photo { padding: 0; min-height: 280px; }
+    .photo img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-tag { position: absolute; left: .9rem; bottom: .9rem; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); background: rgba(0,0,0,.45); }
+
+    .stat { justify-content: center; gap: .15rem; }
+    .stat .big { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 4vw, 2.3rem); line-height: 1; }
+    .stat b:not(.big) { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; }
+    .stat small { font-size: .82rem; opacity: .85; }
+    .tile-yellow.stat small { color: var(--ink); opacity: .75; }
+    .live { display: inline-flex; align-items: center; gap: .4rem; font-size: .78rem; font-weight: 700; color: rgba(255,255,255,.85); margin-bottom: .3rem; }
+    .pulse { width: 9px; height: 9px; border-radius: 999px; background: #34d27b; box-shadow: 0 0 0 0 rgba(52,210,123,.5); }
+    @media (prefers-reduced-motion: no-preference) { .pulse { animation: pulse 2s infinite; } }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52,210,123,.5); } 70% { box-shadow: 0 0 0 9px rgba(52,210,123,0); } 100% { box-shadow: 0 0 0 0 rgba(52,210,123,0); } }
+
+    /* ===== SO GEHT'S ===== */
+    .step-n { font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; color: var(--red); margin-bottom: .5rem; }
+    .tile h3 { font-size: 1.2rem; margin-bottom: .3rem; }
+    .muted-p { color: var(--muted); }
+
+    /* ===== FLOTTE ===== */
+    .car { padding: 0; overflow: hidden; }
+    .car-photo { position: relative; aspect-ratio: 16/10; background: var(--bg); overflow: hidden; }
+    .car.b-4 .car-photo { aspect-ratio: 21/9; }
+    .car-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-out); }
+    .car:hover .car-photo img { transform: scale(1.05); }
+    .car-badge { position: absolute; top: .7rem; left: .7rem; }
+    .car-body { padding: 1.1rem 1.2rem 1.3rem; }
+    .car-body h3 { font-size: 1.18rem; }
+    .car-type { color: var(--red-deep); font-weight: 700; font-size: .84rem; margin: .12rem 0 .6rem; }
+    .car-meta { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem; }
+    .car-meta .chip { font-size: .78rem; padding: .32rem .6rem; }
+    .car-meta .chip svg { width: 14px; height: 14px; }
+    .car-loc { color: var(--muted); font-size: .88rem; display: flex; align-items: center; gap: .4rem; }
+    .car-loc svg { width: 15px; height: 15px; flex: none; color: var(--red); }
+
+    .coop { padding: clamp(1.3rem, 3vw, 2rem); }
+    .coop-grid { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
+    .coop-plus { font-family: var(--font-display); font-weight: 700; font-size: 2.2rem; color: var(--yellow); line-height: 1; display: block; }
+    .coop p { color: #d8d0c4; max-width: 52ch; margin-top: .3rem; }
+    .note { margin-top: 1.1rem; font-size: .84rem; color: var(--muted); }
+
+    /* ===== STANDORTE ===== */
+    .legend-tile { justify-content: center; }
+    .legend { list-style: none; padding: 0; display: grid; gap: .6rem; margin: .4rem 0 1rem; }
+    .legend li { display: flex; align-items: center; gap: .6rem; font-weight: 600; font-size: .92rem; }
+    .legend i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 999px; flex: none; font-style: normal; font-size: .6rem; font-weight: 800; color: #fff; }
+    .lg-atg { background: var(--red); } .lg-vat { background: var(--yellow); } .lg-mvv { background: var(--ink); color: var(--yellow); border: 1.5px solid var(--yellow); }
+    .map-tile { padding: .5rem; min-height: 340px; }
+    .map { width: 100%; height: 100%; min-height: 330px; border-radius: 16px; overflow: hidden; z-index: 0; }
+    :global(.v3pin) { display: grid; place-items: center; border-radius: 999px; border: 2px solid #fff; box-shadow: 0 3px 8px rgba(0,0,0,.45); font-family: var(--font-display); font-weight: 700; line-height: 1; color: #fff; }
+    :global(.v3pin-atg) { width: 22px; height: 22px; background: var(--red); }
+    :global(.v3pin-vat) { width: 13px; height: 13px; background: var(--yellow); border-width: 1.5px; opacity: .92; }
+    :global(.v3pin-mvv) { width: 24px; height: 24px; background: var(--ink); border-color: var(--yellow); color: var(--yellow); font-size: .72rem; }
+    :global(.leaflet-popup-content) { font-family: var(--font-body); font-size: .88rem; }
+    :global(.leaflet-container) { font-family: var(--font-body); }
+
+    /* ===== Rechner (MVV + Preise, dunkle Kacheln) ===== */
+    .ticks { list-style: none; padding: 0; margin: 1rem 0 1.2rem; display: grid; gap: .6rem; }
+    .ticks li { padding-left: 1.8rem; position: relative; color: var(--muted); font-size: .95rem; }
+    .ticks li::before { content: '✓'; position: absolute; left: 0; top: 0; width: 1.3rem; height: 1.3rem; display: grid; place-items: center; background: var(--yellow); color: var(--ink); border-radius: 999px; font-size: .68rem; font-weight: 800; }
+    .ticks b { color: var(--ink); }
+    .tile-ink label { display: block; font-weight: 700; margin: .85rem 0 .3rem; font-size: .92rem; color: #fff; }
+    .tile-ink select { width: 100%; padding: .65rem .7rem; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); background: var(--ink-soft); color: #fff; font: inherit; min-height: 46px; }
+    .tile-ink input[type='range'] { width: 100%; accent-color: var(--yellow); }
+    .val { color: var(--yellow); font-weight: 800; }
+    .cmp { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: .5rem; margin-top: 1rem; }
+    .cmp-col { background: rgba(255,255,255,.06); border-radius: 12px; padding: .75rem .5rem; text-align: center; }
+    .cmp-col span { display: block; font-size: .72rem; color: #cfc7bb; margin-bottom: .2rem; }
+    .cmp-col b { font-family: var(--font-display); font-size: 1.25rem; }
+    .good { color: var(--yellow); }
+    .cmp-arrow { color: #cfc7bb; font-weight: 800; }
+    .save { margin-top: .9rem; background: linear-gradient(180deg, var(--red-bright), var(--red)); border-radius: 12px; padding: .75rem 1.1rem; text-align: center; font-weight: 700; }
+    .save b { font-family: var(--font-display); font-size: 1.3rem; margin-left: .3rem; }
+    .prices { display: grid; gap: 0; margin: .6rem 0 0; }
+    .prices > div { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-bottom: 1px solid var(--line); }
+    .prices > div:last-child { border-bottom: 0; }
+    .prices dt { color: var(--ink); font-size: .95rem; }
+    .prices dd { margin: 0; font-weight: 700; }
+    .free { background: var(--ok); color: #fff; font-weight: 800; font-size: .76rem; padding: .2rem .6rem; border-radius: 999px; }
+    .calc-result { margin-top: 1rem; background: linear-gradient(180deg, var(--red-bright), var(--red)); border-radius: 14px; padding: 1rem 1.2rem; display: flex; justify-content: space-between; align-items: baseline; }
+    .calc-result b { font-family: var(--font-display); font-size: 1.9rem; }
+    .fine { font-size: .8rem; color: var(--muted); margin-top: .8rem; }
+    .tile-ink .fine { color: #cfc7bb; }
+
+    /* ===== FAQ ===== */
+    .faq { display: grid; gap: .7rem; max-width: 860px; }
+    .faq-item { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: var(--sh-1); }
+    .faq-item summary { cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 1.04rem; padding: 1.05rem 1.25rem; list-style: none; display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-x { position: relative; width: 17px; height: 17px; flex: none; }
+    .faq-x::before, .faq-x::after { content: ''; position: absolute; background: var(--red); border-radius: 2px; transition: transform var(--dur) var(--ease-out); }
+    .faq-x::before { top: 7.5px; left: 0; width: 17px; height: 2.5px; }
+    .faq-x::after { left: 7.5px; top: 0; width: 2.5px; height: 17px; }
+    .faq-item[open] .faq-x::after { transform: scaleY(0); }
+    .faq-a { padding: 0 1.25rem 1.15rem; color: var(--muted); }
+
+    /* ===== CTA ===== */
+    .cta { align-items: center; text-align: center; padding: clamp(2.4rem, 5vw, 3.6rem) clamp(1.3rem, 4vw, 2.5rem); }
+    .cta h2 { font-size: clamp(1.8rem, 4.5vw, 2.8rem); max-width: 18ch; margin-bottom: .6rem; }
+    .cta p { max-width: 50ch; margin-bottom: 1.4rem; color: #ffe7e3; }
+    .cta-fine { font-size: .82rem; color: #ffd6d0; margin-top: 1rem; }
+  </style>
+</BaseV3>

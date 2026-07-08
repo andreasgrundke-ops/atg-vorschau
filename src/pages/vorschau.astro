@@ -24,12 +24,10 @@ import '@fontsource-variable/jetbrains-mono';
 
 const base = import.meta.env.BASE_URL;
 
-// Zwei Design-Entwürfe zum direkten Vergleich. V1 ist eingefroren, V2 ist neu
-// (modern/App-Feeling). Der Kunde entscheidet am Ende, welcher veröffentlicht wird.
+// Nur noch der finale Entwurf (Kino-Hero). V2/V3 wurden auf Kundenwunsch
+// zurückgezogen (2026-07-08) — die Routen /v2 /v3 werden nicht mehr gebaut.
 const versions = [
-  { key: 'v1', label: 'Entwurf 1', sub: 'Klassisch · Kino-Hero', src: base },
-  { key: 'v2', label: 'Entwurf 2', sub: 'Modern · App-Feeling', src: `${base}v2/` },
-  { key: 'v3', label: 'Entwurf 3', sub: 'Bento · Dashboard', src: `${base}v3/` },
+  { key: 'v1', label: 'Entwurf', sub: 'Klassisch · Kino-Hero', src: base },
 ];
 
 const tiles = [
@@ -130,12 +128,10 @@ const icons = {
         <p class="s-label">Entwurfspaket zur Ansicht</p>
         <h1>Ihr neuer Webauftritt für<br /><span class="cyan">Auto-Teiler Grasbrunn e.V.</span></h1>
         <p class="lead">
-          Hallo Herr Böhme, hier sind <b>drei Design-Entwürfe</b> für den neuen Auftritt der
-          Auto-Teiler Grasbrunn e.V. — als Nachfolger der bestehenden Seite. <b>Entwurf 1</b>
-          (klassisch, mit großem Kino-Hero), <b>Entwurf 2</b> (moderner, mit App-Feeling fürs
-          Handy) und <b>Entwurf 3</b> (Bento-Kacheln, übersichtlicher Dashboard-Look). Schalten Sie
-          in der Vorschau einfach zwischen den Varianten um und schauen Sie jede in der
-          <b>PC-, Tablet- und Handy-Ansicht</b> an — dazu <b>Flyer</b> und <b>Visitenkarte</b>.
+          Hallo Herr Böhme, hier ist der <b>Design-Entwurf</b> für den neuen Auftritt der
+          Auto-Teiler Grasbrunn e.V. — als Nachfolger der bestehenden Seite: klassisch, mit
+          großem Kino-Hero. Schauen Sie ihn in der <b>PC-, Tablet- und Handy-Ansicht</b> an —
+          dazu <b>Flyer</b> und <b>Visitenkarte</b>.
         </p>
         <div class="hero-cta">
           <button class="btn-p" type="button" id="toPreview">
@@ -149,10 +145,9 @@ const icons = {
 
     <main class="inner">
       <div class="note">
-        <b>Drei Entwürfe zur Auswahl (Mockups).</b> Oben in der Vorschau schalten Sie zwischen
-        <b>Entwurf 1, 2 und 3</b> um. Texte, Fotos, Farben und Kontaktdaten lassen sich bei allen
-        noch frei anpassen — sagen Sie mir einfach, welche Richtung Ihnen am besten gefällt und was
-        wir ändern. Die Seite geht erst nach Ihrer Freigabe online und ist aktuell nur über diesen Link erreichbar.
+        <b>Entwurf zur Ansicht (Mockup).</b> Texte, Fotos, Farben und Kontaktdaten lassen sich
+        noch frei anpassen — sagen Sie mir einfach, was wir ändern. Die Seite geht erst nach Ihrer
+        Freigabe online und ist aktuell nur über diesen Link erreichbar.
       </div>
 
       <!-- Geräte-Vorschau -->
@@ -181,7 +176,7 @@ const icons = {
 
         <div class="stage" id="stage">
           <div class="device" id="device">
-            <iframe id="frame" src={`${base}v3/`} title="Vorschau der Website Auto-Teiler Grasbrunn e.V." loading="eager"></iframe>
+            <iframe id="frame" src={base} title="Vorschau der Website Auto-Teiler Grasbrunn e.V." loading="eager"></iframe>
           </div>
         </div>
         <p class="stage-note" id="stageNote">PC-Ansicht · 1440 × 900</p>
@@ -273,7 +268,7 @@ const icons = {
       const tiles = Array.from(document.querySelectorAll<HTMLButtonElement>('.tile[data-mode]'));
 
       let mode = 'desktop';
-      let ver = 'v3'; // Default: neuester Entwurf zuerst zeigen
+      let ver = 'v1'; // Nur noch ein Entwurf (v2/v3 zurückgezogen)
 
       // Versions-Umschalter: iframe-Quelle zwischen Entwurf 1 (/) und Entwurf 2 (/v2/) wechseln.
       const frame = document.getElementById('frame') as HTMLIFrameElement;
@@ -343,7 +338,7 @@ const icons = {
       window.addEventListener('resize', fit, { passive: true });
 
       const params = new URLSearchParams(location.search);
-      setVer(params.get('v') || 'v3');
+      setVer(params.get('v') || 'v1');
       setMode(params.get('d') || 'desktop');
     </script>
 

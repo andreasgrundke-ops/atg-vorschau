@@ -24,9 +24,9 @@ const base = import.meta.env.BASE_URL;
     </span>
     <span>Mitglied</span>
   </a>
-  <a class="tab" href={`${base}#mvv`} data-spy="mvv">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="14" rx="3"/><path d="M4 11h16"/><circle cx="8.5" cy="14" r="1"/><circle cx="15.5" cy="14" r="1"/><path d="m8 17-2 4M16 17l2 4"/></svg>
-    <span>MVV</span>
+  <a class="tab" href={`${base}#preise`} data-spy="preise">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    <span>Preise</span>
   </a>
   <a class="tab" href={`${base}#kontakt`} data-spy="kontakt">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -73,7 +73,7 @@ const base = import.meta.env.BASE_URL;
   const tabs = Array.from(document.querySelectorAll<HTMLAnchorElement>('.tab[data-spy]'));
   const byId: Record<string, HTMLAnchorElement> = {};
   tabs.forEach((t) => { const id = t.dataset.spy; if (id) byId[id] = t; });
-  const ids = ['top', 'flotte', 'mvv', 'kontakt'];
+  const ids = ['top', 'flotte', 'preise', 'kontakt'];
   const sections = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
   if (sections.length) {
     const io = new IntersectionObserver((entries) => {

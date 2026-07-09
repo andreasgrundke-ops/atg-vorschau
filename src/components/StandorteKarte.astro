@@ -3,26 +3,31 @@
  * StandorteKarte — interaktive Karte der Carsharing-Standorte.
  *
  * Titel:        ATG Carsharing — Standorte-Karte
- * Version:      1.1
+ * Version:      2.0
  * Autor:        Grundke IT-Service
- * Datum:        2026-06-27
+ * Datum:        2026-07-08
  * Beschreibung: OpenStreetMap/Leaflet-Karte (DSGVO-freundlich, KEIN Google-Tracking).
- *               ATG-Standorte in Grasbrunn/Neukeferloh prominent (rot), Partner-Flotte
- *               Vaterstetten ergänzend (gelb), MVV-Karten-Abholung am Bahnhof
- *               Vaterstetten (dunkel/„S"). Marker sind runde CSS-DivIcons — keine
- *               externen Bild-Assets, base-Path-sicher. Lazy-Init via IntersectionObserver.
+ *               Alle 5 ATG-Fahrzeuge in Neukeferloh (rote nummerierte Marker), KEINE
+ *               Partner-/VAT-Pins. Zweispaltig eingebettet: Standort-Liste (klickbar)
+ *               + Karte. Klick auf einen Standort — hier oder in der Flotte-Galerie
+ *               (Event „atg:highlight") — markiert das Fahrzeug, während alle sichtbar
+ *               bleiben. Marker sind runde CSS-DivIcons (base-Path-sicher), Lazy-Init.
  * Änderungshistorie:
  *   2026-06-27  1.0  Erstausgabe — ATG (Neukeferloh) + VAT (37 Pins) + MVV-Bahnhof.
  *   2026-06-27  1.1  Runde Marker (sauberer), Lazy-Load der Tiles.
+ *   2026-07-08  2.0  Alle 5 ATG-KFZ, Karten-Karte im CI-Look, Standort-Liste,
+ *                    Klick-Markierung + Sprung aus der Flotte-Galerie.
  */
 import 'leaflet/dist/leaflet.css';
 
-// Nur die ATG-eigenen Fahrzeuge in Neukeferloh (Kundenwunsch 2026-07-08:
-// keine Partner-/MVV-Pins auf der Karte).
+// Nur die ATG-eigenen Fahrzeuge in Neukeferloh (Kundenwunsch: keine VAT-Pins).
+// Standorte ungefähr — genaue Stellplätze stehen vor Ort / im Buchungssystem.
 const atg = [
-  { name: 'Renault ZOE (E-Auto)', loc: 'Am Rathaus, Neukeferloh', lat: 48.09617, lng: 11.76036 },
-  { name: 'Opel Corsa', loc: 'Finkenstraße, hinter der Kirche', lat: 48.09781, lng: 11.75959 },
-  { name: 'Dacia Sandero', loc: 'Ecke Waldstraße / Saarlandstraße', lat: 48.09560, lng: 11.76071 },
+  { slug: 'zoe', name: 'Renault ZOE', kfz: 'E-Auto', loc: 'Am Rathaus, Neukeferloh', lat: 48.09617, lng: 11.76036 },
+  { slug: 'corsa', name: 'Opel Corsa', kfz: 'Kleinwagen', loc: 'Finkenstraße, hinter der Kirche', lat: 48.09781, lng: 11.75959 },
+  { slug: 'sandero', name: 'Dacia Sandero', kfz: 'Kleinwagen', loc: 'Ecke Waldstraße / Saarlandstraße', lat: 48.09560, lng: 11.76071 },
+  { slug: 'clio', name: 'Renault Clio Grandtour', kfz: 'Kombi', loc: 'Dianastraße (beim Orterer)', lat: 48.09720, lng: 11.76300 },
+  { slug: 'trafic', name: 'Renault Trafic', kfz: 'Kleinbus · 9 Sitze', loc: 'Neukeferloh', lat: 48.09470, lng: 11.75880 },
 ];
 const data = { atg };
 ---
@@ -33,16 +38,32 @@ const data = { atg };
       <p class="kicker"><span class="dot"></span> Standorte</p>
       <h2>Direkt vor der Haustür in Neukeferloh</h2>
       <p>
-        Die ATG-Fahrzeuge stehen an festen Stellplätzen mitten in Neukeferloh — vom Rathaus
-        über die Finkenstraße bis zur Waldstraße. Kurzer Weg, schnell losgefahren.
+        Alle fünf ATG-Fahrzeuge stehen an festen Stellplätzen mitten in Neukeferloh — vom Rathaus
+        über die Finken- und Dianastraße bis zur Waldstraße. Tippe auf einen Standort, dann springt
+        die Karte zum Fahrzeug.
       </p>
     </header>
 
-    <div class="map-legend">
-      <span class="lg lg-atg"><i></i> ATG-Fahrzeuge in Neukeferloh</span>
+    <div class="std-card">
+      <div class="std-list" aria-label="Fahrzeug-Standorte">
+        {atg.map((p, i) => (
+          <button class="std-chip" type="button" data-slug={p.slug}>
+            <span class="std-num">{i + 1}</span>
+            <span class="std-chip-txt">
+              <b>{p.name}</b>
+              <small>{p.loc}</small>
+            </span>
+            <span class="std-chip-kfz">{p.kfz}</span>
+          </button>
+        ))}
+        <p class="std-legend"><i></i> ATG-Fahrzeuge in Neukeferloh — keine Fremdfahrzeuge.</p>
+      </div>
+
+      <div class="std-map-wrap">
+        <div id="atg-map" class="map" role="img" aria-label="Karte mit den 5 Carsharing-Standorten der ATG in Neukeferloh"></div>
+      </div>
     </div>
 
-    <div id="atg-map" class="map" role="img" aria-label="Karte mit den Carsharing-Standorten der ATG in Neukeferloh"></div>
     <p class="map-note">
       Karte: © OpenStreetMap-Mitwirkende · datensparsam, ohne Google-Tracking. Standorte ungefähr —
       die genauen Stellplätze stehen vor Ort und im Buchungssystem.
@@ -54,11 +75,13 @@ const data = { atg };
 
 <script>
   // Gebündeltes Modul-Script (kein define:vars → Vite löst den leaflet-Import auf).
-  // Daten kommen aus dem JSON-Script oben.
   const dataEl = document.getElementById('atg-map-data');
   const data = dataEl ? JSON.parse(dataEl.textContent || '{}') : { atg: [] };
   const mapEl = document.getElementById('atg-map');
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.std-chip'));
   let loaded = false;
+  let pending: string | null = null;
+  let doHighlight: ((slug: string) => void) | null = null;
 
   async function initMap() {
     if (loaded || !mapEl) return;
@@ -71,23 +94,47 @@ const data = { atg };
       attribution: '&copy; OpenStreetMap',
     }).addTo(map);
 
-    const dot = (cls, label = '') =>
-      L.divIcon({ className: '', html: `<span class="dot-pin ${cls}">${label}</span>`, iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] });
+    const dot = (cls: string, label = '') =>
+      L.divIcon({ className: '', html: `<span class="dot-pin ${cls}">${label}</span>`, iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -13] });
 
-    const pts = [];
+    const markers: Record<string, any> = {};
+    const pts: [number, number][] = [];
 
-    data.atg.forEach((p) => {
-      L.marker([p.lat, p.lng], { icon: dot('dp-atg') })
+    data.atg.forEach((p: any, i: number) => {
+      const m = L.marker([p.lat, p.lng], { icon: dot('dp-atg', String(i + 1)) })
         .addTo(map)
         .bindPopup(`<b>${p.name}</b><br>${p.loc}`);
+      markers[p.slug] = m;
       pts.push([p.lat, p.lng]);
     });
 
-    map.fitBounds(pts, { padding: [40, 40] });
+    map.fitBounds(pts, { padding: [45, 45] });
     setTimeout(() => map.invalidateSize(), 200);
+
+    doHighlight = (slug: string) => {
+      Object.entries(markers).forEach(([s, m]) => {
+        const el = (m as any).getElement?.();
+        el?.querySelector('.dot-pin')?.classList.toggle('is-hl', s === slug);
+      });
+      chips.forEach((c) => c.classList.toggle('is-active', c.dataset.slug === slug));
+      const m = markers[slug];
+      if (m) { map.panTo(m.getLatLng(), { animate: true }); m.openPopup(); }
+    };
+
+    if (pending) { doHighlight(pending); pending = null; }
   }
 
-  if ('IntersectionObserver' in window) {
+  // Highlight anfordern — initialisiert die Karte bei Bedarf zuerst.
+  const requestHighlight = (slug: string) => {
+    if (!slug) return;
+    if (loaded && doHighlight) doHighlight(slug);
+    else { pending = slug; initMap(); }
+  };
+
+  chips.forEach((c) => c.addEventListener('click', () => requestHighlight(c.dataset.slug || '')));
+  window.addEventListener('atg:highlight', (e) => requestHighlight((e as CustomEvent).detail?.slug || ''));
+
+  if ('IntersectionObserver' in window && mapEl) {
     const io = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) { initMap(); io.disconnect(); }
     }, { rootMargin: '250px' });
@@ -101,17 +148,44 @@ const data = { atg };
   .kicker { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-red-deep); margin-bottom: 0.6rem; }
   .kicker .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--color-yellow); }
 
-  .map-legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; margin-bottom: 1rem; }
-  .lg { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 0.9rem; color: var(--color-ink); }
-  .lg i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 999px; flex: none; box-shadow: 0 1px 3px rgba(0,0,0,.25); font-style: normal; font-size: 0.62rem; font-weight: 800; color: #fff; }
-  .lg-atg i { background: var(--color-red); }
+  /* Eingebettete Karten-Karte: Standort-Liste + Karte in einem CI-Rahmen */
+  .std-card {
+    display: grid; grid-template-columns: 1fr;
+    border: 1px solid var(--color-line); border-radius: var(--radius-card, 14px);
+    overflow: hidden; background: var(--color-surface);
+    box-shadow: 0 24px 54px -34px rgba(24, 21, 19, 0.5);
+  }
+  @media (min-width: 860px) { .std-card { grid-template-columns: 320px 1fr; } }
 
-  .map { width: 100%; height: clamp(360px, 60vh, 560px); border-radius: var(--radius-card, 14px); overflow: hidden; border: 1px solid var(--color-line); box-shadow: 0 18px 44px -28px rgba(24,21,19,.5); z-index: 0; }
+  .std-list { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; background: var(--color-bg); border-bottom: 1px solid var(--color-line); }
+  @media (min-width: 860px) { .std-list { border-bottom: 0; border-right: 1px solid var(--color-line); } }
+
+  .std-chip {
+    display: flex; align-items: center; gap: 0.7rem; width: 100%;
+    background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 12px;
+    padding: 0.6rem 0.75rem; cursor: pointer; text-align: left; font: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+  }
+  .std-chip:hover { border-color: var(--color-red); transform: translateY(-1px); }
+  .std-chip.is-active { border-color: var(--color-red); box-shadow: 0 0 0 2px var(--color-red-soft), 0 10px 24px -16px rgba(212, 42, 34, 0.6); }
+  .std-num { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; background: var(--color-red); color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; }
+  .std-chip.is-active .std-num { background: var(--color-red-deep); }
+  .std-chip-txt { display: grid; min-width: 0; }
+  .std-chip-txt b { font-family: var(--font-display); font-size: 0.98rem; line-height: 1.1; }
+  .std-chip-txt small { color: var(--color-muted); font-size: 0.8rem; }
+  .std-chip-kfz { margin-left: auto; flex: none; font-size: 0.7rem; font-weight: 800; color: var(--color-red-deep); background: var(--color-red-soft); padding: 0.18rem 0.5rem; border-radius: 999px; white-space: nowrap; }
+  .std-legend { margin: 0.4rem 0 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.78rem; color: var(--color-muted); }
+  .std-legend i { width: 12px; height: 12px; border-radius: 999px; background: var(--color-red); flex: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
+
+  .std-map-wrap { min-height: 0; }
+  .map { width: 100%; height: clamp(320px, 55vh, 540px); z-index: 0; }
+  @media (min-width: 860px) { .map { height: 100%; min-height: 440px; } }
   .map-note { font-size: 0.78rem; color: var(--color-muted); margin-top: 0.8rem; }
 
   /* Runde CSS-Marker (keine externen Bilder, base-Path-sicher) */
-  :global(.dot-pin) { display: grid; place-items: center; border-radius: 999px; border: 2px solid #fff; box-shadow: 0 3px 8px rgba(0,0,0,.45); font-family: var(--font-display, sans-serif); font-weight: 800; line-height: 1; color: #fff; }
-  :global(.dp-atg) { width: 22px; height: 22px; background: var(--color-red, #d42a22); }
+  :global(.dot-pin) { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; border: 2px solid #fff; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45); font-family: var(--font-display, sans-serif); font-weight: 800; font-size: 0.8rem; line-height: 1; color: #fff; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  :global(.dp-atg) { background: var(--color-red, #d42a22); }
+  :global(.dot-pin.is-hl) { transform: scale(1.3); box-shadow: 0 0 0 6px rgba(212, 42, 34, 0.32), 0 4px 10px rgba(0, 0, 0, 0.5); z-index: 1000; }
   :global(.leaflet-popup-content) { font-family: var(--font-body, sans-serif); font-size: 0.88rem; }
   :global(.leaflet-container) { font-family: var(--font-body, sans-serif); }
 </style>

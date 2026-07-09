@@ -27,7 +27,7 @@ const cars = [
 ];
 const steps = [
   { n: '1', h: 'Online melden', t: 'Kurzes Formular — wir melden uns persönlich.' },
-  { n: '2', h: 'Unterlagen & Einlage', t: '50 € Aufnahme + 600 € Einlage (zurück bei Austritt).' },
+  { n: '2', h: 'Unterlagen & Einlage', t: '50 € Aufnahme + 600 € Einlage je Haushalt (zurück bei Austritt).' },
   { n: '3', h: 'Einweisung & losfahren', t: 'Transponderkarte — ab dann buchst du selbst.' },
 ];
 ---
@@ -73,8 +73,8 @@ const steps = [
           <p class="kicker"><span class="dot"></span> Carsharing dahoam</p>
           <p class="teaser-lead">Teil dir ein Auto, statt eins zu besitzen — direkt um die Ecke in Grasbrunn, ohne Monatsbeitrag.</p>
           <div class="stats">
-            <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag</span></div>
-            <div class="stat"><b>1&nbsp;€/h</b><span>tagsüber</span></div>
+            <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag · Sprit inkl.</span></div>
+            <div class="stat"><b>ab 1&nbsp;€/h</b><span>tagsüber · zzgl. km</span></div>
             <div class="stat"><b>41</b><span>Fahrzeuge mit VAT</span></div>
           </div>
           <div class="mvv-mini">
@@ -118,11 +118,11 @@ const steps = [
           <h3>Was kostet das?</h3>
           <table class="tariffs">
             <tbody>
-              <tr><td>Tagsüber (8–20 Uhr)</td><td>1,00 €/h</td></tr>
-              <tr><td>Nachts (20–8 Uhr)</td><td>0,20 €/h</td></tr>
-              <tr><td>Kilometer ab</td><td>0,40 €/km</td></tr>
+              <tr><td>Tagsüber (8–20 Uhr)</td><td>ab 1,00 €/h</td></tr>
+              <tr><td>Nachts (20–8 Uhr)</td><td>ab 0,20 €/h</td></tr>
+              <tr><td>Kilometer (Sprit inkl.)</td><td>ab 0,40 €/km</td></tr>
               <tr><td>Aufnahme / Einlage</td><td>50 € / 600 €</td></tr>
-              <tr><td>Versicherung</td><td>inklusive</td></tr>
+              <tr><td>Versicherung &amp; Sprit</td><td>inklusive</td></tr>
             </tbody>
           </table>
           <div class="mvv-box">

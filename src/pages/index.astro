@@ -19,7 +19,7 @@ const heroSlides = [
     kind: 'kfz', img: heroPhoto, pos: 'center 55%',
     h1a: 'Weniger Autos.', h1b: 'Dennoch mobil.',
     lead: 'Teil dir ein Auto, statt eins zu besitzen — vom E-Auto bis zum 9-Sitzer Kleinbus, direkt um die Ecke. <strong>Ohne Monatsbeitrag.</strong>',
-    tag: 'Renault ZOE — emissionsfrei, ab 1 €/h tagsüber',
+    tag: 'Renault ZOE — emissionsfrei · ab 1 €/h zzgl. km · Sprit inklusive',
   },
   {
     kind: 'kfz', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg', pos: 'center 50%',
@@ -35,13 +35,63 @@ const heroSlides = [
   },
 ];
 
+// Führerscheinklasse: alle Fahrzeuge ≤ 3,5 t und ≤ 9 Sitze → Klasse B (alt: Klasse 3).
+// ISOFIX: alle Fahrzeuge haben ISOFIX-Halterungen für Kindersitze.
+// ahk (Anhängerkupplung): null = noch bestätigen (Angabe folgt vom Verein).
 const cars = [
-  { name: 'Renault ZOE', type: 'Elektro · emissionsfrei', badge: 'E-Auto · Wallbox', loc: 'Am Rathaus, Neukeferloh', seats: '5 Sitze', tarif: 'ab 0,45 €/km', img: heroPhoto },
-  { name: 'Opel Corsa', type: 'Wendiger Stadtflitzer', badge: 'Kleinwagen', loc: 'Finkenstraße, hinter der Kirche', seats: '5 Sitze', tarif: 'ab 0,40 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Opel-Corsa-NEU.jpg' },
-  { name: 'Dacia Sandero', type: 'Günstig & praktisch', badge: 'Kleinwagen', loc: 'Ecke Waldstraße / Saarlandstraße', seats: '5 Sitze', tarif: 'ab 0,40 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Dacia-Sandero-NEU-1.jpg' },
-  { name: 'Renault Clio Grandtour', type: 'Kombi mit großem Kofferraum', badge: 'Kombi', loc: 'Neukeferloh', seats: '5 Sitze · großer Kofferraum', tarif: 'ab 0,45 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg' },
-  { name: 'Renault Trafic', type: 'Kleinbus — 9 Sitze für Gruppen & Ausflüge', badge: 'Kleinbus · 9 Sitze', loc: 'Neukeferloh', seats: '9 Sitze', tarif: 'ab 0,60 €/km', img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg' },
+  {
+    slug: 'zoe', name: 'Renault ZOE', type: 'Elektro · emissionsfrei', badge: 'E-Auto',
+    loc: 'Am Rathaus, Neukeferloh', seats: '5 Sitze', tarif: 'ab 0,45 €/km',
+    antrieb: 'Elektro', schaltung: 'Automatik', isofix: true, fuehrerschein: 'Klasse B (alt: 3)', ahk: null,
+    img: heroPhoto,
+  },
+  {
+    slug: 'corsa', name: 'Opel Corsa', type: 'Wendiger Stadtflitzer', badge: 'Kleinwagen',
+    loc: 'Finkenstraße, hinter der Kirche', seats: '5 Sitze', tarif: 'ab 0,40 €/km',
+    antrieb: 'Benzin', schaltung: 'Schaltgetriebe', isofix: true, fuehrerschein: 'Klasse B (alt: 3)', ahk: null,
+    img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Opel-Corsa-NEU.jpg',
+  },
+  {
+    slug: 'sandero', name: 'Dacia Sandero', type: 'Günstig & praktisch', badge: 'Kleinwagen',
+    loc: 'Ecke Waldstraße / Saarlandstraße', seats: '5 Sitze', tarif: 'ab 0,40 €/km',
+    antrieb: 'Benzin', schaltung: 'Schaltgetriebe', isofix: true, fuehrerschein: 'Klasse B (alt: 3)', ahk: null,
+    img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Dacia-Sandero-NEU-1.jpg',
+  },
+  {
+    slug: 'clio', name: 'Renault Clio Grandtour', type: 'Kombi mit großem Kofferraum', badge: 'Kombi',
+    loc: 'Dianastraße (beim Orterer), Neukeferloh', seats: '5 Sitze · großer Kofferraum', tarif: 'ab 0,45 €/km',
+    antrieb: 'Benzin', schaltung: 'Schaltgetriebe', isofix: true, fuehrerschein: 'Klasse B (alt: 3)', ahk: null,
+    img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg',
+  },
+  {
+    slug: 'trafic', name: 'Renault Trafic', type: 'Kleinbus — 9 Sitze für Gruppen & Ausflüge', badge: 'Kleinbus · 9 Sitze',
+    loc: 'Neukeferloh', seats: '9 Sitze', tarif: 'ab 0,60 €/km',
+    antrieb: 'Diesel', schaltung: 'Schaltgetriebe', isofix: true, fuehrerschein: 'Klasse B (alt: 3)', ahk: null,
+    img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg',
+  },
 ];
+
+// Kompakte Ausstattungs-Chips je Fahrzeug (für Galerie-Slide „Ausstattung").
+const equip = (c) => [
+  { ic: 'seat', t: c.seats },
+  { ic: 'gear', t: c.schaltung },
+  { ic: 'fuel', t: c.antrieb },
+  { ic: 'child', t: 'ISOFIX' },
+  { ic: 'licence', t: c.fuehrerschein },
+  { ic: 'trailer', t: c.ahk === true ? 'mit AHK' : c.ahk === false ? 'ohne AHK' : 'AHK auf Anfrage' },
+];
+
+// Inline-SVG-Icons (aria-hidden, dekorativ). Lucide-Stil, stroke=currentColor.
+const S = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+const icons = {
+  pin: `<svg ${S}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  seat: `<svg ${S}><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 15a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/><path d="M5 18v2M19 18v2"/></svg>`,
+  gear: `<svg ${S}><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>`,
+  fuel: `<svg ${S}><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>`,
+  child: `<svg ${S}><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2 2 4-4.5"/></svg>`,
+  licence: `<svg ${S}><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h3"/></svg>`,
+  trailer: `<svg ${S}><rect x="2" y="8" width="14" height="8" rx="1"/><path d="M16 14h2"/><circle cx="20" cy="16" r="2"/></svg>`,
+};
 
 const steps = [
   { n: '1', h: 'Online melden', t: 'Kurzes Formular ausfüllen. Wir melden uns mit allen Infos zum Verein und zur Carsharing-Teilnahme.' },
@@ -50,8 +100,8 @@ const steps = [
 ];
 
 const faqs = [
-  { q: 'Was kostet Carsharing bei ATG?', a: 'Tagsüber 1,00 €/Std., nachts 0,20 €/Std., dazu Kilometer ab 0,40 €/km je nach Fahrzeug. Einmalig 50 € Aufnahme und 600 € Einlage (bei Austritt zurück). Kein Monatsbeitrag.' },
-  { q: 'Wie werde ich Mitglied?', a: 'Online melden, Ausweis und Führerschein nachreichen, Einlage zahlen, kurze Einweisung vor Ort — dann buchst du selbstständig.' },
+  { q: 'Was kostet Carsharing bei ATG?', a: 'Tagsüber ab 1,00 €/Std., nachts ab 0,20 €/Std. — jeweils zzgl. Kilometer ab 0,40 €/km je nach Fahrzeug. Der Sprit ist inklusive: getankt wird mit der Tankkarte im Fahrzeug, du zahlst und verauslagst nichts. Einmalig 50 € Aufnahme und 600 € Einlage (bei Austritt zurück) — je Haushalt einmal, egal wie viele Fahrer. Kein Monatsbeitrag.' },
+  { q: 'Wie werde ich Mitglied?', a: 'Online melden, Ausweis und Führerschein nachreichen, Einlage zahlen, kurze Einweisung vor Ort — dann buchst du selbstständig. Je Haushalt genügt eine Mitgliedschaft mit einer Einlage — alle Fahrer im Haushalt sind mit dabei.' },
   { q: 'Wo stehen die Fahrzeuge?', a: 'An festen Stellplätzen in Neukeferloh (u.a. Rathaus, Finkenstraße, Waldstraße/Saarlandstraße). Über die Kooperation mit den Vaterstettener Auto-Teilern kannst du zusätzlich deren Fahrzeuge nutzen.' },
   { q: 'Ist der Sprit im Preis enthalten?', a: 'Ja. Sprit und Versicherung sind in den Kilometerpreisen bereits enthalten. Die Tankkarte liegt im Fahrzeug — du zahlst keinen Cent extra fürs Tanken.' },
   { q: 'Gibt es einen Monatsbeitrag?', a: 'Nein. Nur die einmalige Einlage (rückzahlbar) und der Aufnahmebeitrag. Bezahlt wird nur, was tatsächlich gefahren wird.' },
@@ -121,9 +171,9 @@ const faqSchema = {
   <section class="stats">
     <div class="wrap stats-grid">
       <div class="stat"><b data-count="5">5</b><span>Fahrzeuge in Neukeferloh</span></div>
-      <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag</span></div>
-      <div class="stat"><b>1&nbsp;€/h</b><span>tagsüber fahren</span></div>
-      <div class="stat"><b>0,20&nbsp;€/h</b><span>nachts fahren</span></div>
+      <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag · Sprit inkl.</span></div>
+      <div class="stat"><b>ab&nbsp;1&nbsp;€/h</b><span>tagsüber · zzgl. km</span></div>
+      <div class="stat"><b>ab&nbsp;0,20&nbsp;€/h</b><span>nachts · zzgl. km</span></div>
     </div>
   </section>
 
@@ -155,19 +205,49 @@ const faqSchema = {
       </header>
       <div class="cars">
         {cars.map((c) => (
-          <article class="car">
-            <div class="car-photo">
-              <img src={c.img} alt={`${c.name} – Carsharing-Fahrzeug der ATG`} width="400" height="260" loading="lazy" />
-              <span class="car-badge">{c.badge}</span>
+          <article class="car" data-car={c.slug}>
+            <div class="car-gallery" data-gallery aria-label={`Galerie ${c.name}: Fahrzeug, Standort, Ausstattung`}>
+              <figure class="cg-slide cg-photo is-on" style={`background-image:url(${c.img})`}>
+                <span class="car-badge">{c.badge}</span>
+                <figcaption class="cg-cap">Das Fahrzeug</figcaption>
+              </figure>
+              <figure class="cg-slide cg-standort">
+                <div class="cg-inner">
+                  <span class="cg-ic" set:html={icons.pin}></span>
+                  <b>Standort</b>
+                  <span class="cg-loc">{c.loc}</span>
+                  <button class="cg-maplink" type="button" data-map={c.slug}>Auf der Karte zeigen →</button>
+                </div>
+                <figcaption class="cg-cap">Standort</figcaption>
+              </figure>
+              <figure class="cg-slide cg-ausstattung">
+                <div class="cg-inner">
+                  <b class="cg-atitle">Ausstattung</b>
+                  <ul class="cg-chips">
+                    {equip(c).map((e) => (
+                      <li><span class="cg-chip-ic" set:html={icons[e.ic]}></span>{e.t}</li>
+                    ))}
+                  </ul>
+                </div>
+                <figcaption class="cg-cap">Ausstattung</figcaption>
+              </figure>
+              <div class="cg-dots" role="tablist" aria-label="Bild wählen">
+                <button class="cg-dot is-on" type="button" aria-label="Fahrzeug" aria-selected="true"></button>
+                <button class="cg-dot" type="button" aria-label="Standort" aria-selected="false"></button>
+                <button class="cg-dot" type="button" aria-label="Ausstattung" aria-selected="false"></button>
+              </div>
             </div>
             <div class="car-body">
               <h3>{c.name}</h3>
               <p class="car-type">{c.type}</p>
               <ul class="car-meta">
                 <li><span aria-hidden="true">👤</span> {c.seats}</li>
+                <li><span aria-hidden="true">⚙️</span> {c.schaltung}</li>
                 <li><span aria-hidden="true">💶</span> {c.tarif}</li>
               </ul>
-              <p class="car-loc"><span aria-hidden="true">📍</span> {c.loc}</p>
+              <button class="car-loc" type="button" data-map={c.slug}>
+                <span aria-hidden="true">📍</span> <span class="car-loc-txt">{c.loc}</span><span class="car-loc-go">Karte →</span>
+              </button>
             </div>
           </article>
         ))}
@@ -179,7 +259,7 @@ const faqSchema = {
           </div>
         </article>
       </div>
-      <p class="note">📷 Phase 2: echte Fotos der Fahrzeuge an ihren realen Standorten + Detailseiten je Fahrzeug (Cockpit, Kofferraum, Sitze).</p>
+      <p class="note">Je Fahrzeug eine ruhige Galerie (Fahrzeug · Standort · Ausstattung) — beim Klick bleibt das Bild stehen. Die Fahrzeugdaten sind echt; Standort- und Ausstattungsfotos folgen in Phase 2.</p>
     </div>
   </section>
 
@@ -205,13 +285,13 @@ const faqSchema = {
           <h3>Tarife im Überblick</h3>
           <table>
             <tbody>
-              <tr><td>Zeittarif tagsüber (8–20 Uhr)</td><td>1,00 €/h</td></tr>
-              <tr><td>Zeittarif nachts (20–8 Uhr)</td><td>0,20 €/h</td></tr>
-              <tr><td>Kilometer (Kleinwagen)</td><td>ab 0,40 €/km</td></tr>
-              <tr><td>Kilometer (E-Auto / größer)</td><td>ab 0,45 €/km</td></tr>
-              <tr><td>Kilometer (Kleinbus, 9 Sitze)</td><td>ab 0,60 €/km</td></tr>
+              <tr><td>Zeittarif tagsüber (8–20 Uhr)</td><td>ab 1,00 €/h</td></tr>
+              <tr><td>Zeittarif nachts (20–8 Uhr)</td><td>ab 0,20 €/h</td></tr>
+              <tr><td>Kilometer inkl. Sprit (Kleinwagen)</td><td>ab 0,40 €/km</td></tr>
+              <tr><td>Kilometer inkl. Sprit (E-Auto / größer)</td><td>ab 0,45 €/km</td></tr>
+              <tr><td>Kilometer inkl. Sprit (Kleinbus, 9 Sitze)</td><td>ab 0,60 €/km</td></tr>
               <tr><td>Aufnahmebeitrag (einmalig)</td><td>50 €</td></tr>
-              <tr><td>Einlage (bei Austritt zurück)</td><td>600 €</td></tr>
+              <tr><td>Einlage — je Haushalt einmal (zurück bei Austritt)</td><td>600 €</td></tr>
               <tr><td>Monatsbeitrag</td><td><span class="free">0 € · keiner</span></td></tr>
             </tbody>
           </table>
@@ -231,8 +311,63 @@ const faqSchema = {
             <option value="0.60">Kleinbus 9-Sitzer (Trafic) – 0,60 €/km</option>
           </select>
           <div class="calc-result"><span>Beispielpreis</span><b id="calc-total">7,50 €</b></div>
-          <p class="fine">Überschlag: Zeittarif (tags 1 €/h) + Kilometer — <b>Versicherung und Sprit sind schon drin</b>. Echte Abrechnung übers Buchungssystem.</p>
+          <p class="fine">Überschlag: Zeittarif (ab 1 €/h tagsüber) + Kilometer — <b>Versicherung und Sprit sind schon drin</b>. Die Tankkarte liegt im Fahrzeug, Tanken kostet dich keinen Cent extra. Echte Abrechnung übers Buchungssystem.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WARUM TEILEN (Vorteil vs. eigenes Auto) ============ -->
+  <section id="vorteil" class="sec">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <h2>Teilen statt besitzen — spart Geld und Aufwand</h2>
+        <p>Ein eigenes Auto steht die meiste Zeit ungenutzt herum, kostet aber jeden Monat. Beim Carsharing zahlst du nur, wenn du wirklich fährst — um alles andere kümmert sich der Verein.</p>
+      </header>
+
+      <div class="vs reveal">
+        <div class="vs-col vs-own">
+          <span class="vs-tag">Eigenes Auto</span>
+          <ul>
+            <li>Anschaffung, Wertverlust, Reparaturen</li>
+            <li>Versicherung, Steuer, TÜV, Wartung</li>
+            <li>Tanken, Reifenwechsel, Stellplatz</li>
+            <li>Aufwand: alles selbst organisieren</li>
+          </ul>
+        </div>
+        <div class="vs-col vs-share">
+          <span class="vs-tag vs-tag-on">Carsharing bei ATG</span>
+          <ul>
+            <li>Nur zahlen, was du fährst — ab 1 €/h</li>
+            <li>Versicherung, Sprit &amp; Wartung inklusive</li>
+            <li>Tankkarte liegt im Auto — nichts auslegen</li>
+            <li>Kein Aufwand — der Verein macht den Rest</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="perks">
+        <article class="perk reveal">
+          <span class="perk-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          </span>
+          <h3>Flexibel &amp; schnell buchen</h3>
+          <p>Fahrzeug in Sekunden reservieren — am Computer, Tablet oder Handy, rund um die Uhr.</p>
+        </article>
+        <article class="perk reveal">
+          <span class="perk-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+          </span>
+          <h3>Zutritt per Transponderkarte</h3>
+          <p>Kein Schlüsseltausch: Mit deiner Transponderkarte öffnest du jedes gebuchte Fahrzeug.</p>
+        </article>
+        <article class="perk reveal">
+          <span class="perk-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+          </span>
+          <h3>Ein Haushalt, eine Einlage</h3>
+          <p>Je Haushalt zählt eine Mitgliedschaft — nur einmal 600 € Einlage, egal wie viele Fahrer.</p>
+        </article>
       </div>
     </div>
   </section>
@@ -353,6 +488,42 @@ const faqSchema = {
       [h, km, cls].forEach((el) => el.addEventListener('input', calc));
       calc();
     }
+  </script>
+
+  <!-- Fahrzeug-Galerien: ruhiger Auto-Wechsel; Klick lässt die Galerie stehen -->
+  <script>
+    const galReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gal, gi) => {
+      const slides = Array.from(gal.querySelectorAll<HTMLElement>('.cg-slide'));
+      const dots = Array.from(gal.querySelectorAll<HTMLButtonElement>('.cg-dot'));
+      if (slides.length < 2) return;
+      let idx = 0, timer = 0, frozen = false;
+      const show = (n: number) => {
+        idx = (n + slides.length) % slides.length;
+        slides.forEach((s, i) => s.classList.toggle('is-on', i === idx));
+        dots.forEach((d, i) => { d.classList.toggle('is-on', i === idx); d.setAttribute('aria-selected', i === idx ? 'true' : 'false'); });
+      };
+      const stop = () => { if (timer) { window.clearInterval(timer); timer = 0; } };
+      const start = () => { if (galReduce || frozen || timer) return; timer = window.setInterval(() => show(idx + 1), 4200); };
+      const freeze = () => { frozen = true; stop(); gal.classList.add('is-frozen'); };
+      dots.forEach((d, i) => d.addEventListener('click', (e) => { e.stopPropagation(); show(i); freeze(); }));
+      gal.addEventListener('click', freeze);
+      gal.addEventListener('mouseenter', () => { if (!frozen) stop(); });
+      gal.addEventListener('mouseleave', () => { if (!frozen) start(); });
+      window.setTimeout(start, gi * 650); // versetzt starten, damit nicht alle gleichzeitig wechseln
+    });
+
+    // Standort anklicken → zur Karte scrollen und das Fahrzeug markieren.
+    const goToMap = (slug: string) => {
+      const map = document.getElementById('standorte');
+      if (!map) return;
+      const l = (window as any).lenis;
+      if (l) l.scrollTo(map, { offset: -72 }); else map.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => window.dispatchEvent(new CustomEvent('atg:highlight', { detail: { slug } })), 450);
+    };
+    document.querySelectorAll<HTMLElement>('[data-map]').forEach((btn) => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); goToMap(btn.getAttribute('data-map') || ''); });
+    });
   </script>
 
   <style>
@@ -476,6 +647,57 @@ const faqSchema = {
     .car-coop .btn { align-self: start; }
     .note { margin-top: 1.2rem; font-size: 0.86rem; color: var(--color-muted); }
 
+    /* Fahrzeug-Galerie (Fahrzeug · Standort · Ausstattung) */
+    .car-gallery { position: relative; aspect-ratio: 3 / 2; background: var(--color-ink); overflow: hidden; cursor: pointer; }
+    .cg-slide { position: absolute; inset: 0; margin: 0; opacity: 0; visibility: hidden; transition: opacity 0.8s ease; }
+    .cg-slide.is-on { opacity: 1; visibility: visible; }
+    .cg-photo { background-size: cover; background-position: center; transition: opacity 0.8s ease, transform 0.6s ease; }
+    .car:hover .cg-photo.is-on { transform: scale(1.05); }
+    .cg-cap { position: absolute; left: 0.7rem; bottom: 0.7rem; background: rgba(24, 21, 19, 0.72); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 999px; backdrop-filter: blur(3px); }
+    .cg-standort, .cg-ausstattung { display: grid; place-items: center; padding: 1rem; color: #fff; }
+    .cg-standort { background: linear-gradient(150deg, var(--color-red) 0%, var(--color-red-deep) 100%); }
+    .cg-ausstattung { background: linear-gradient(150deg, var(--color-ink) 0%, var(--color-ink-soft) 100%); }
+    .cg-inner { text-align: center; display: grid; gap: 0.5rem; justify-items: center; width: 100%; }
+    .cg-ic { display: grid; place-items: center; color: var(--color-yellow); }
+    .cg-ic svg { width: 34px; height: 34px; }
+    .cg-standort b, .cg-ausstattung b { font-family: var(--font-display); font-size: 1.05rem; }
+    .cg-loc { font-size: 0.92rem; color: rgba(255, 255, 255, 0.92); max-width: 24ch; line-height: 1.3; }
+    .cg-maplink { margin-top: 0.35rem; background: var(--color-yellow); color: var(--color-ink); border: 0; border-radius: 999px; font-family: var(--font-body); font-weight: 800; font-size: 0.8rem; padding: 0.42rem 0.85rem; cursor: pointer; min-height: 38px; }
+    .cg-maplink:hover { background: var(--color-yellow-deep); }
+    .cg-chips { list-style: none; margin: 0.2rem 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.7rem; text-align: left; }
+    .cg-chips li { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; font-weight: 600; color: #fff; }
+    .cg-chip-ic { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; background: rgba(255, 255, 255, 0.12); color: var(--color-yellow); flex: none; }
+    .cg-chip-ic svg { width: 15px; height: 15px; }
+    .cg-dots { position: absolute; right: 0.6rem; bottom: 0.6rem; display: flex; gap: 0.3rem; z-index: 2; }
+    .cg-dot { width: 8px; height: 8px; border-radius: 999px; border: 0; background: rgba(255, 255, 255, 0.5); cursor: pointer; padding: 0; transition: width 0.3s ease, background 0.3s ease; }
+    .cg-dot.is-on { background: var(--color-yellow); width: 20px; }
+
+    /* Standort-Button unter der Karte (springt zur Karte) */
+    .car-loc { display: flex; align-items: center; gap: 0.35rem; width: 100%; margin-top: 0.6rem; background: var(--color-bg); border: 1px solid var(--color-line); border-radius: 10px; padding: 0.5rem 0.7rem; color: var(--color-ink); font: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: left; transition: border-color 0.15s ease, background 0.15s ease; }
+    .car-loc:hover { border-color: var(--color-red); background: var(--color-red-soft); }
+    .car-loc-txt { min-width: 0; }
+    .car-loc-go { margin-left: auto; color: var(--color-red-deep); font-weight: 800; font-size: 0.82rem; white-space: nowrap; }
+
+    /* Warum teilen — Vergleich + Perks */
+    .vs { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-bottom: 1.6rem; }
+    @media (min-width: 760px) { .vs { grid-template-columns: 1fr 1fr; } }
+    .vs-col { border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 1.3rem 1.4rem; background: var(--color-surface); }
+    .vs-share { border-color: var(--color-red); box-shadow: 0 18px 40px -28px rgba(212, 42, 34, 0.5); }
+    .vs-tag { display: inline-block; font-weight: 800; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); margin-bottom: 0.8rem; }
+    .vs-tag-on { color: #fff; background: var(--color-red); padding: 0.28rem 0.75rem; border-radius: 999px; }
+    .vs-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+    .vs-col li { position: relative; padding-left: 1.6rem; color: var(--color-ink); font-size: 0.96rem; line-height: 1.35; }
+    .vs-own li { color: var(--color-muted); }
+    .vs-own li::before { content: '✕'; position: absolute; left: 0; color: var(--color-muted); font-weight: 800; }
+    .vs-share li::before { content: '✓'; position: absolute; left: 0; color: var(--color-red); font-weight: 800; }
+    .perks { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    @media (min-width: 760px) { .perks { grid-template-columns: repeat(3, 1fr); } }
+    .perk { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 1.3rem; }
+    .perk-ic { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 13px; background: var(--color-red-soft); color: var(--color-red-deep); margin-bottom: 0.7rem; }
+    .perk-ic svg { width: 26px; height: 26px; }
+    .perk h3 { font-size: 1.15rem; margin-bottom: 0.3rem; }
+    .perk p { color: var(--color-muted); font-size: 0.95rem; }
+
     /* Preise + Rechner */
     .price-grid { display: grid; gap: 1.1rem; grid-template-columns: 1fr; }
     @media (min-width: 880px) { .price-grid { grid-template-columns: 1.1fr 1fr; } }
@@ -533,5 +755,38 @@ const faqSchema = {
     .pay-claim { margin: 0 0 1.6rem; padding: 1.2rem 1.5rem; border-left: 5px solid var(--color-yellow); background: var(--color-surface); border-radius: 0 var(--radius-card) var(--radius-card) 0; box-shadow: 0 14px 34px -26px rgba(24,21,19,.5); }
     .pay-claim p { font-size: clamp(1.05rem, 2vw, 1.22rem); line-height: 1.55; color: var(--color-ink); font-weight: 500; }
     .pay-claim b { color: var(--color-red-deep); font-weight: 800; }
+
+    /* ===== Mobile-Feinschliff (an Carsharing-Apps orientiert: weniger scrollen,
+       mehr auf einen Blick). Flotte wird zum wisch-baren Karten-Karussell. ===== */
+    @media (max-width: 640px) {
+      .sec { padding: 2.1rem 0; }
+      .sec-head { margin-bottom: 1.3rem; }
+      .sec-head h2 { font-size: clamp(1.55rem, 6.5vw, 2rem); }
+      .sec-head p { font-size: 1rem; }
+      .stats-grid { gap: 1rem 0.8rem; }
+
+      /* Flotte: horizontales Snap-Karussell statt langer Spalte */
+      .cars {
+        grid-auto-flow: column;
+        grid-auto-columns: 82%;
+        grid-template-columns: none;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 0.9rem;
+        margin: 0 calc(-1 * clamp(1rem, 4vw, 2rem));
+        padding: 0.2rem clamp(1rem, 4vw, 2rem) 1rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .cars::-webkit-scrollbar { display: none; }
+      .car { scroll-snap-align: start; }
+      .car-coop { min-height: 0; }
+      .note { margin-top: 0.6rem; }
+
+      /* Vergleich kompakter */
+      .vs { gap: 0.7rem; margin-bottom: 1.1rem; }
+      .vs-col { padding: 1rem 1.1rem; }
+      .perks { gap: 0.7rem; }
+    }
   </style>
 </Base>

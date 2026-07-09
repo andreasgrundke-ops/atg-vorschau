@@ -145,6 +145,12 @@ const data = { atg };
 </script>
 
 <style>
+  /* .wrap/.sec sind in index.astro scoped → greifen hier NICHT. Ohne eigene .wrap
+     lief die Karte randlos über die volle Breite. Jetzt mittig einfassen,
+     Desktop auf ~80 % Breite (etwas schmaler als der Rest, mit Luft zum Rand). */
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }
+  @media (min-width: 860px) { .wrap { width: 80%; max-width: 1300px; } }
+
   .kicker { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-red-deep); margin-bottom: 0.6rem; }
   .kicker .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--color-yellow); }
 

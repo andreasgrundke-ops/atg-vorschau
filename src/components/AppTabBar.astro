@@ -4,9 +4,13 @@
  * Gibt der responsiven Seite App-Charakter (wie eine Handy-App). Mit zentralem
  * Haupt-CTA und ScrollSpy (aktiver Tab folgt der sichtbaren Sektion).
  *
- * Version: 1.0 · Autor: Grundke IT-Service · Datum: 2026-06-27
+ * Version: 1.1 · Autor: Grundke IT-Service · Datum: 2026-07-09
+ *   1.1  „Buchen"-Tab (statt Preise) — Fahrzeug-Buchung dauerhaft in der Bottom-Bar
+ *        erreichbar (vorher nur im Hero, beim Scrollen weg).
  */
 const base = import.meta.env.BASE_URL;
+// Externe Buchungsstrecke (Mitgliederbereich) — dauerhaft per Bottom-Tab erreichbar.
+const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
 ---
 
 <nav class="tabbar" aria-label="App-Navigation">
@@ -24,9 +28,11 @@ const base = import.meta.env.BASE_URL;
     </span>
     <span>Mitglied+</span>
   </a>
-  <a class="tab" href={`${base}#preise`} data-spy="preise">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="8" y="6" width="8" height="3"/><path d="M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01M16 17h.01"/></svg>
-    <span>Preise</span>
+  <a class="tab tab-cta tab-book" href={BOOK} rel="noopener" aria-label="Fahrzeug buchen">
+    <span class="cta-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+    </span>
+    <span>Buchen</span>
   </a>
   <a class="tab" href={`${base}#kontakt`} data-spy="kontakt">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -64,6 +70,13 @@ const base = import.meta.env.BASE_URL;
   }
   .tab-cta .cta-circle svg { width: 22px; height: 22px; }
 
+  /* „Buchen" = erhabener Haupt-CTA wie „Mitglied+", nur in CI-Gelb (#ffc400).
+     MUSS nach .tab-cta stehen (gleiche Spezifität → Quellreihenfolge gewinnt). */
+  .tab-book .cta-circle {
+    background: var(--color-yellow); color: var(--color-ink);
+    box-shadow: 0 8px 18px -6px rgba(255, 196, 0, 0.7);
+  }
+
   @media (max-width: 767px) { .tabbar { display: grid; } }
   @media (prefers-reduced-motion: reduce) { .tab:active { transform: none; } }
 </style>
@@ -73,7 +86,7 @@ const base = import.meta.env.BASE_URL;
   const tabs = Array.from(document.querySelectorAll<HTMLAnchorElement>('.tab[data-spy]'));
   const byId: Record<string, HTMLAnchorElement> = {};
   tabs.forEach((t) => { const id = t.dataset.spy; if (id) byId[id] = t; });
-  const ids = ['top', 'flotte', 'preise', 'kontakt'];
+  const ids = ['top', 'flotte', 'kontakt'];
   const sections = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
   if (sections.length) {
     const io = new IntersectionObserver((entries) => {

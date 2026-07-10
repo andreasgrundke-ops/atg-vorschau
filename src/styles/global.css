@@ -90,6 +90,13 @@ img { display: block; max-width: 100%; }
   body { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
 }
 
+/* === Mobile-Verdichtung (≤640px): kompakter Text, kleinere Buttons →
+   mehr Inhalt pro Screen, weniger Scrollen (App-Feeling). === */
+@media (max-width: 640px) {
+  body { font-size: 15.5px; line-height: 1.5; }
+  .btn { min-height: 44px; padding: .62rem 1.1rem; font-size: .95rem; }
+}
+
 /* === Scroll-Reveal === Elemente faden + slide-up beim Sichtbarwerden.
    Nur mit JS aktiv (html.js) → ohne JS bleibt alles sichtbar (A11y/SEO). */
 @media (prefers-reduced-motion: no-preference) {

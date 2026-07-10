@@ -8,9 +8,12 @@
  * Datum:        2026-06-28
  * Beschreibung: Gefalteter A4-Quer-Flyer (Wickel-/Zickzackfalz) in der Rot/Gelb-CI.
  *               2 Blätter (Außen + Innen) à 3 Panels (je ~99 mm). Falzlinien gestrichelt.
- *               Inkl. MVV-Karten-Thema. Bildschirm: zentriert; Druck: A4 quer randlos.
+ *               Bildschirm: zentriert; Druck: A4 quer randlos.
  * Änderungshistorie:
  *   2026-06-28  1.0  Erstausgabe (Flotte, Tarife, MVV, Schritte, Kontakt + QR).
+ *   2026-07-10  1.1  Inhaltsregeln: MVV entfernt; Leihzahlen "41"/"+36" und Kürzel "VAT"
+ *                    raus (öffentlich nur 5 ATG-Fahrzeuge in Neukeferloh); Renault Trafic
+ *                    = 9-Sitzer Kleinbus statt Transporter; Sprit-/Versicherung-Hinweis.
  */
 import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/hanken-grotesk';
@@ -23,7 +26,7 @@ const cars = [
   { n: 'Opel Corsa', t: 'Kleinwagen' },
   { n: 'Dacia Sandero', t: 'Kleinwagen' },
   { n: 'Renault Clio Grandtour', t: 'Kombi' },
-  { n: 'Renault Trafic', t: 'Transporter · bis 9 Sitze' },
+  { n: 'Renault Trafic', t: '9-Sitzer Kleinbus' },
 ];
 const steps = [
   { n: '1', h: 'Online melden', t: 'Kurzes Formular — wir melden uns persönlich.' },
@@ -75,11 +78,11 @@ const steps = [
           <div class="stats">
             <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag · Kraftstoff inkl.</span></div>
             <div class="stat"><b>ab 1&nbsp;€/h</b><span>tagsüber · zzgl. km</span></div>
-            <div class="stat"><b>41</b><span>Fahrzeuge mit VAT</span></div>
+            <div class="stat"><b>5</b><span>Fahrzeuge in Neukeferloh</span></div>
           </div>
-          <div class="mvv-mini">
-            <b>🚆 Auch MVV-Karten</b>
-            <span>M-1 bis M-5 ab 4 €/Tag — Bus &amp; Bahn über Partner Vaterstetten</span>
+          <div class="note-mini">
+            <b>Sprit &amp; Versicherung inklusive</b>
+            <span>Tankkarte liegt im Auto — du zahlst nur Zeit und Kilometer.</span>
           </div>
           <p class="imprint">VR 207138, AG München · Kooperation mit dem Vaterstettener Auto-Teiler e.V.</p>
         </div>
@@ -110,10 +113,10 @@ const steps = [
               <li><b>{c.n}</b><span>{c.t}</span></li>
             ))}
           </ul>
-          <p class="plus">+ rund 36 Fahrzeuge in Vaterstetten (gemeinsame Flotte)</p>
+          <p class="plus">In Kooperation mit dem Vaterstettener Auto-Teiler e.V.</p>
         </div>
 
-        <!-- Panel: Tarife + MVV -->
+        <!-- Panel: Tarife + Hinweis -->
         <div class="panel">
           <h3>Was kostet das?</h3>
           <table class="tariffs">
@@ -125,9 +128,9 @@ const steps = [
               <tr><td>Versicherung &amp; Kraftstoff</td><td>inklusive</td></tr>
             </tbody>
           </table>
-          <div class="mvv-box">
-            <b>🚆 Auch MVV-Karten</b>
-            <p>M-1 bis M-5 ab 4 €/Tag über Partner Vaterstetten — Abholung am Bahnhof Vaterstetten.</p>
+          <div class="note-box">
+            <b>Alles inklusive</b>
+            <p>Versicherung und Sprit sind im Preis enthalten — getankt wird mit der Tankkarte im Fahrzeug. Kein Aufschlag.</p>
           </div>
         </div>
 
@@ -209,9 +212,9 @@ const steps = [
       .stat { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 3mm 4mm; text-align: center; }
       .stat b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; color: var(--red); line-height: 1; }
       .stat span { font-size: 0.76rem; color: var(--muted); font-weight: 600; }
-      .mvv-mini { margin-top: 3mm; background: var(--ink); color: #fff; border-radius: 10px; padding: 3mm 3.5mm; }
-      .mvv-mini b { display: block; font-family: var(--font-display); color: var(--yellow); font-size: 0.92rem; }
-      .mvv-mini span { display: block; margin-top: 1mm; font-size: 0.74rem; color: #e9e2d8; line-height: 1.35; }
+      .note-mini { margin-top: 3mm; background: var(--ink); color: #fff; border-radius: 10px; padding: 3mm 3.5mm; }
+      .note-mini b { display: block; font-family: var(--font-display); color: var(--yellow); font-size: 0.92rem; }
+      .note-mini span { display: block; margin-top: 1mm; font-size: 0.74rem; color: #e9e2d8; line-height: 1.35; }
       .imprint { margin-top: auto; font-size: 0.68rem; color: var(--muted); }
 
       /* Flotte */
@@ -225,9 +228,9 @@ const steps = [
       table.tariffs { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
       table.tariffs td { padding: 2.2mm 0; border-bottom: 1px solid var(--line); }
       table.tariffs td:last-child { text-align: right; font-weight: 800; font-family: var(--font-display); }
-      .mvv-box { margin-top: 4mm; background: var(--ink); color: #fff; border-radius: 12px; padding: 4mm; }
-      .mvv-box b { font-family: var(--font-display); color: var(--yellow); font-size: 0.98rem; }
-      .mvv-box p { margin: 1.5mm 0 0; font-size: 0.8rem; color: #e9e2d8; line-height: 1.4; }
+      .note-box { margin-top: 4mm; background: var(--ink); color: #fff; border-radius: 12px; padding: 4mm; }
+      .note-box b { font-family: var(--font-display); color: var(--yellow); font-size: 0.98rem; }
+      .note-box p { margin: 1.5mm 0 0; font-size: 0.8rem; color: #e9e2d8; line-height: 1.4; }
 
       /* Schritte */
       .steps { display: grid; gap: 3mm; margin-top: 2mm; }

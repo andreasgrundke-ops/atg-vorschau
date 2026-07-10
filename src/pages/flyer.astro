@@ -18,6 +18,8 @@
  *                    stattdessen Sprit-/Versicherung-inklusive-Hinweis.
  *   2026-07-10  1.2  Claim "Weniger Autos, dennoch mobil."; Wording "Kraftstoff" → "Sprit"
  *                    (einheitlich); Leerzeichen-Fix im Intro nach "Monatsbeitrag,".
+ *   2026-07-10  1.3  Auf Kundenwunsch zurück: Claim ohne Komma ("Weniger Autos. Dennoch
+ *                    mobil.") und Wording wieder "Kraftstoff" statt "Sprit".
  */
 import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/hanken-grotesk';
@@ -68,7 +70,7 @@ const steps = [
           </div>
           <div class="head-claim">
             <p class="kicker"><span class="dot"></span> Grasbrunn &amp; Umgebung</p>
-            <h1>Weniger Autos,<br /><span class="hl">dennoch mobil.</span></h1>
+            <h1>Weniger Autos.<br /><span class="hl">Dennoch mobil.</span></h1>
           </div>
         </header>
 
@@ -76,14 +78,14 @@ const steps = [
         <section class="intro">
           <p>
             Teil dir ein Auto, statt eins zu besitzen — vom E-Auto bis zum 9-Sitzer,
-            direkt um die Ecke in Grasbrunn. Als gemeinnütziger Verein, <strong>ohne Monatsbeitrag</strong>, <strong>Sprit &amp; Versicherung inklusive</strong> — mit fairen Tarifen. In Kooperation
+            direkt um die Ecke in Grasbrunn. Als gemeinnütziger Verein, <strong>ohne Monatsbeitrag</strong>, <strong>Kraftstoff &amp; Versicherung inklusive</strong> — mit fairen Tarifen. In Kooperation
             mit dem Vaterstettener Auto-Teiler e.V.
           </p>
         </section>
 
         <!-- 3 Kennzahlen -->
         <section class="stats">
-          <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag · Sprit inkl.</span></div>
+          <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag · Kraftstoff inkl.</span></div>
           <div class="stat stat-accent"><b>ab 1&nbsp;€/h</b><span>tagsüber · zzgl. km</span></div>
           <div class="stat"><b>5</b><span>Fahrzeuge in Neukeferloh</span></div>
         </section>
@@ -108,18 +110,18 @@ const steps = [
         <section class="tariffs">
           <div class="t"><span>Tagsüber (8–20 Uhr)</span><b>ab 1,00 €/h</b></div>
           <div class="t"><span>Nachts (20–8 Uhr)</span><b>ab 0,20 €/h</b></div>
-          <div class="t"><span>Kilometer (Sprit inkl.)</span><b>ab 0,40 €/km</b></div>
-          <div class="t"><span>Versicherung &amp; Sprit</span><b>inklusive</b></div>
+          <div class="t"><span>Kilometer (Kraftstoff inkl.)</span><b>ab 0,40 €/km</b></div>
+          <div class="t"><span>Versicherung &amp; Kraftstoff</span><b>inklusive</b></div>
         </section>
 
-        <!-- Gut zu wissen: Sprit & Versicherung inklusive -->
+        <!-- Gut zu wissen: Kraftstoff & Versicherung inklusive -->
         <section class="note-box">
           <div class="note-ic" aria-hidden="true">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 21V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v16"/><path d="M3 21h13"/><path d="M14 8h3l3 3v7a1.5 1.5 0 0 1-3 0V13"/><path d="M7 7h4"/></svg>
           </div>
           <div class="note-txt">
-            <b>Sprit &amp; Versicherung schon dabei</b>
-            <p>Getankt wird mit der Tankkarte im Fahrzeug — du zahlst nur Zeit und Kilometer. Kein Sprit-Aufschlag, keine versteckten Extras.</p>
+            <b>Kraftstoff &amp; Versicherung schon dabei</b>
+            <p>Getankt wird mit der Tankkarte im Fahrzeug — du zahlst nur Zeit und Kilometer. Kein Kraftstoff-Aufschlag, keine versteckten Extras.</p>
           </div>
         </section>
 
@@ -244,7 +246,7 @@ const steps = [
       .tariffs .t span { color: var(--muted); font-size: 0.92rem; font-weight: 600; }
       .tariffs .t b { font-family: var(--font-display); font-weight: 800; color: var(--ink); }
 
-      /* Hinweis-Box (Sprit inklusive) */
+      /* Hinweis-Box (Kraftstoff inklusive) */
       .note-box { display: flex; gap: 4mm; align-items: center; margin: 5mm 14mm 0; background: var(--ink); color: #fff; border-radius: 14px; padding: 4.5mm 5mm; }
       .note-ic { flex: none; width: 12mm; height: 12mm; display: grid; place-items: center; background: var(--yellow); color: var(--ink); border-radius: 10px; }
       .note-txt b { font-family: var(--font-display); font-weight: 800; font-size: 1.02rem; display: block; color: var(--yellow); }

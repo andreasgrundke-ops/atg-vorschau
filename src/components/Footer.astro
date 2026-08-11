@@ -4,11 +4,15 @@
  * Impressum/Datenschutz/Barrierefreiheit verlinken später auf eigene Seiten (Phase 1 Pflicht).
  *
  * base = import.meta.env.BASE_URL: trägt den Pages-Unterordner für die internen Rechts-Links.
+ *
+ * Der Anker `#kontakt` sitzt seit 2026-08-12 auf der Kontakt-Sektion der Startseite,
+ * nicht mehr hier: Der Sprung landete sonst am Seitenende und damit optisch auf der
+ * Dokumentenliste statt beim Formular (Rückmeldung Wolfgang Schneidt, 11.08.2026).
  */
 const base = import.meta.env.BASE_URL;
 ---
 
-<footer class="site-footer" id="kontakt">
+<footer class="site-footer" id="seitenende">
   <div class="inner">
     <div class="grid">
       <div>

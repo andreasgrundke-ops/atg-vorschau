@@ -3,32 +3,41 @@
  * StandorteKarte — interaktive Karte der Carsharing-Standorte.
  *
  * Titel:        ATG Carsharing — Standorte-Karte
- * Version:      2.0
+ * Version:      2.1
  * Autor:        Grundke IT-Service
- * Datum:        2026-07-08
+ * Datum:        2026-08-12
  * Beschreibung: OpenStreetMap/Leaflet-Karte (DSGVO-freundlich, KEIN Google-Tracking).
  *               Alle 5 ATG-Fahrzeuge in Neukeferloh (rote nummerierte Marker), KEINE
  *               Partner-/VAT-Pins. Zweispaltig eingebettet: Standort-Liste (klickbar)
  *               + Karte. Klick auf einen Standort — hier oder in der Flotte-Galerie
- *               (Event „atg:highlight") — markiert das Fahrzeug, während alle sichtbar
- *               bleiben. Marker sind runde CSS-DivIcons (base-Path-sicher), Lazy-Init.
+ *               (Event „atg:highlight") — holt die Karte in den Blick und zoomt auf
+ *               den Stellplatz. Marker sind runde CSS-DivIcons (base-Path-sicher),
+ *               Lazy-Init. Fahrzeug- und Standortdaten: src/data/fahrzeuge.ts.
  * Änderungshistorie:
  *   2026-06-27  1.0  Erstausgabe — ATG (Neukeferloh) + VAT (37 Pins) + MVV-Bahnhof.
  *   2026-06-27  1.1  Runde Marker (sauberer), Lazy-Load der Tiles.
  *   2026-07-08  2.0  Alle 5 ATG-KFZ, Karten-Karte im CI-Look, Standort-Liste,
  *                    Klick-Markierung + Sprung aus der Flotte-Galerie.
+ *   2026-08-12  2.1  Klick auf einen Standort scrollt die Karte in den Blick und
+ *                    zoomt auf das Fahrzeug. Vorher wurde nur markiert und minimal
+ *                    geschwenkt — am Handy liegt die Karte unter der Liste, also
+ *                    passierte im sichtbaren Bereich nichts (Wolfgang Schneidt,
+ *                    11.08.2026). Dazu „Alle Standorte"-Rücksprung und Daten aus
+ *                    src/data/fahrzeuge.ts statt eigener Kopie.
  */
 import 'leaflet/dist/leaflet.css';
+import { FAHRZEUGE } from '../data/fahrzeuge';
 
 // Nur die ATG-eigenen Fahrzeuge in Neukeferloh (Kundenwunsch: keine VAT-Pins).
-// Standorte ungefähr — genaue Stellplätze stehen vor Ort / im Buchungssystem.
-const atg = [
-  { slug: 'zoe', name: 'Renault ZOE', kfz: 'E-Auto', loc: 'Am Rathaus, Neukeferloh', lat: 48.09617, lng: 11.76036 },
-  { slug: 'corsa', name: 'Opel Corsa', kfz: 'Kleinwagen', loc: 'Finkenstraße, hinter der Kirche', lat: 48.09781, lng: 11.75959 },
-  { slug: 'sandero', name: 'Dacia Sandero', kfz: 'Kleinwagen', loc: 'Ecke Waldstraße / Saarlandstraße', lat: 48.09560, lng: 11.76071 },
-  { slug: 'clio', name: 'Renault Clio Grandtour', kfz: 'Kombi', loc: 'Dianastraße (beim Orterer)', lat: 48.09720, lng: 11.76300 },
-  { slug: 'trafic', name: 'Renault Trafic', kfz: 'Kleinbus · 9 Sitze', loc: 'Neukeferloh', lat: 48.09470, lng: 11.75880 },
-];
+const atg = FAHRZEUGE.map((f) => ({
+  slug: f.slug,
+  name: f.name,
+  kfz: f.badge,
+  loc: f.standort.kurz,
+  locLang: f.standort.lang,
+  lat: f.standort.lat,
+  lng: f.standort.lng,
+}));
 const data = { atg };
 ---
 
@@ -39,8 +48,8 @@ const data = { atg };
       <h2>Direkt vor der Haustür in Neukeferloh</h2>
       <p>
         Alle fünf ATG-Fahrzeuge stehen an festen Stellplätzen mitten in Neukeferloh — vom Rathaus
-        über die Finken- und Dianastraße bis zur Waldstraße. Tippe auf einen Standort, dann springt
-        die Karte zum Fahrzeug.
+        über die Finken- und Dianastraße bis zur Waldstraße. Tippe auf ein Fahrzeug in der Liste,
+        dann zoomt die Karte auf seinen Stellplatz.
       </p>
     </header>
 
@@ -56,6 +65,7 @@ const data = { atg };
             <span class="std-chip-kfz">{p.kfz}</span>
           </button>
         ))}
+        <button class="std-alle" type="button" id="std-alle" hidden>Alle Standorte zeigen</button>
         <p class="std-legend"><i></i> ATG-Fahrzeuge in Neukeferloh — keine Fremdfahrzeuge.</p>
       </div>
 
@@ -65,8 +75,8 @@ const data = { atg };
     </div>
 
     <p class="map-note">
-      Karte: © OpenStreetMap-Mitwirkende · datensparsam, ohne Google-Tracking. Standorte ungefähr —
-      die genauen Stellplätze stehen vor Ort und im Buchungssystem.
+      Karte: © OpenStreetMap-Mitwirkende · datensparsam, ohne Google-Tracking. Die genauen
+      Stellplätze stehen zusätzlich im Buchungssystem.
     </p>
   </div>
 </section>
@@ -79,9 +89,17 @@ const data = { atg };
   const data = dataEl ? JSON.parse(dataEl.textContent || '{}') : { atg: [] };
   const mapEl = document.getElementById('atg-map');
   const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.std-chip'));
+  const alleBtn = document.getElementById('std-alle') as HTMLButtonElement | null;
+
+  // Zoomstufe, auf die ein einzelner Stellplatz gefahren wird. Die fünf Fahrzeuge
+  // stehen keine 400 m auseinander — ohne Zoom sieht ein reiner Schwenk wie „nichts
+  // passiert" aus.
+  const FOKUS_ZOOM = 17;
+
   let loaded = false;
   let pending: string | null = null;
   let doHighlight: ((slug: string) => void) | null = null;
+  let zeigeAlle: (() => void) | null = null;
 
   async function initMap() {
     if (loaded || !mapEl) return;
@@ -100,25 +118,44 @@ const data = { atg };
     const markers: Record<string, any> = {};
     const pts: [number, number][] = [];
 
-    data.atg.forEach((p: any, i: number) => {
-      const m = L.marker([p.lat, p.lng], { icon: dot('dp-atg', String(i + 1)) })
-        .addTo(map)
-        .bindPopup(`<b>${p.name}</b><br>${p.loc}`);
-      markers[p.slug] = m;
-      pts.push([p.lat, p.lng]);
-    });
-
-    map.fitBounds(pts, { padding: [45, 45] });
-    setTimeout(() => map.invalidateSize(), 200);
-
-    doHighlight = (slug: string) => {
+    // Markiert Pin + Listeneintrag. Leerer slug = Auswahl aufheben.
+    const setzeAktiv = (slug: string) => {
       Object.entries(markers).forEach(([s, m]) => {
         const el = (m as any).getElement?.();
         el?.querySelector('.dot-pin')?.classList.toggle('is-hl', s === slug);
       });
       chips.forEach((c) => c.classList.toggle('is-active', c.dataset.slug === slug));
+      if (alleBtn) alleBtn.hidden = !slug;
+    };
+
+    data.atg.forEach((p: any, i: number) => {
+      const m = L.marker([p.lat, p.lng], { icon: dot('dp-atg', String(i + 1)) })
+        .addTo(map)
+        .bindPopup(`<b>${p.name}</b><br>${p.locLang || p.loc}`);
+      markers[p.slug] = m;
+      pts.push([p.lat, p.lng]);
+      m.on('click', () => setzeAktiv(p.slug));
+    });
+
+    const uebersicht = () => {
+      map.fitBounds(pts, { padding: [45, 45] });
+      setzeAktiv('');
+    };
+
+    uebersicht();
+    setTimeout(() => map.invalidateSize(), 200);
+
+    doHighlight = (slug: string) => {
+      setzeAktiv(slug);
       const m = markers[slug];
-      if (m) { map.panTo(m.getLatLng(), { animate: true }); m.openPopup(); }
+      if (!m) return;
+      map.setView(m.getLatLng(), Math.max(map.getZoom(), FOKUS_ZOOM), { animate: true });
+      m.openPopup();
+    };
+
+    zeigeAlle = () => {
+      map.closePopup();
+      uebersicht();
     };
 
     if (pending) { doHighlight(pending); pending = null; }
@@ -131,7 +168,35 @@ const data = { atg };
     else { pending = slug; initMap(); }
   };
 
-  chips.forEach((c) => c.addEventListener('click', () => requestHighlight(c.dataset.slug || '')));
+  // Liegt die Karte zu weniger als der Hälfte im Bild, wird sie herangeholt.
+  // Am Handy steht sie unter der Liste — sonst tippt man ins Leere.
+  const karteImBlick = () => {
+    if (!mapEl) return true;
+    const r = mapEl.getBoundingClientRect();
+    const sichtbar = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+    return sichtbar >= Math.min(r.height, window.innerHeight) * 0.5;
+  };
+
+  const holeKarteInDenBlick = () => {
+    if (!mapEl || karteImBlick()) return;
+    const l = (window as any).lenis;
+    if (l) l.scrollTo(mapEl, { offset: -80 });
+    else mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  chips.forEach((c) =>
+    c.addEventListener('click', () => {
+      holeKarteInDenBlick();
+      requestHighlight(c.dataset.slug || '');
+    }),
+  );
+
+  alleBtn?.addEventListener('click', () => {
+    if (zeigeAlle) zeigeAlle();
+    alleBtn.hidden = true;
+  });
+
+  // Sprung aus der Flotte-Galerie: dort wird bereits zur Sektion gescrollt.
   window.addEventListener('atg:highlight', (e) => requestHighlight((e as CustomEvent).detail?.slug || ''));
 
   if ('IntersectionObserver' in window && mapEl) {
@@ -180,6 +245,15 @@ const data = { atg };
   .std-chip-txt b { font-family: var(--font-display); font-size: 0.98rem; line-height: 1.1; }
   .std-chip-txt small { color: var(--color-muted); font-size: 0.8rem; }
   .std-chip-kfz { margin-left: auto; flex: none; font-size: 0.7rem; font-weight: 800; color: var(--color-red-deep); background: var(--color-red-soft); padding: 0.18rem 0.5rem; border-radius: 999px; white-space: nowrap; }
+
+  /* Rücksprung zur Gesamtansicht — erscheint erst, wenn ein Fahrzeug gewählt ist */
+  .std-alle {
+    align-self: start; background: none; border: 0; padding: 0.2rem 0; cursor: pointer;
+    font: inherit; font-size: 0.84rem; font-weight: 700; color: var(--color-red-deep);
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .std-alle[hidden] { display: none; }
+
   .std-legend { margin: 0.4rem 0 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.78rem; color: var(--color-muted); }
   .std-legend i { width: 12px; height: 12px; border-radius: 999px; background: var(--color-red); flex: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
 

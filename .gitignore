@@ -7,6 +7,9 @@ dist/
 # interne Referenz (nicht ins öffentliche Repo)
 _referenz-alt/
 
+# Testartefakte (Playwright-Snapshots/Screenshots aus Browser-Prüfungen)
+.playwright-mcp/
+
 # OS / Logs
 .DS_Store
 Thumbs.db

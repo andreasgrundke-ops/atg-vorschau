@@ -1,0 +1,222 @@
+---
+/**
+ * Pin-Picker — Stellplätze der ATG-Fahrzeuge metergenau festlegen.
+ *
+ * Titel:        ATG Carsharing — Stellplätze festlegen
+ * Version:      1.0
+ * Autor:        Grundke IT-Service
+ * Datum:        2026-08-12
+ * Beschreibung: Interne Hilfsseite (nicht verlinkt, noindex). Jeder Fahrzeug-Pin lässt
+ *               sich mit der Maus oder dem Finger auf den echten Stellplatz ziehen.
+ *               Unten stehen die Koordinaten; „Liste kopieren" legt sie in die
+ *               Zwischenablage — die Werte wandern dann in src/data/fahrzeuge.ts.
+ *
+ *               Hintergrund: Die Pins stammten aus groben Schätzungen; der Trafic lag
+ *               rund 250 m daneben, Clio und Corsa daneben (Wolfgang Schneidt,
+ *               11.08.2026). Wer den Stellplatz kennt, soll ihn setzen können, ohne
+ *               Koordinaten heraussuchen zu müssen.
+ *
+ * Ablauf:       1. Seite öffnen  2. Pin ziehen  3. „Liste kopieren"  4. Text an
+ *               Grundke IT-Service schicken  5. Werte werden fest eingetragen.
+ *
+ * Änderungshistorie:
+ *   2026-08-12  1.0  Erstausgabe.
+ */
+import 'leaflet/dist/leaflet.css';
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/hanken-grotesk';
+import '../styles/global.css';
+import { FAHRZEUGE } from '../data/fahrzeuge';
+
+const pins = FAHRZEUGE.map((f) => ({
+  slug: f.slug,
+  name: f.name,
+  loc: f.standort.lang,
+  lat: f.standort.lat,
+  lng: f.standort.lng,
+  geprueft: f.standort.geprueft,
+}));
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stellplätze festlegen — ATG Carsharing (intern)</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#d42a22" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d42a22'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-size='14' fill='%23ffc400' text-anchor='middle'%3EATG%3C/text%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <main class="pp">
+      <header class="pp-head">
+        <p class="pp-kicker">Interne Seite · nicht öffentlich verlinkt</p>
+        <h1>Stellplätze festlegen</h1>
+        <p class="pp-lead">
+          Zieh jeden Pin auf den Platz, wo das Fahrzeug wirklich steht. Danach unten auf <b>Liste
+          kopieren</b> tippen und den Text an Andreas Grundke schicken — die Standorte werden dann
+          fest auf der Website eingetragen.
+        </p>
+      </header>
+
+      <div id="pp-map" class="pp-map"></div>
+
+      <ul class="pp-list" id="pp-list">
+        {pins.map((p, i) => (
+          <li data-slug={p.slug}>
+            <span class="pp-num">{i + 1}</span>
+            <span class="pp-txt">
+              <b>{p.name}</b>
+              <small>{p.loc}</small>
+            </span>
+            <span class="pp-koord">
+              <code data-koord={p.slug}>{p.lat.toFixed(5)}, {p.lng.toFixed(5)}</code>
+              <em data-status={p.slug}>{p.geprueft ? 'bestätigt' : 'noch zu prüfen'}</em>
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <div class="pp-actions">
+        <button class="pp-btn pp-btn-red" type="button" id="pp-copy">Liste kopieren</button>
+        <button class="pp-btn" type="button" id="pp-reset">Alles zurücksetzen</button>
+        <span class="pp-msg" id="pp-msg" role="status" aria-live="polite"></span>
+      </div>
+
+      <p class="pp-fine">
+        Karte: © OpenStreetMap-Mitwirkende. Diese Seite speichert nichts auf einem Server —
+        Änderungen bleiben im Browser, bis du sie kopierst und weitergibst.
+      </p>
+    </main>
+
+    <script type="application/json" id="pp-data" set:html={JSON.stringify(pins)}></script>
+
+    <script>
+      const dataEl = document.getElementById('pp-data');
+      const pins: any[] = dataEl ? JSON.parse(dataEl.textContent || '[]') : [];
+      const msgEl = document.getElementById('pp-msg');
+      const copyBtn = document.getElementById('pp-copy');
+      const resetBtn = document.getElementById('pp-reset');
+
+      // Ausgangswerte merken, damit „Zurücksetzen" sie wiederherstellen kann.
+      const start = pins.map((p) => ({ ...p }));
+      const aktuell = pins.map((p) => ({ ...p }));
+
+      const setMsg = (text: string) => {
+        if (msgEl) msgEl.textContent = text;
+      };
+
+      const zeige = (i: number, verschoben: boolean) => {
+        const p = aktuell[i];
+        const kEl = document.querySelector(`[data-koord="${p.slug}"]`);
+        const sEl = document.querySelector(`[data-status="${p.slug}"]`);
+        if (kEl) kEl.textContent = `${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`;
+        if (sEl) {
+          sEl.textContent = verschoben ? 'von dir gesetzt' : p.geprueft ? 'bestätigt' : 'noch zu prüfen';
+          sEl.classList.toggle('is-set', verschoben);
+        }
+      };
+
+      const initMap = async () => {
+        const L = (await import('leaflet')).default;
+        const map = L.map('pp-map', { scrollWheelZoom: true });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap',
+        }).addTo(map);
+
+        const icon = (label: string) =>
+          L.divIcon({
+            className: '',
+            html: `<span class="pp-pin">${label}</span>`,
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+            popupAnchor: [0, -16],
+          });
+
+        const marker = aktuell.map((p, i) => {
+          const m = L.marker([p.lat, p.lng], { icon: icon(String(i + 1)), draggable: true })
+            .addTo(map)
+            .bindPopup(`<b>${p.name}</b><br>Pin ziehen, bis er auf dem Stellplatz liegt.`);
+          m.on('dragend', () => {
+            const ll = m.getLatLng();
+            aktuell[i].lat = ll.lat;
+            aktuell[i].lng = ll.lng;
+            zeige(i, true);
+            setMsg(`${p.name}: neue Position übernommen.`);
+          });
+          return m;
+        });
+
+        map.fitBounds(aktuell.map((p) => [p.lat, p.lng]) as any, { padding: [50, 50] });
+        setTimeout(() => map.invalidateSize(), 200);
+
+        // Listeneintrag antippen → Karte springt zum Pin und öffnet ihn.
+        document.querySelectorAll<HTMLLIElement>('#pp-list li').forEach((li, i) => {
+          li.addEventListener('click', () => {
+            map.setView(marker[i].getLatLng(), Math.max(map.getZoom(), 18), { animate: true });
+            marker[i].openPopup();
+          });
+        });
+
+        resetBtn?.addEventListener('click', () => {
+          start.forEach((p, i) => {
+            aktuell[i].lat = p.lat;
+            aktuell[i].lng = p.lng;
+            marker[i].setLatLng([p.lat, p.lng]);
+            zeige(i, false);
+          });
+          map.fitBounds(start.map((p) => [p.lat, p.lng]) as any, { padding: [50, 50] });
+          setMsg('Zurückgesetzt auf den gespeicherten Stand.');
+        });
+      };
+
+      copyBtn?.addEventListener('click', async () => {
+        const text = aktuell
+          .map((p) => `${p.name} (${p.slug}): ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`)
+          .join('\n');
+        try {
+          await navigator.clipboard.writeText(text);
+          setMsg('Liste kopiert — jetzt in eine E-Mail oder WhatsApp einfügen.');
+        } catch {
+          // Kein Clipboard-Zugriff (ältere Browser, kein HTTPS): Text zum Abschreiben zeigen.
+          setMsg('Kopieren nicht möglich — bitte den Text unten abtippen:\n' + text);
+        }
+      });
+
+      initMap();
+    </script>
+
+    <style is:global>
+      body { background: var(--color-bg); color: var(--color-ink); }
+      .pp { max-width: 900px; margin: 0 auto; padding: clamp(1.2rem, 4vw, 2.4rem) clamp(1rem, 4vw, 2rem) 3rem; }
+      .pp-kicker { display: inline-block; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-red-deep); background: var(--color-red-soft); padding: 0.25rem 0.6rem; border-radius: 999px; }
+      .pp-head h1 { font-size: clamp(1.7rem, 5vw, 2.4rem); font-weight: 800; margin: 0.7rem 0 0.4rem; }
+      .pp-lead { color: var(--color-muted); max-width: 60ch; }
+      .pp-map { height: clamp(340px, 58vh, 560px); margin: 1.3rem 0 1.1rem; border: 1px solid var(--color-line); border-radius: 14px; overflow: hidden; z-index: 0; }
+      .pp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+      .pp-list li { display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem 0.75rem; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 12px; cursor: pointer; }
+      .pp-list li:hover { border-color: var(--color-red); }
+      .pp-num { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; background: var(--color-red); color: #fff; font-weight: 800; }
+      .pp-txt { display: grid; min-width: 0; }
+      .pp-txt b { font-size: 0.98rem; }
+      .pp-txt small { color: var(--color-muted); font-size: 0.8rem; }
+      .pp-koord { margin-left: auto; text-align: right; display: grid; gap: 0.15rem; }
+      .pp-koord code { font-family: ui-monospace, 'JetBrains Mono', monospace; font-size: 0.82rem; }
+      .pp-koord em { font-style: normal; font-size: 0.72rem; color: var(--color-muted); }
+      .pp-koord em.is-set { color: #167a4e; font-weight: 700; }
+      .pp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin-top: 1.2rem; }
+      .pp-btn { font: inherit; font-weight: 700; padding: 0.7rem 1.1rem; min-height: 46px; border-radius: 10px; border: 1px solid var(--color-line); background: var(--color-surface); color: var(--color-ink); cursor: pointer; }
+      .pp-btn-red { background: var(--color-red); border-color: var(--color-red); color: #fff; }
+      .pp-btn:hover { border-color: var(--color-red); }
+      .pp-msg { font-size: 0.86rem; font-weight: 600; color: var(--color-red-deep); white-space: pre-line; }
+      .pp-fine { margin-top: 1.4rem; font-size: 0.78rem; color: var(--color-muted); }
+      .pp-pin { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; border: 2px solid #fff; background: var(--color-red); color: #fff; font-weight: 800; font-size: 0.85rem; box-shadow: 0 3px 8px rgba(0,0,0,.45); cursor: grab; }
+      .pp-pin:active { cursor: grabbing; }
+    </style>
+  </body>
+</html>

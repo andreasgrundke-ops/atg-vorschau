@@ -48,14 +48,22 @@ bestehenden WordPress-Seite. Vorschau läuft über GitHub Pages, Abstimmung mit 
   Gegenprobe mit `AKTIONSPREISE_GELTEN = false`: Website und beide Flyer stellen gemeinsam
   um. Soll/Ist je Punkt in `docs/SOLL-IST_Korrekturliste-Schneidt.md`.
 - **Offen — Verein:** sechs Rückfragen, Herleitung in
-  `docs/RUECKFRAGEN-Verein_2026-08-12.md`, Mailtext in `docs/MAIL-Rueckfragen_2026-08-12.md`.
-  Am 21.08. dazugekommen: Die Preisseite des Vereins vermerkt bei PKW 2 hinter
-  „0,48 / 0,45 € pro km" den Zusatz „Renault ZOE keine Änderung!" — der Aktionspreis gilt
-  also vermutlich nicht für die ZOE. `tarife.ts` führt Sandero und ZOE bisher unter einem
-  gemeinsamen Klassenpreis von 0,45 €/km; bestätigt der Verein die Lesart, braucht die ZOE
-  einen eigenen Satz. Weiter offen: geltende Kilometerpreise seit dem 30.06.2026, Lesart
-  der Staffel ab 301 km, Satz oberhalb 1.000 km, Klassenzuordnung Clio/Sandero und die
-  Bestätigung der fünf Stellplätze über `/pins` (alle stehen auf `geprueft: false`).
+  `docs/RUECKFRAGEN-Verein_2026-08-12.md`. Der Preisabgleich am 21.08. hat die wichtigste
+  Frage gedreht: Das rot ausgezeichnete Wertepaar auf der Preisseite ist **kein
+  Aktionspreis, sondern ein saisonaler Spritzuschlag** (Vereinsmeldung vom 15.04.2026:
+  Benziner 3 ct/km, Trafic 5 ct/km, „mindestens bis 30.06.2026"). Rechnerisch bestätigt:
+  0,40+0,03=0,43 · 0,45+0,03=0,48 · 0,60+0,05=0,65. Der niedrigere Wert ist also der
+  reguläre Preis — und genau den zeigt die Website. `tarife.ts` hatte die Bedeutung
+  umgekehrt hinterlegt und heißt jetzt `SPRITZUSCHLAG_GILT` statt `AKTIONSPREISE_GELTEN`
+  (Beträge unverändert). Zu klären: Läuft der Zuschlag noch? Gilt er wirklich nicht für
+  die ZOE („Renault ZOE keine Änderung!") — falls doch wieder aktiv, braucht die ZOE
+  einen eigenen Satz, weil der Zuschlag am Antrieb hängt und nicht an der Preisklasse.
+  Weiter offen: Lesart der Staffel ab 301 km, Satz oberhalb 1.000 km, Klassenzuordnung
+  Clio/Sandero, Bestätigung der Stellplätze über `/pins`.
+- **Stellplätze:** Alle fünf Koordinaten am 21.08.2026 über `/pins` gesetzt und gegen
+  OpenStreetMap geprüft (Clio 6 m, Trafic 16 m, Sandero 9 m neben den dort eingetragenen
+  ATG-Punkten, ZOE 7 m neben einer Ladesäule, Corsa Finkenstraße Höhe 14). Stehen bis zur
+  Abnahme durch den Verein weiter auf `geprueft: false`.
 - **Offen — vor dem Livegang:** Der Vorstand soll Preisliste und Dokumente selbst
   austauschen können, also Login und Upload (Anforderung Andreas, 21.08.2026). Das sprengt
   den heutigen Aufbau: Astro baut statisch, die Seite liegt auf GitHub Pages — dort gibt es

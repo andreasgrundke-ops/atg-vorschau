@@ -2,7 +2,7 @@
  * Tarife ATG — eine Quelle der Wahrheit für Website, Kostenrechner, Flyer und Visitenkarte.
  *
  * Titel:        ATG Carsharing — Tarifdaten
- * Version:      1.0
+ * Version:      1.1
  * Autor:        Grundke IT-Service
  * Datum:        2026-08-12
  * Beschreibung: Zeittarife, Kilometerpreise je Fahrzeugklasse inkl. Staffel ab 301 km,
@@ -12,20 +12,41 @@
  *               genau hier ändern.
  *
  *               Quelle: Preisübersicht des Vereins (atg-grasbrunn.de/preise).
- *               Dort stehen je Klasse ZWEI Werte, z. B. „0,43 / 0,40" — der niedrigere
- *               ist der rot markierte Aktionspreis mit dem Vermerk „gilt mindestens bis
- *               30.06.2026". Dieses Datum ist verstrichen, ohne dass die Seite
- *               aktualisiert wurde. Bis der Verein bestätigt, welcher Wert gilt, zeigen
- *               wir den Aktionspreis (`km`); der reguläre steht als `kmRegulaer` daneben.
- *               Umstellen = `AKTIONSPREISE_GELTEN` auf false setzen.
+ *               Dort stehen je Klasse ZWEI Werte, z. B. „0,43 / 0,40". Rot ausgezeichnet
+ *               ist der HÖHERE. Das ist kein Aktionspreis, sondern ein saisonaler
+ *               Spritzuschlag: angekündigt am 15.04.2026 („Teure Spritpreise"), Benziner
+ *               3 ct/km, Trafic 5 ct/km, „gilt mindestens bis 30.06.2026", Rücknahme im
+ *               Folgequartal, wenn die Spritpreise sinken. Der niedrigere Wert ist also
+ *               der reguläre Preis. Rechnerisch bestätigt: 0,40+0,03=0,43 · 0,45+0,03=0,48
+ *               · 0,60+0,05=0,65.
+ *
+ *               Das Enddatum ist verstrichen; die Preisseite wurde zuletzt am 21.07.2026
+ *               geändert, ohne den Zuschlag zu entfernen. Wir zeigen deshalb die regulären
+ *               Preise (`km`), der Zuschlagspreis steht als `kmMitZuschlag` daneben.
+ *               Umstellen = `SPRITZUSCHLAG_GILT` auf true setzen.
+ *
+ *               Sonderfall ZOE: Ein Spritzuschlag trifft ein E-Auto nicht, die Preisseite
+ *               vermerkt dazu „Renault ZOE keine Änderung!". Sandero und ZOE liegen aber
+ *               in derselben Klasse. Solange kein Zuschlag gilt, kosten beide 0,45 €/km
+ *               und der Unterschied fällt nicht an; wird der Zuschlag wieder aktiviert,
+ *               braucht die ZOE einen eigenen Satz — er hängt am Antrieb, nicht an der
+ *               Preisklasse.
  *
  * Änderungshistorie:
- *   2026-08-12  1.0  Erstausgabe — herausgelöst aus index.astro nach Korrekturliste
- *                    Wolfgang Schneidt vom 11.08.2026 (feste Preise statt „ab", Staffel).
+ *   2026-08-12  1.0  Erstausgabe — herausgelöst aus index.astro nach der Korrekturliste
+ *                    von Wolfgang Schneidt (feste Preise statt „ab", Staffel).
+ *   2026-08-21  1.1  Abgleich mit atg-grasbrunn.de: Der rote Wert ist der Spritzuschlag,
+ *                    nicht ein Aktionspreis — die Bedeutung war umgekehrt hinterlegt.
+ *                    `AKTIONSPREISE_GELTEN` heißt jetzt `SPRITZUSCHLAG_GILT` (Logik
+ *                    gedreht), `kmRegulaer` heißt `kmMitZuschlag`. Die angezeigten
+ *                    Beträge bleiben unverändert.
  */
 
-/** Aktionspreise (rot) oder reguläre Preise (schwarz) anzeigen. Siehe Kopfkommentar. */
-export const AKTIONSPREISE_GELTEN = true;
+/**
+ * Gilt der saisonale Spritzuschlag? `false` = reguläre Preise (schwarz in der Preisliste),
+ * `true` = Zuschlagspreise (rot). Siehe Kopfkommentar; vom Verein zu bestätigen.
+ */
+export const SPRITZUSCHLAG_GILT = false;
 
 /** Zeittarif — gilt für alle Fahrzeuge gleich, unabhängig von der Klasse. */
 export const ZEIT = {
@@ -51,10 +72,10 @@ export interface Klasse {
   label: string;
   /** Klartext für Website-Besucher, die die Klassennamen nicht kennen. */
   beschreibung: string;
-  /** Aktionspreis pro km bis 300 km (rot in der Preisliste). */
-  km: number;
   /** Regulärer Preis pro km bis 300 km (schwarz in der Preisliste). */
-  kmRegulaer: number;
+  km: number;
+  /** Preis pro km bis 300 km mit saisonalem Spritzuschlag (rot in der Preisliste). */
+  kmMitZuschlag: number;
   /** Reduzierter Preis pro km für 301–1000 km. */
   kmStaffel: number;
 }
@@ -65,7 +86,7 @@ export const KLASSEN: Record<KlasseId, Klasse> = {
     label: 'PKW 1',
     beschreibung: 'Opel Corsa · Renault Clio Grandtour',
     km: 0.4,
-    kmRegulaer: 0.43,
+    kmMitZuschlag: 0.43,
     kmStaffel: 0.32,
   },
   pkw2: {
@@ -73,7 +94,7 @@ export const KLASSEN: Record<KlasseId, Klasse> = {
     label: 'PKW 2',
     beschreibung: 'Dacia Sandero · Renault ZOE',
     km: 0.45,
-    kmRegulaer: 0.48,
+    kmMitZuschlag: 0.48,
     kmStaffel: 0.37,
   },
   transporter: {
@@ -81,7 +102,7 @@ export const KLASSEN: Record<KlasseId, Klasse> = {
     label: 'Transporter',
     beschreibung: 'Renault Trafic (9 Sitze)',
     km: 0.6,
-    kmRegulaer: 0.65,
+    kmMitZuschlag: 0.65,
     kmStaffel: 0.52,
   },
 };
@@ -100,7 +121,7 @@ export const PREIS_STAND = '08/2026';
 
 /** Kilometerpreis der Klasse, der bis 300 km gilt. */
 export const kmSatz = (id: KlasseId): number =>
-  AKTIONSPREISE_GELTEN ? KLASSEN[id].km : KLASSEN[id].kmRegulaer;
+  SPRITZUSCHLAG_GILT ? KLASSEN[id].kmMitZuschlag : KLASSEN[id].km;
 
 /** Zahl deutsch mit zwei Nachkommastellen: 1.234,56. */
 const zahl = (n: number): string =>

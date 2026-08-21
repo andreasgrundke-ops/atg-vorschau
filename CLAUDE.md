@@ -37,6 +37,25 @@ bestehenden WordPress-Seite. Vorschau läuft über GitHub Pages, Abstimmung mit 
   und mittig, daneben passt eine beschriftete Leiste erst ab rund 1565 px Fensterbreite.
   Wer dort etwas verbreitert, prüft Breiten zwischen 1024 und 1680 px gegen.
 
+## Hosting und DNS der bestehenden Seite (Stand 21.08.2026)
+
+Ermittelt über DNS, RIPE und die Anbieterseite — nicht vom Verein bestätigt.
+
+| | |
+|---|---|
+| Hoster / DNS | **InternetWerk GmbH**, Frankenstr. 2A, 04932 Hirschfeld · Tel. 035343-668800 · info@internetwerk.de · HRB 9096 AG Cottbus |
+| Nameserver | `ns1.internetwerk.de`, `ns2.internetwerk.de` |
+| Webserver | `91.210.225.28` (Apache), IP-Netz von IP-Projects, als InternetWerk GmbH eingetragen |
+| Mail | MX `mail.atg-grasbrunn.de` → **dieselbe IP**, SPF `include:spf.internetwerk.de` |
+
+Andreas hat den WordPress-Login, aber keinen Hoster-Zugang — der ist für die DNS-Einträge
+nötig und beim Verein anzufragen.
+
+**Beim Umschalten aufpassen:** Website und Vereins-Mail liegen auf derselben Maschine.
+Für den Livegang nur den A-Record (und ggf. `www`) umhängen. MX und SPF unangetastet
+lassen, sonst reißt die E-Mail des Vereins ab. Ein Nameserver-Wechsel würde beides auf
+einmal verschieben und muss die MX-Einträge mitnehmen.
+
 ## Stand / offen / nächster Schritt
 - **Stand:** 21.08.2026 — Version 1.2 auf der Vorschau (GitHub Pages). Enthält die
   Korrekturliste von Wolfgang Schneidt (Mail vom 27.07.2026, eingearbeitet am 12.08.) und

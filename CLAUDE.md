@@ -47,19 +47,23 @@ bestehenden WordPress-Seite. Vorschau läuft über GitHub Pages, Abstimmung mit 
   dort standen sie als fester Text, eine Preisumstellung hätte sie stumm veralten lassen.
   Gegenprobe mit `AKTIONSPREISE_GELTEN = false`: Website und beide Flyer stellen gemeinsam
   um. Soll/Ist je Punkt in `docs/SOLL-IST_Korrekturliste-Schneidt.md`.
-- **Offen — Verein:** sechs Rückfragen, Herleitung in
-  `docs/RUECKFRAGEN-Verein_2026-08-12.md`. Der Preisabgleich am 21.08. hat die wichtigste
-  Frage gedreht: Das rot ausgezeichnete Wertepaar auf der Preisseite ist **kein
-  Aktionspreis, sondern ein saisonaler Spritzuschlag** (Vereinsmeldung vom 15.04.2026:
-  Benziner 3 ct/km, Trafic 5 ct/km, „mindestens bis 30.06.2026"). Rechnerisch bestätigt:
-  0,40+0,03=0,43 · 0,45+0,03=0,48 · 0,60+0,05=0,65. Der niedrigere Wert ist also der
-  reguläre Preis — und genau den zeigt die Website. `tarife.ts` hatte die Bedeutung
-  umgekehrt hinterlegt und heißt jetzt `SPRITZUSCHLAG_GILT` statt `AKTIONSPREISE_GELTEN`
-  (Beträge unverändert). Zu klären: Läuft der Zuschlag noch? Gilt er wirklich nicht für
-  die ZOE („Renault ZOE keine Änderung!") — falls doch wieder aktiv, braucht die ZOE
-  einen eigenen Satz, weil der Zuschlag am Antrieb hängt und nicht an der Preisklasse.
-  Weiter offen: Lesart der Staffel ab 301 km, Satz oberhalb 1.000 km, Klassenzuordnung
+- **Preise (21.08.2026):** Die Website zeigt die Preise **mit saisonalem Spritzuschlag**,
+  also so, wie sie auf atg-grasbrunn.de als geltend markiert sind: 0,43 €/km PKW 1,
+  0,48 €/km Sandero, 0,45 €/km ZOE, 0,65 €/km Trafic (Staffel unverändert 0,32/0,37/0,52).
+  Der Zuschlag stammt aus der Vereinsmeldung vom 15.04.2026 (Benziner 3 ct, Trafic 5 ct,
+  „mindestens bis 30.06.2026") und ist nie zurückgenommen worden. Die ZOE hat eine eigene
+  Klassenzeile bekommen, weil ein Spritzuschlag ein E-Auto nicht trifft („Renault ZOE
+  keine Änderung!") — Tabelle, Kostenrechner und Fahrzeugkarte führen sie getrennt vom
+  Sandero. Rücknahme = `SPRITZUSCHLAG_GILT = false` in `tarife.ts`.
+- **Offen — Verein:** sechs Rückfragen, Herleitung und Belege in
+  `docs/RUECKFRAGEN-Verein_2026-08-12.md`: Gilt der Zuschlag noch? Ist die ZOE davon
+  ausgenommen? Lesart der Staffel ab 301 km, Satz oberhalb 1.000 km, Klassenzuordnung
   Clio/Sandero, Bestätigung der Stellplätze über `/pins`.
+- **Offen — Rechtsseiten:** Der Footer zeigte auf eigene `/impressum/`, `/datenschutz/`
+  und `/barrierefreiheit/` — die es nicht gibt, alle drei liefen auf 404. Sie verweisen
+  jetzt auf die Seiten des Vereins. Eigene müssen vor dem Livegang her, weil die
+  WordPress-Datenschutzerklärung die Technik dieser Seite nicht beschreibt (OpenStreetMap-
+  Kacheln, Service Worker, lokale Schriften, keine Cookies).
 - **Stellplätze:** Alle fünf Koordinaten am 21.08.2026 über `/pins` gesetzt und gegen
   OpenStreetMap geprüft (Clio 6 m, Trafic 16 m, Sandero 9 m neben den dort eingetragenen
   ATG-Punkten, ZOE 7 m neben einer Ladesäule, Corsa Finkenstraße Höhe 14). Stehen bis zur

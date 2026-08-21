@@ -8,7 +8,8 @@ lassen.
 > **Änderung am 21.08.2026:** Ein Abgleich mit atg-grasbrunn.de hat die Preisfrage
 > gedreht. Die frühere Fassung dieses Dokuments hielt den niedrigeren Wert für einen
 > Aktionspreis. Tatsächlich ist der höhere, rot ausgezeichnete Wert ein befristeter
-> Spritzuschlag. Herleitung siehe Punkt 1.
+> Spritzuschlag. Herleitung siehe Punkt 1. Die Website zeigt seither die Preise so, wie
+> sie auf der Vereinsseite stehen — also mit Zuschlag (Entscheidung Andreas, 21.08.).
 
 ---
 
@@ -34,10 +35,13 @@ Zuschlag nicht betroffen.
 Das genannte Enddatum ist verstrichen. Die Preisseite wurde zuletzt am 21.07.2026
 geändert, ohne den Zuschlag zu entfernen.
 
-**Frage:** Ist der Zuschlag ausgelaufen? Die neue Website zeigt aktuell die regulären
-Preise ohne Zuschlag (0,40 / 0,45 / 0,60 €/km).
+**Frage:** Ist der Zuschlag ausgelaufen oder gilt er weiter?
 
-*Umstellung ist eine Zeile:* `SPRITZUSCHLAG_GILT = true` in `src/data/tarife.ts`.
+Die neue Website zeigt seit dem 21.08.2026 die Preise **mit** Zuschlag, also genau die
+Werte, die auf eurer Preisseite als geltend markiert sind: 0,43 €/km für PKW 1, 0,48 €/km
+für den Sandero, 0,45 €/km für die ZOE und 0,65 €/km für den Trafic.
+
+*Rücknahme ist eine Zeile:* `SPRITZUSCHLAG_GILT = false` in `src/data/tarife.ts`.
 
 ## 2. Die ZOE beim Zuschlag
 
@@ -45,9 +49,11 @@ Neben dem Wertepaar von PKW 2 steht, ebenfalls rot, „Renault ZOE keine Änderu
 Spritzuschlag trifft ein Elektroauto nicht — die ZOE bliebe also bei 0,45 €/km, während
 der Sandero mit Zuschlag 0,48 €/km kostet.
 
-**Frage:** Stimmt diese Lesart? Solange kein Zuschlag gilt, spielt es keine Rolle, beide
-kosten 0,45 €/km. Wird er wieder aktiviert, braucht die ZOE einen eigenen Satz, weil der
-Zuschlag am Antrieb hängt und nicht an der Preisklasse.
+**Frage:** Stimmt diese Lesart?
+
+So ist es umgesetzt: Die ZOE hat eine eigene Zeile in der Tarif-Tabelle und im
+Kostenrechner und steht bei 0,45 €/km, der Sandero bei 0,48 €/km. Fällt der Zuschlag
+weg, kosten beide wieder gleich viel und die Zeile zeigt denselben Betrag.
 
 ## 3. Wie wird die Staffel ab 301 km gerechnet?
 
@@ -106,6 +112,13 @@ Die Preisseite nennt außerdem Grobverschmutzung 60 €, Fahrten außerhalb der 
 bereit, sind auf der Website aber bewusst nicht ausgestellt — sie gehören eher in die
 Nutzungsordnung als auf eine Startseite. Falls gewünscht, nehmen wir sie in die
 Tarif-Tabelle auf.
+
+**Rechtsseiten fehlen.** Der Footer verwies auf eigene Seiten `/impressum/`,
+`/datenschutz/` und `/barrierefreiheit/`, die es in diesem Projekt nicht gibt — alle drei
+liefen ins Leere. Sie zeigen jetzt auf die bestehenden Seiten des Vereins. Vor dem
+Livegang braucht die Seite eigene: Die WordPress-Datenschutzerklärung beschreibt die
+Technik dieser Website nicht (Kartenkacheln von OpenStreetMap, Service Worker, lokale
+Schriften, keine Cookies, kein Tracking).
 
 Ebenfalls abgeglichen und unverändert korrekt: Zeittarife (1,00 €/h tags, 0,20 €/h
 nachts), Aufnahmebeitrag 50 €, Einlage 600 €, monatlicher Beitrag 0 €, Selbstbeteiligung

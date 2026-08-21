@@ -75,8 +75,8 @@ const steps = [
 ];
 
 const faqs = [
-  { q: 'Was kostet Carsharing bei ATG?', a: `Der Zeittarif ist bei allen Fahrzeugen gleich: ${ZEIT.tag.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Std. tagsüber (${ZEIT.tagVon}–${ZEIT.tagBis} Uhr) und ${ZEIT.nacht.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Std. nachts. Dazu kommen die Kilometer: ${proKm(kmSatz('pkw1'))} für Corsa und Clio Grandtour, ${proKm(kmSatz('pkw2'))} für Sandero und ZOE, ${proKm(kmSatz('transporter'))} für den Trafic. Kraftstoff und Versicherung sind darin enthalten: getankt wird mit der Tankkarte im Fahrzeug, du verauslagst nichts. Einmalig ${EINMALIG.aufnahme} € Aufnahme und ${EINMALIG.einlage} € Einlage (bei Austritt zurück) — je Haushalt einmal, egal wie viele Fahrer. Kein Monatsbeitrag.` },
-  { q: 'Wird es bei längeren Fahrten günstiger?', a: `Ja. Ab dem ${STAFFEL.ab}. Kilometer einer Fahrt gilt der reduzierte Kilometerpreis: ${proKm(KLASSEN.pkw1.kmStaffel)} statt ${proKm(kmSatz('pkw1'))} (Corsa, Clio Grandtour), ${proKm(KLASSEN.pkw2.kmStaffel)} statt ${proKm(kmSatz('pkw2'))} (Sandero, ZOE) und ${proKm(KLASSEN.transporter.kmStaffel)} statt ${proKm(kmSatz('transporter'))} beim Trafic. Die ersten ${STAFFEL.volleKm} Kilometer werden zum normalen Satz berechnet, jeder weitere zum reduzierten. Der Kostenrechner auf dieser Seite rechnet das mit.` },
+  { q: 'Was kostet Carsharing bei ATG?', a: `Der Zeittarif ist bei allen Fahrzeugen gleich: ${ZEIT.tag.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Std. tagsüber (${ZEIT.tagVon}–${ZEIT.tagBis} Uhr) und ${ZEIT.nacht.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Std. nachts. Dazu kommen die Kilometer: ${proKm(kmSatz('pkw1'))} für Corsa und Clio Grandtour, ${proKm(kmSatz('pkw2'))} für den Sandero, ${proKm(kmSatz('zoe'))} für die ZOE und ${proKm(kmSatz('transporter'))} für den Trafic. Kraftstoff und Versicherung sind darin enthalten: getankt wird mit der Tankkarte im Fahrzeug, du verauslagst nichts. Einmalig ${EINMALIG.aufnahme} € Aufnahme und ${EINMALIG.einlage} € Einlage (bei Austritt zurück) — je Haushalt einmal, egal wie viele Fahrer. Kein Monatsbeitrag.` },
+  { q: 'Wird es bei längeren Fahrten günstiger?', a: `Ja. Ab dem ${STAFFEL.ab}. Kilometer einer Fahrt gilt der reduzierte Kilometerpreis: ${proKm(KLASSEN.pkw1.kmStaffel)} statt ${proKm(kmSatz('pkw1'))} (Corsa, Clio Grandtour), ${proKm(KLASSEN.pkw2.kmStaffel)} statt ${proKm(kmSatz('pkw2'))} (Sandero) bzw. ${proKm(kmSatz('zoe'))} (ZOE) und ${proKm(KLASSEN.transporter.kmStaffel)} statt ${proKm(kmSatz('transporter'))} beim Trafic. Die ersten ${STAFFEL.volleKm} Kilometer werden zum normalen Satz berechnet, jeder weitere zum reduzierten. Der Kostenrechner auf dieser Seite rechnet das mit.` },
   { q: 'Wie werde ich Mitglied?', a: 'Online melden, Ausweis und Führerschein nachreichen, Einlage zahlen, kurze Einweisung vor Ort — dann buchst du selbstständig. Je Haushalt genügt eine Mitgliedschaft mit einer Einlage — alle Fahrer im Haushalt sind mit dabei.' },
   { q: 'Wo stehen die Fahrzeuge?', a: 'An festen Stellplätzen in Neukeferloh (u.a. Rathaus, Finkenstraße, Waldstraße/Saarlandstraße). Über die Kooperation mit den Vaterstettener Auto-Teilern kannst du zusätzlich deren Fahrzeuge nutzen.' },
   { q: 'Ist der Kraftstoff im Preis enthalten?', a: 'Ja. Kraftstoff und Versicherung sind in den Kilometerpreisen bereits enthalten. Die Tankkarte liegt im Fahrzeug — du zahlst keinen Cent extra fürs Tanken.' },
@@ -289,7 +289,9 @@ const faqSchema = {
           </table>
 
           <p class="fine">
-            Stand {PREIS_STAND}. Ab dem {STAFFEL.ab}. Kilometer einer Fahrt gilt der reduzierte Satz
+            Stand {PREIS_STAND}. In den Kilometerpreisen der Verbrenner steckt der saisonale
+            Spritzuschlag des Vereins (3 Cent, beim Trafic 5 Cent); die ZOE fährt elektrisch und
+            ist davon ausgenommen. Ab dem {STAFFEL.ab}. Kilometer einer Fahrt gilt der reduzierte Satz
             für die darüber liegenden Kilometer. Versicherung <b>und Kraftstoff inklusive</b> (Selbstbeteiligung
             Haftpflicht {SB.haftpflicht} € / Kasko {SB.kasko} €). Die Tankkarte liegt im Fahrzeug —
             Tanken kostet dich keinen Cent extra.

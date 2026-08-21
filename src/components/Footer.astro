@@ -3,13 +3,17 @@
  * Footer — dunkle Ink-Fläche. NAP, Kontakt (Sofort-Aktionen), Partner Vaterstetten, Rechts-Links.
  * Impressum/Datenschutz/Barrierefreiheit verlinken später auf eigene Seiten (Phase 1 Pflicht).
  *
- * base = import.meta.env.BASE_URL: trägt den Pages-Unterordner für die internen Rechts-Links.
+ * Impressum und Datenschutz zeigen bis zum Livegang auf die bestehenden Seiten des
+ * Vereins. Vorher standen dort interne Links (`/impressum/`, `/datenschutz/`,
+ * `/barrierefreiheit/`) auf Seiten, die es in diesem Projekt nicht gibt — alle drei
+ * liefen ins Leere. Eigene Seiten müssen vor dem Livegang her: Die
+ * WordPress-Datenschutzerklärung beschreibt die Technik dieser Seite nicht
+ * (Kartenkacheln von OpenStreetMap, Service Worker, lokale Schriften, keine Cookies).
  *
  * Der Anker `#kontakt` sitzt seit 2026-08-12 auf der Kontakt-Sektion der Startseite,
  * nicht mehr hier: Der Sprung landete sonst am Seitenende und damit optisch auf der
  * Dokumentenliste statt beim Formular (Rückmeldung Wolfgang Schneidt, 11.08.2026).
  */
-const base = import.meta.env.BASE_URL;
 ---
 
 <footer class="site-footer" id="seitenende">
@@ -41,9 +45,8 @@ const base = import.meta.env.BASE_URL;
 
     <div class="legal">
       <div class="legal-links">
-        <a href={`${base}impressum/`}>Impressum</a>
-        <a href={`${base}datenschutz/`}>Datenschutz</a>
-        <a href={`${base}barrierefreiheit/`}>Barrierefreiheit</a>
+        <a href="https://www.atg-grasbrunn.de/impressum/" rel="noopener">Impressum</a>
+        <a href="https://www.atg-grasbrunn.de/datenschutz/" rel="noopener">Datenschutz</a>
       </div>
       <span class="muted small">© 2026 Auto-Teiler Grasbrunn e.V. · VR 207138, AG München · „Carsharing dahoam“</span>
     </div>

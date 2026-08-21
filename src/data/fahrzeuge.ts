@@ -76,7 +76,8 @@ export const FAHRZEUGE: Fahrzeug[] = [
     name: 'Renault ZOE',
     typ: 'Elektro · emissionsfrei',
     badge: 'E-Auto',
-    klasse: 'pkw2',
+    // Eigene Tarifzeile statt PKW 2: Der Spritzuschlag gilt für das E-Auto nicht.
+    klasse: 'zoe',
     sitze: '5 Sitze',
     antrieb: 'Elektro',
     schaltung: 'Automatik',

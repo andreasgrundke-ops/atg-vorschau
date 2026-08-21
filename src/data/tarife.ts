@@ -2,7 +2,7 @@
  * Tarife ATG — eine Quelle der Wahrheit für Website, Kostenrechner, Flyer und Visitenkarte.
  *
  * Titel:        ATG Carsharing — Tarifdaten
- * Version:      1.1
+ * Version:      1.2
  * Autor:        Grundke IT-Service
  * Datum:        2026-08-12
  * Beschreibung: Zeittarife, Kilometerpreise je Fahrzeugklasse inkl. Staffel ab 301 km,
@@ -35,6 +35,11 @@
  * Änderungshistorie:
  *   2026-08-12  1.0  Erstausgabe — herausgelöst aus index.astro nach der Korrekturliste
  *                    von Wolfgang Schneidt (feste Preise statt „ab", Staffel).
+ *   2026-08-21  1.2  Spritzuschlag scharf geschaltet (`SPRITZUSCHLAG_GILT = true`) — die
+ *                    Preise gelten laut Andreas bis auf weiteres so, wie sie auf
+ *                    atg-grasbrunn.de stehen, und dort sind die roten Zuschlagspreise
+ *                    nicht zurückgenommen. Die ZOE hat dafür eine eigene Klassenzeile
+ *                    bekommen, weil sie als E-Auto beim regulären Satz bleibt.
  *   2026-08-21  1.1  Abgleich mit atg-grasbrunn.de: Der rote Wert ist der Spritzuschlag,
  *                    nicht ein Aktionspreis — die Bedeutung war umgekehrt hinterlegt.
  *                    `AKTIONSPREISE_GELTEN` heißt jetzt `SPRITZUSCHLAG_GILT` (Logik
@@ -46,7 +51,7 @@
  * Gilt der saisonale Spritzuschlag? `false` = reguläre Preise (schwarz in der Preisliste),
  * `true` = Zuschlagspreise (rot). Siehe Kopfkommentar; vom Verein zu bestätigen.
  */
-export const SPRITZUSCHLAG_GILT = false;
+export const SPRITZUSCHLAG_GILT = true;
 
 /** Zeittarif — gilt für alle Fahrzeuge gleich, unabhängig von der Klasse. */
 export const ZEIT = {
@@ -64,7 +69,13 @@ export const STAFFEL = {
   volleKm: 300,
 } as const;
 
-export type KlasseId = 'pkw1' | 'pkw2' | 'transporter';
+/**
+ * Die Preisliste kennt drei Klassen. Die ZOE steht darin unter PKW 2, zahlt aber als
+ * E-Auto keinen Spritzuschlag — solange der gilt, hat sie einen eigenen Kilometerpreis
+ * und deshalb hier eine eigene Zeile. Fällt der Zuschlag weg, kostet sie wieder dasselbe
+ * wie der Sandero; die Zeile bleibt dann bestehen und zeigt denselben Betrag.
+ */
+export type KlasseId = 'pkw1' | 'pkw2' | 'zoe' | 'transporter';
 
 export interface Klasse {
   id: KlasseId;
@@ -92,9 +103,19 @@ export const KLASSEN: Record<KlasseId, Klasse> = {
   pkw2: {
     id: 'pkw2',
     label: 'PKW 2',
-    beschreibung: 'Dacia Sandero · Renault ZOE',
+    beschreibung: 'Dacia Sandero',
     km: 0.45,
     kmMitZuschlag: 0.48,
+    kmStaffel: 0.37,
+  },
+  zoe: {
+    id: 'zoe',
+    label: 'PKW 2',
+    beschreibung: 'Renault ZOE (E-Auto)',
+    km: 0.45,
+    // Kein Spritzuschlag für das E-Auto — „Renault ZOE keine Änderung!" auf der
+    // Preisseite des Vereins. Der Wert ist absichtlich gleich `km`.
+    kmMitZuschlag: 0.45,
     kmStaffel: 0.37,
   },
   transporter: {
@@ -146,7 +167,7 @@ export const zahlKurz = (n: number): string =>
   n.toLocaleString('de-DE', { maximumFractionDigits: 2 });
 
 /** Alle Klassen in der Reihenfolge der Preisliste. */
-export const ALLE_KLASSEN: readonly KlasseId[] = ['pkw1', 'pkw2', 'transporter'] as const;
+export const ALLE_KLASSEN: readonly KlasseId[] = ['pkw1', 'pkw2', 'zoe', 'transporter'] as const;
 
 /**
  * Spanne über alle Klassen, z. B. „0,40–0,60 €/km".

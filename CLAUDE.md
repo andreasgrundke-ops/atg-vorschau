@@ -17,7 +17,7 @@ bestehenden WordPress-Seite. Vorschau läuft über GitHub Pages, Abstimmung mit 
 ### Wo was liegt
 | Thema | Datei |
 |---|---|
-| Preise, Klassen, Rechenlogik | `src/data/tarife.ts` — **einzige Quelle**, nicht in Seiten hartkodieren |
+| Preise, Klassen, Rechenlogik | `src/data/tarife.ts` — **einzige Quelle**, nicht in Seiten hartkodieren. Startseite, Flyer, Querflyer und Visitenkarte hängen alle daran; für die Kurzform auf den Druckstücken gibt es `kmSpanne()` / `kmStaffelSpanne()` |
 | Fahrzeuge, Stellplätze, Koordinaten | `src/data/fahrzeuge.ts` |
 | Startseite (alle Sektionen) | `src/pages/index.astro` |
 | Standorte-Karte | `src/components/StandorteKarte.astro` |
@@ -31,22 +31,38 @@ bestehenden WordPress-Seite. Vorschau läuft über GitHub Pages, Abstimmung mit 
   Für solche Knoten `:global(...)` verwenden (siehe Kostenrechner-Zeilen).
 - Der Service Worker cacht die Shell: beim Testen von Änderungen abmelden oder Cache leeren,
   sonst prüft man den alten Stand.
+- Zahlen nie roh ins Markup (`{ZEIT.tag}`) — JavaScript formatiert ohne Locale englisch,
+  aus 1,5 würde „1.5". Über `zahlKurz()`, `proKm()`, `proStd()` oder `eur()` gehen.
+- Die schwebenden Aktions-Buttons stehen fest über dem Inhalt. Der Inhalt ist 1200 px breit
+  und mittig, daneben passt eine beschriftete Leiste erst ab rund 1565 px Fensterbreite.
+  Wer dort etwas verbreitert, prüft Breiten zwischen 1024 und 1680 px gegen.
 
 ## Stand / offen / nächster Schritt
-- **Stand:** 12.08.2026 — Korrekturliste Wolfgang Schneidt (11.08.2026) eingearbeitet:
-  Anhängerkupplung nur beim Trafic, Trafic-Stellplatz benannt und Pin korrigiert,
-  Standort-Klick scrollt die Karte in den Blick und zoomt, feste Kilometerpreise mit
-  Staffel 301–1.000 km, Kostenrechner rechnet Tag/Nacht getrennt und weist jede Position
-  aus, eigene Kontakt-Sektion (`#kontakt` zeigte vorher auf den Footer). Nebenbefund:
-  Clio und Sandero standen in den falschen Preisklassen — nach Preisliste des Vereins
-  korrigiert. Build grün, im Browser geprüft (Desktop + 390 px).
-- **Offen:** fünf Rückfragen an den Vorstand → `docs/RUECKFRAGEN-Verein_2026-08-12.md`.
-  Wichtigste: Welche Kilometerpreise gelten seit dem 30.06.2026? Wie ist die Staffel
-  gemeint? Stellplätze über `/pins` bestätigen lassen.
-  Beobachtung: Die schwebenden Aktions-Buttons rechts überdecken bei Fensterbreiten um
-  1400 px die rechte Kante der Inhalte (Beträge im Kostenrechner) — Entscheidung offen.
-- **Nächster Schritt:** Antworten des Vereins einarbeiten (Preise = eine Konstante in
-  `tarife.ts`, Koordinaten = `fahrzeuge.ts` + `geprueft: true`), dann Version 1.2 zur
-  Abstimmung schicken.
+- **Stand:** 21.08.2026 — Version 1.2 auf der Vorschau (GitHub Pages). Enthält die
+  Korrekturliste von Wolfgang Schneidt (Mail vom 27.07.2026, eingearbeitet am 12.08.) und
+  zwei Nachzüge: Die schwebenden Aktions-Buttons zeigen unterhalb 1680 px nur noch ihre
+  Icons (48 px, Beschriftung klappt bei Hover/Fokus auf) — vorher lagen sie 83 px über dem
+  Kostenrechner und verdeckten den Betrag, und zwar auf jeder Breite ab 768 px, nicht nur
+  bei 1400. Außerdem holen Flyer, Querflyer und Visitenkarte ihre Beträge aus `tarife.ts`;
+  dort standen sie als fester Text, eine Preisumstellung hätte sie stumm veralten lassen.
+  Gegenprobe mit `AKTIONSPREISE_GELTEN = false`: Website und beide Flyer stellen gemeinsam
+  um. Soll/Ist je Punkt in `docs/SOLL-IST_Korrekturliste-Schneidt.md`.
+- **Offen — Verein:** sechs Rückfragen, Herleitung in
+  `docs/RUECKFRAGEN-Verein_2026-08-12.md`, Mailtext in `docs/MAIL-Rueckfragen_2026-08-12.md`.
+  Am 21.08. dazugekommen: Die Preisseite des Vereins vermerkt bei PKW 2 hinter
+  „0,48 / 0,45 € pro km" den Zusatz „Renault ZOE keine Änderung!" — der Aktionspreis gilt
+  also vermutlich nicht für die ZOE. `tarife.ts` führt Sandero und ZOE bisher unter einem
+  gemeinsamen Klassenpreis von 0,45 €/km; bestätigt der Verein die Lesart, braucht die ZOE
+  einen eigenen Satz. Weiter offen: geltende Kilometerpreise seit dem 30.06.2026, Lesart
+  der Staffel ab 301 km, Satz oberhalb 1.000 km, Klassenzuordnung Clio/Sandero und die
+  Bestätigung der fünf Stellplätze über `/pins` (alle stehen auf `geprueft: false`).
+- **Offen — vor dem Livegang:** Der Vorstand soll Preisliste und Dokumente selbst
+  austauschen können, also Login und Upload (Anforderung Andreas, 21.08.2026). Das sprengt
+  den heutigen Aufbau: Astro baut statisch, die Seite liegt auf GitHub Pages — dort gibt es
+  weder Anmeldung noch Schreibzugriff. Braucht eigenes Hosting mit Backend. Konzeptionell
+  offen, noch nicht begonnen.
+- **Nächster Schritt:** Antworten des Vereins einarbeiten (Preise = Konstanten in
+  `tarife.ts`, Koordinaten = `fahrzeuge.ts` + `geprueft: true`), danach Login/Upload
+  konzipieren.
 
 *CI 2026.01 · Grundke IT-Service · www.grundke-it.de*

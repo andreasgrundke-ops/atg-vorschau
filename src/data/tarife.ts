@@ -102,17 +102,47 @@ export const PREIS_STAND = '08/2026';
 export const kmSatz = (id: KlasseId): number =>
   AKTIONSPREISE_GELTEN ? KLASSEN[id].km : KLASSEN[id].kmRegulaer;
 
+/** Zahl deutsch mit zwei Nachkommastellen: 1.234,56. */
+const zahl = (n: number): string =>
+  n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 /** Euro-Betrag deutsch formatiert: 1.234,56 €. */
-export const eur = (n: number): string =>
-  n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+export const eur = (n: number): string => zahl(n) + ' €';
 
 /** Kilometerpreis kurz, ohne Nachkomma-Null-Ballast: 0,40 €/km. */
-export const proKm = (n: number): string =>
-  n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €/km';
+export const proKm = (n: number): string => zahl(n) + ' €/km';
 
 /** Stundenpreis: 1,00 €/h. */
-export const proStd = (n: number): string =>
-  n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €/h';
+export const proStd = (n: number): string => zahl(n) + ' €/h';
+
+/**
+ * Zahl ohne Nachkomma-Ballast: „1" statt „1,00", aber „1,5" statt „1.5".
+ * Für die Blickfang-Kennzahlen auf Flyer und Visitenkarte, die den Betrag groß und
+ * kurz zeigen. Ein direkt eingesetztes `{ZEIT.tag}` sähe bei glatten Werten gleich
+ * aus, würde bei krummen aber den englischen Punkt schreiben.
+ */
+export const zahlKurz = (n: number): string =>
+  n.toLocaleString('de-DE', { maximumFractionDigits: 2 });
+
+/** Alle Klassen in der Reihenfolge der Preisliste. */
+export const ALLE_KLASSEN: readonly KlasseId[] = ['pkw1', 'pkw2', 'transporter'] as const;
+
+/**
+ * Spanne über alle Klassen, z. B. „0,40–0,60 €/km".
+ * Flyer und Visitenkarte haben keinen Platz für drei Klassen und nennen deshalb
+ * nur die Spanne. Sie muss trotzdem aus denselben Werten kommen wie die Website —
+ * sonst zeigt das gedruckte Blatt nach einer Preisänderung noch die alten Sätze.
+ */
+export const kmSpanne = (): string => {
+  const werte = ALLE_KLASSEN.map(kmSatz);
+  return `${zahl(Math.min(...werte))}–${zahl(Math.max(...werte))} €/km`;
+};
+
+/** Dasselbe für die Staffel ab 301 km: „0,32–0,52 €/km". */
+export const kmStaffelSpanne = (): string => {
+  const werte = ALLE_KLASSEN.map((id) => KLASSEN[id].kmStaffel);
+  return `${zahl(Math.min(...werte))}–${zahl(Math.max(...werte))} €/km`;
+};
 
 export interface KmKosten {
   volleKm: number;

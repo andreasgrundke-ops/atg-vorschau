@@ -10,10 +10,11 @@
 import Base from '../layouts/Base.astro';
 import StandorteKarte from '../components/StandorteKarte.astro';
 import { FAHRZEUGE, type Fahrzeug } from '../data/fahrzeuge';
-import { KLASSEN, ZEIT, STAFFEL, EINMALIG, SB, PREIS_STAND, kmSatz, proKm, proStd } from '../data/tarife';
+import { KLASSEN, ALLE_KLASSEN, ZEIT, STAFFEL, EINMALIG, SB, PREIS_STAND, kmSatz, proKm, proStd } from '../data/tarife';
 
-// Reihenfolge der Klassen in der Tarif-Tabelle (günstigste zuerst).
-const klassenListe = [KLASSEN.pkw1, KLASSEN.pkw2, KLASSEN.transporter];
+// Reihenfolge der Klassen in der Tarif-Tabelle (günstigste zuerst) — dieselbe,
+// aus der die Flyer ihre Preisspanne bilden. Deshalb aus tarife.ts, nicht hier gelistet.
+const klassenListe = ALLE_KLASSEN.map((id) => KLASSEN[id]);
 
 const base = import.meta.env.BASE_URL;
 const heroPhoto = 'https://www.atg-grasbrunn.de/wp-content/uploads/2024/09/WhatsApp-Bild-2024-09-01-um-12.45.09_ef67264d-1.jpg';

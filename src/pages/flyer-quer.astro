@@ -17,9 +17,12 @@
  *   2026-07-10  1.2  Claim "Weniger Autos, dennoch mobil."; Wording "Kraftstoff" → "Sprit".
  *   2026-07-10  1.3  Auf Kundenwunsch zurück: Claim ohne Komma ("Weniger Autos. Dennoch
  *                    mobil.") und Wording wieder "Kraftstoff" statt "Sprit".
+ *   2026-08-12  1.4  Preise kommen aus src/data/tarife.ts statt aus dem Text — sonst
+ *                    veraltet der Flyer still, wenn die Website neue Sätze bekommt.
  */
 import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/hanken-grotesk';
+import { ZEIT, STAFFEL, EINMALIG, kmSpanne, kmStaffelSpanne, proStd, zahlKurz } from '../data/tarife';
 
 const base = import.meta.env.BASE_URL;
 const heroPhoto = 'https://www.atg-grasbrunn.de/wp-content/uploads/2024/09/WhatsApp-Bild-2024-09-01-um-12.45.09_ef67264d-1.jpg';
@@ -33,7 +36,7 @@ const cars = [
 ];
 const steps = [
   { n: '1', h: 'Online melden', t: 'Kurzes Formular — wir melden uns persönlich.' },
-  { n: '2', h: 'Unterlagen & Einlage', t: '50 € Aufnahme + 600 € Einlage je Haushalt (zurück bei Austritt).' },
+  { n: '2', h: 'Unterlagen & Einlage', t: `${EINMALIG.aufnahme} € Aufnahme + ${EINMALIG.einlage} € Einlage je Haushalt (zurück bei Austritt).` },
   { n: '3', h: 'Einweisung & losfahren', t: 'Transponderkarte — ab dann buchst du selbst.' },
 ];
 ---
@@ -80,14 +83,14 @@ const steps = [
           <p class="teaser-lead">Teil dir ein Auto, statt eins zu besitzen — direkt um die Ecke in Grasbrunn, ohne Monatsbeitrag.</p>
           <div class="stats">
             <div class="stat"><b>0&nbsp;€</b><span>Monatsbeitrag · Kraftstoff inkl.</span></div>
-            <div class="stat"><b>1&nbsp;€/h</b><span>tagsüber · zzgl. km</span></div>
+            <div class="stat"><b>{zahlKurz(ZEIT.tag)}&nbsp;€/h</b><span>tagsüber · zzgl. km</span></div>
             <div class="stat"><b>5</b><span>Fahrzeuge in Neukeferloh</span></div>
           </div>
           <div class="note-mini">
             <b>Kraftstoff &amp; Versicherung inklusive</b>
             <span>Tankkarte liegt im Auto — du zahlst nur Zeit und Kilometer.</span>
           </div>
-          <p class="imprint">VR 207138, AG München · Kooperation mit dem Vaterstettener Auto-Teiler e.V. · Version 1.1</p>
+          <p class="imprint">VR 207138, AG München · Kooperation mit dem Vaterstettener Auto-Teiler e.V. · Version 1.2</p>
         </div>
 
         <!-- Panel: TITEL (Cover) -->
@@ -124,11 +127,11 @@ const steps = [
           <h3>Was kostet das?</h3>
           <table class="tariffs">
             <tbody>
-              <tr><td>Tagsüber (8–20 Uhr)</td><td>1,00 €/h</td></tr>
-              <tr><td>Nachts (20–8 Uhr)</td><td>0,20 €/h</td></tr>
-              <tr><td>Kilometer (Kraftstoff inkl.)</td><td>0,40–0,60 €/km</td></tr>
-              <tr><td>Ab 301 km je Fahrt</td><td>0,32–0,52 €/km</td></tr>
-              <tr><td>Aufnahme / Einlage</td><td>50 € / 600 €</td></tr>
+              <tr><td>Tagsüber ({ZEIT.tagVon}–{ZEIT.tagBis} Uhr)</td><td>{proStd(ZEIT.tag)}</td></tr>
+              <tr><td>Nachts ({ZEIT.tagBis}–{ZEIT.tagVon} Uhr)</td><td>{proStd(ZEIT.nacht)}</td></tr>
+              <tr><td>Kilometer (Kraftstoff inkl.)</td><td>{kmSpanne()}</td></tr>
+              <tr><td>Ab {STAFFEL.ab} km je Fahrt</td><td>{kmStaffelSpanne()}</td></tr>
+              <tr><td>Aufnahme / Einlage</td><td>{EINMALIG.aufnahme} € / {EINMALIG.einlage} €</td></tr>
               <tr><td>Versicherung &amp; Kraftstoff</td><td>inklusive</td></tr>
             </tbody>
           </table>

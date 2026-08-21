@@ -13,9 +13,11 @@
  * Änderungshistorie:
  *   2026-06-27  1.0  Erstausgabe mit echten Vereinsdaten + vCard-QR.
  *   2026-07-11  1.1  Tarif-Zeile "zzgl. km" ergänzt (einheitlich zur Startseite).
+ *   2026-08-12  1.2  Stundensatz aus src/data/tarife.ts statt fest im Text.
  */
 import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/hanken-grotesk';
+import { ZEIT, zahlKurz } from '../data/tarife';
 
 const base = import.meta.env.BASE_URL;
 ---
@@ -73,8 +75,8 @@ const base = import.meta.env.BASE_URL;
               <span>atg-grasbrunn.de</span>
             </div>
           </div>
-          <div class="back-tariff">1 €/h tagsüber zzgl. km · Kraftstoff &amp; Versicherung inkl. · kein Monatsbeitrag</div>
-          <div class="back-foot">VR 207138, AG München · gemeinnütziges Carsharing · v1.1</div>
+          <div class="back-tariff">{zahlKurz(ZEIT.tag)} €/h tagsüber zzgl. km · Kraftstoff &amp; Versicherung inkl. · kein Monatsbeitrag</div>
+          <div class="back-foot">VR 207138, AG München · gemeinnütziges Carsharing · v1.2</div>
         </article>
       </div>
 

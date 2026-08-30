@@ -2,21 +2,20 @@
  * Fahrzeuge ATG — eine Quelle der Wahrheit für Flotte, Standorte-Karte und Pin-Picker.
  *
  * Titel:        ATG Carsharing — Fahrzeug- und Standortdaten
- * Version:      1.1
+ * Version:      1.2
  * Autor:        Grundke IT-Service
- * Datum:        2026-08-12
+ * Datum:        2026-08-30
  * Beschreibung: Die fünf ATG-Fahrzeuge mit Klasse, Ausstattung und Stellplatz.
  *               Standorttext und Koordinaten standen bisher doppelt (Flotte in
  *               index.astro, Karte in StandorteKarte.astro) und liefen auseinander —
  *               der Trafic hieß in der Flotte schlicht „Neukeferloh".
  *
- *               `standort.geprueft` sagt, ob der Punkt vom Verein bestätigt ist.
- *               Die aktuellen Koordinaten hat Andreas am 21.08.2026 vor Ort über /pins
- *               gesetzt; sie sind damit deutlich näher dran als die vorher aus Adressen
- *               abgeleiteten Punkte, aber noch nicht vom Verein abgenommen. Deshalb
- *               stehen sie weiter auf `geprueft: false`. Wolfgang Schneidt prüft nach —
- *               Seite /pins öffnen, Pin ziehen, Liste kopieren, hier eintragen und dann
- *               `geprueft: true` setzen.
+ *               `standort.geprueft` sagt, ob der Punkt vom Verein bestätigt ist. Die
+ *               Koordinaten hat Andreas am 21.08.2026 vor Ort über /pins gesetzt;
+ *               Wolfgang Schneidt hat sie am 30.08.2026 abgenommen, die ZOE an der
+ *               Ladesäule eingeschlossen. Alle fünf stehen deshalb auf `geprueft: true`.
+ *               Zieht ein Fahrzeug um: Seite /pins öffnen, Pin ziehen, Liste kopieren,
+ *               hier eintragen.
  *
  * Änderungshistorie:
  *   2026-08-12  1.0  Erstausgabe — zusammengeführt aus index.astro + StandorteKarte.astro
@@ -30,7 +29,11 @@
  *                    neben den dort eingetragenen ATG-Stellplätzen, Sandero 9 m neben
  *                    „ATG - Dacia", ZOE 7 m neben einer Wirelane-Ladesäule, Corsa in
  *                    der Finkenstraße auf Höhe Nr. 14. Bestätigung durch den Verein
- *                    steht weiter aus.
+ *                    stand noch aus.
+ *   2026-08-30  1.2  Stellplätze vom Verein abgenommen (Wolfgang Schneidt) — alle fünf
+ *                    auf `geprueft: true`. Der Sandero trägt auf der Fahrzeugkarte jetzt
+ *                    „Mittelklasse" statt „Kleinwagen": Er gehört zur teureren Klasse
+ *                    PKW 2, stand aber mit demselben Badge da wie der Corsa.
  */
 import type { KlasseId } from './tarife';
 
@@ -89,7 +92,7 @@ export const FAHRZEUGE: Fahrzeug[] = [
       lang: 'Am Rathaus, Neukeferloh (Ladepunkt)',
       lat: 48.09589,
       lng: 11.76123,
-      geprueft: false,
+      geprueft: true,
     },
     img: FOTO_ZOE,
   },
@@ -110,7 +113,7 @@ export const FAHRZEUGE: Fahrzeug[] = [
       lang: 'Finkenstraße, hinter der Kirche (gegenüber Nr. 14)',
       lat: 48.09708,
       lng: 11.75879,
-      geprueft: false,
+      geprueft: true,
     },
     img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Opel-Corsa-NEU.jpg',
   },
@@ -118,7 +121,9 @@ export const FAHRZEUGE: Fahrzeug[] = [
     slug: 'sandero',
     name: 'Dacia Sandero',
     typ: 'Günstig & praktisch',
-    badge: 'Kleinwagen',
+    // „Mittelklasse" statt „Kleinwagen" — Wolfgang Schneidt, 30.08.2026. Der Sandero
+    // liegt in der teureren Klasse PKW 2, das Badge stellte ihn neben den Corsa.
+    badge: 'Mittelklasse',
     klasse: 'pkw2',
     sitze: '5 Sitze',
     antrieb: 'Benzin',
@@ -131,7 +136,7 @@ export const FAHRZEUGE: Fahrzeug[] = [
       lang: 'Ecke Waldstraße / Saarlandstraße, Neukeferloh',
       lat: 48.09581,
       lng: 11.76101,
-      geprueft: false,
+      geprueft: true,
     },
     img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2025/07/Dacia-Sandero-NEU-1.jpg',
   },
@@ -153,7 +158,7 @@ export const FAHRZEUGE: Fahrzeug[] = [
       lang: 'Dianastraße (beim Orterer), Neukeferloh',
       lat: 48.09676,
       lng: 11.76716,
-      geprueft: false,
+      geprueft: true,
     },
     img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/12/20221204_151256.jpg',
   },
@@ -174,7 +179,7 @@ export const FAHRZEUGE: Fahrzeug[] = [
       lang: 'Parkplatz gegenüber Winklerring 12, westlich vom Rathaus',
       lat: 48.09641,
       lng: 11.76126,
-      geprueft: false,
+      geprueft: true,
     },
     img: 'https://www.atg-grasbrunn.de/wp-content/uploads/2022/03/20220322_161630.jpg',
   },

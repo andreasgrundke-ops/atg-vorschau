@@ -10,7 +10,7 @@
 import Base from '../layouts/Base.astro';
 import StandorteKarte from '../components/StandorteKarte.astro';
 import { FAHRZEUGE, type Fahrzeug } from '../data/fahrzeuge';
-import { KLASSEN, ALLE_KLASSEN, ZEIT, STAFFEL, EINMALIG, SB, PREIS_STAND, kmSatz, proKm, proStd } from '../data/tarife';
+import { KLASSEN, ALLE_KLASSEN, ZEIT, STAFFEL, RECHNER_MAX, EINMALIG, SB, PREIS_STAND, kmSatz, proKm, proStd } from '../data/tarife';
 
 // Reihenfolge der Klassen in der Tarif-Tabelle (günstigste zuerst) — dieselbe,
 // aus der die Flyer ihre Preisspanne bilden. Deshalb aus tarife.ts, nicht hier gelistet.
@@ -76,7 +76,7 @@ const steps = [
 
 const faqs = [
   { q: 'Was kostet Carsharing bei ATG?', a: `Der Zeittarif ist bei allen Fahrzeugen gleich: ${ZEIT.tag.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Std. tagsüber (${ZEIT.tagVon}–${ZEIT.tagBis} Uhr) und ${ZEIT.nacht.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Std. nachts. Dazu kommen die Kilometer: ${proKm(kmSatz('pkw1'))} für Corsa und Clio Grandtour, ${proKm(kmSatz('pkw2'))} für den Sandero, ${proKm(kmSatz('zoe'))} für die ZOE und ${proKm(kmSatz('transporter'))} für den Trafic. Kraftstoff und Versicherung sind darin enthalten: getankt wird mit der Tankkarte im Fahrzeug, du verauslagst nichts. Einmalig ${EINMALIG.aufnahme} € Aufnahme und ${EINMALIG.einlage} € Einlage (bei Austritt zurück) — je Haushalt einmal, egal wie viele Fahrer. Kein Monatsbeitrag.` },
-  { q: 'Wird es bei längeren Fahrten günstiger?', a: `Ja. Ab dem ${STAFFEL.ab}. Kilometer einer Fahrt gilt der reduzierte Kilometerpreis: ${proKm(KLASSEN.pkw1.kmStaffel)} statt ${proKm(kmSatz('pkw1'))} (Corsa, Clio Grandtour), ${proKm(KLASSEN.pkw2.kmStaffel)} statt ${proKm(kmSatz('pkw2'))} (Sandero) bzw. ${proKm(kmSatz('zoe'))} (ZOE) und ${proKm(KLASSEN.transporter.kmStaffel)} statt ${proKm(kmSatz('transporter'))} beim Trafic. Die ersten ${STAFFEL.volleKm} Kilometer werden zum normalen Satz berechnet, jeder weitere zum reduzierten. Der Kostenrechner auf dieser Seite rechnet das mit.` },
+  { q: 'Wird es bei längeren Fahrten günstiger?', a: `Ja. Ab dem ${STAFFEL.ab}. Kilometer einer Fahrt gilt der reduzierte Kilometerpreis: ${proKm(KLASSEN.pkw1.kmStaffel)} statt ${proKm(kmSatz('pkw1'))} (Corsa, Clio Grandtour), ${proKm(KLASSEN.pkw2.kmStaffel)} statt ${proKm(kmSatz('pkw2'))} (Sandero) bzw. ${proKm(kmSatz('zoe'))} (ZOE) und ${proKm(KLASSEN.transporter.kmStaffel)} statt ${proKm(kmSatz('transporter'))} beim Trafic. Die ersten ${STAFFEL.volleKm} Kilometer werden zum normalen Satz berechnet, die Kilometer ${STAFFEL.ab} bis ${STAFFEL.bis.toLocaleString('de-DE')} zum reduzierten. Danach beginnt die Staffel von vorn: je angefangene ${STAFFEL.zyklus.toLocaleString('de-DE')} Kilometer wieder ${STAFFEL.volleKm} km zum normalen und ${STAFFEL.bis - STAFFEL.volleKm} km zum reduzierten Satz. Der Kostenrechner auf dieser Seite rechnet das mit.` },
   { q: 'Wie werde ich Mitglied?', a: 'Online melden, Ausweis und Führerschein nachreichen, Einlage zahlen, kurze Einweisung vor Ort — dann buchst du selbstständig. Je Haushalt genügt eine Mitgliedschaft mit einer Einlage — alle Fahrer im Haushalt sind mit dabei.' },
   { q: 'Wo stehen die Fahrzeuge?', a: 'An festen Stellplätzen in Neukeferloh (u.a. Rathaus, Finkenstraße, Waldstraße/Saarlandstraße). Über die Kooperation mit den Vaterstettener Auto-Teilern kannst du zusätzlich deren Fahrzeuge nutzen.' },
   { q: 'Ist der Kraftstoff im Preis enthalten?', a: 'Ja. Kraftstoff und Versicherung sind in den Kilometerpreisen bereits enthalten. Die Tankkarte liegt im Fahrzeug — du zahlst keinen Cent extra fürs Tanken.' },
@@ -292,7 +292,9 @@ const faqSchema = {
             Stand {PREIS_STAND}. In den Kilometerpreisen der Verbrenner steckt der saisonale
             Spritzuschlag des Vereins (3 Cent, beim Trafic 5 Cent); die ZOE fährt elektrisch und
             ist davon ausgenommen. Ab dem {STAFFEL.ab}. Kilometer einer Fahrt gilt der reduzierte Satz
-            für die darüber liegenden Kilometer. Versicherung <b>und Kraftstoff inklusive</b> (Selbstbeteiligung
+            für die darüber liegenden Kilometer. Nach {STAFFEL.bis.toLocaleString('de-DE')} km beginnt die Staffel
+            von vorn — {(STAFFEL.bis + 1).toLocaleString('de-DE')} bis {(STAFFEL.bis + STAFFEL.volleKm).toLocaleString('de-DE')} km
+            wieder zum Grundtarif, danach wieder reduziert (Nutzungsordnung Ziff. 5). Versicherung <b>und Kraftstoff inklusive</b> (Selbstbeteiligung
             Haftpflicht {SB.haftpflicht} € / Kasko {SB.kasko} €). Die Tankkarte liegt im Fahrzeug —
             Tanken kostet dich keinen Cent extra.
           </p>
@@ -320,9 +322,9 @@ const faqSchema = {
 
           <label for="calc-km">Strecke</label>
           <div class="calc-kmrow">
-            <input id="calc-km" type="range" min="0" max={STAFFEL.bis} value="30" step="5" />
+            <input id="calc-km" type="range" min="0" max={RECHNER_MAX} value="30" step="5" />
             <span class="calc-kmnum">
-              <input id="calc-kmnum" type="number" min="0" max={STAFFEL.bis} value="30" step="1" inputmode="numeric" aria-label="Strecke in Kilometern" />
+              <input id="calc-kmnum" type="number" min="0" max={RECHNER_MAX} value="30" step="1" inputmode="numeric" aria-label="Strecke in Kilometern" />
               <span>km</span>
             </span>
           </div>
@@ -331,8 +333,9 @@ const faqSchema = {
           <div class="calc-result"><span>Dein Preis</span><b id="calc-total">—</b></div>
           <p class="fine">
             <b>Versicherung und Kraftstoff sind schon drin</b> — die Tankkarte liegt im Fahrzeug.
-            Fahrten über {STAFFEL.bis.toLocaleString('de-DE')} km bitte beim Vorstand erfragen.
-            Verbindlich abgerechnet wird übers Buchungssystem.
+            Die Staffel wiederholt sich je {STAFFEL.zyklus.toLocaleString('de-DE')} Kilometer:
+            {STAFFEL.volleKm} km zum Grundtarif, die folgenden {STAFFEL.bis - STAFFEL.volleKm} km zum
+            Staffelpreis, dann von vorn. Verbindlich abgerechnet wird übers Buchungssystem.
           </p>
         </div>
       </div>
@@ -628,7 +631,7 @@ const faqSchema = {
        Zeit getrennt nach Tag/Nacht, Kilometer gestaffelt ab 301 km, jede Position
        einzeln ausgewiesen: der Wert soll nachvollziehbar sein, nicht nur plausibel. -->
   <script>
-    import { ZEIT, STAFFEL, fahrtkosten, eur, proKm, proStd, type KlasseId } from '../data/tarife';
+    import { ZEIT, STAFFEL, RECHNER_MAX, fahrtkosten, eur, proKm, proStd, type KlasseId } from '../data/tarife';
 
     const clsEl = document.getElementById('calc-cls') as HTMLSelectElement | null;
     const tagEl = document.getElementById('calc-htag') as HTMLInputElement | null;
@@ -656,11 +659,27 @@ const faqSchema = {
         const zeilen: string[] = [];
         if (stdTag > 0) zeilen.push(zeile(`${stdTag} Std. tagsüber × ${proStd(ZEIT.tag)}`, k.zeitTagSumme));
         if (stdNacht > 0) zeilen.push(zeile(`${stdNacht} Std. nachts × ${proStd(ZEIT.nacht)}`, k.zeitNachtSumme));
-        if (k.km.volleKm > 0) zeilen.push(zeile(`${k.km.volleKm} km × ${proKm(k.km.volleSatz)}`, k.km.volleSumme));
+        // Bis 1.000 km liegen die Kilometer am Stück, dann trägt „ab dem 301." die
+        // Erklärung. Darüber wiederholt sich die Staffel und die Kilometer sind über
+        // mehrere Abschnitte verteilt — dann nur noch Grundtarif und Staffelpreis nennen.
+        const kmZahl = (n: number) => n.toLocaleString('de-DE');
+        const langeFahrt = km > STAFFEL.zyklus;
+        if (k.km.volleKm > 0) {
+          zeilen.push(
+            zeile(
+              langeFahrt
+                ? `${kmZahl(k.km.volleKm)} km Grundtarif × ${proKm(k.km.volleSatz)}`
+                : `${k.km.volleKm} km × ${proKm(k.km.volleSatz)}`,
+              k.km.volleSumme,
+            ),
+          );
+        }
         if (k.km.staffelKm > 0) {
           zeilen.push(
             zeile(
-              `${k.km.staffelKm} km ab dem ${STAFFEL.ab}. × ${proKm(k.km.staffelSatz)}`,
+              langeFahrt
+                ? `${kmZahl(k.km.staffelKm)} km Staffelpreis × ${proKm(k.km.staffelSatz)}`
+                : `${k.km.staffelKm} km ab dem ${STAFFEL.ab}. × ${proKm(k.km.staffelSatz)}`,
               k.km.staffelSumme,
               'is-saving',
             ),
@@ -673,7 +692,7 @@ const faqSchema = {
       // Slider und Zahlenfeld für die Strecke halten sich gegenseitig aktuell —
       // Slider fürs schnelle Schätzen, Zahlenfeld für den exakten Wert.
       const setKm = (wert: number) => {
-        const v = Math.min(STAFFEL.bis, Math.max(0, Math.round(wert || 0)));
+        const v = Math.min(RECHNER_MAX, Math.max(0, Math.round(wert || 0)));
         kmEl.value = String(v);
         kmNumEl.value = String(v);
         rechne();
@@ -683,7 +702,7 @@ const faqSchema = {
       kmNumEl.addEventListener('input', () => {
         const v = parseInt(kmNumEl.value, 10);
         if (Number.isNaN(v)) return;
-        kmEl.value = String(Math.min(STAFFEL.bis, Math.max(0, v)));
+        kmEl.value = String(Math.min(RECHNER_MAX, Math.max(0, v)));
         rechne();
       });
       kmNumEl.addEventListener('blur', () => setKm(parseInt(kmNumEl.value, 10)));

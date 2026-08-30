@@ -25,8 +25,10 @@ falls ein Punkt fehlt.
 | Rücksprung zur Übersicht | Erfüllt: Button „Alle Standorte zeigen", blendet sich nach dem Klick aus | `StandorteKarte.astro:194` |
 | Interne Seite zum Pins-Setzen | Erfüllt: `/pins`, per Drag verschiebbar, „Liste kopieren", `noindex, nofollow`, nirgends verlinkt | `pins.astro:47` |
 
-Alle fünf Koordinaten stehen auf `geprueft: false`. Bestätigt sind sie erst, wenn der
-Verein die Pins über `/pins` gezogen und zurückgemeldet hat.
+**Nachtrag 30.08.2026:** Andreas hat am 21.08. alle fünf Pins vor Ort neu gesetzt,
+Wolfgang Schneidt hat sie am 30.08. abgenommen („Passt so!", die ZOE an der Ladesäule
+eingeschlossen). Alle Koordinaten stehen jetzt auf `geprueft: true`; die Werte oben sind
+der Zwischenstand vom 12.08. und inzwischen überholt — maßgeblich ist `fahrzeuge.ts`.
 
 ## Preise
 
@@ -87,15 +89,34 @@ Nachgemessen: 1400 px → 54 px Abstand statt 83 px Überlappung · 1600 px → 
 1280 px → Betrag frei, die Leiste berührt nur noch die Kartenecke · 1024 px → Betrag frei
 mit 9 px · 390 px unverändert.
 
+## Nachtrag 30.08.2026 — Mail Wolfgang Schneidt
+
+Alle sechs Rückfragen sind beantwortet, Herleitung und Kontrollwerte stehen in
+`RUECKFRAGEN-Verein_2026-08-12.md`. Kurzfassung:
+
+| Punkt | Antwort | Folge im Code |
+|---|---|---|
+| Spritzuschlag | gilt weiter | `SPRITZUSCHLAG_GILT` bleibt `true` |
+| ZOE | vom Zuschlag ausgenommen | eigene Klassenzeile, 0,45 €/km |
+| Staffel ab 301 km | abschnittsweise, nicht rückwirkend | unverändert; 420 km im Corsa = 167,40 € |
+| über 1.000 km | wieder der normale Satz | zyklische Staffel in `kmKosten` (Nutzungsordnung Ziff. 5: je 1.000 km 300 voll / 700 reduziert), Deckel im Rechner entfällt |
+| Fahrzeugklassen | passen | unverändert |
+| Stellplätze | bestätigt | alle fünf `geprueft: true` |
+
+Dazu eine neue Korrektur aus derselben Mail: Der Dacia Sandero trug in der
+Fahrzeugübersicht das Badge „Kleinwagen" und stand damit neben dem Corsa, obwohl er in
+der teureren Klasse PKW 2 liegt. Er heißt jetzt **Mittelklasse** — Fahrzeugkarte,
+Standorte-Karte und Querflyer ziehen das Badge aus derselben Quelle.
+
+Gegengeprüft im Browser (Preview 4321): Corsa 420 km = 167,40 € · 1.000 km = 353,00 € ·
+1.300 km = 482,00 € · 1.500 km = 546,00 € · 2.000 km = 706,00 €; Trafic 1.500 km =
+858,00 €. Sandero-Karte zeigt „Mittelklasse" und 0,48 €/km.
+
 ## Was noch offen ist
 
-Beim Verein, siehe `RUECKFRAGEN-Verein_2026-08-12.md` und die fertige Mail in
-`MAIL-Rueckfragen_2026-08-12.md`:
-
-1. Welche Kilometerpreise gelten seit dem 30.06.2026?
-2. Wird die Staffel ab 301 km gestaffelt oder rückwirkend gerechnet?
-3. Gibt es einen Satz oberhalb von 1.000 km?
-4. Stimmen die Fahrzeugklassen (Clio in PKW 1, Sandero in PKW 2)?
-5. Stellplätze über `/pins` bestätigen.
+- Eigenes Impressum, eigene Datenschutzerklärung, Barrierefreiheitserklärung — Pflicht
+  vor dem Livegang, die WordPress-Fassung beschreibt die Technik dieser Seite nicht.
+- Login mit Upload für den Vorstand (Preisliste und Dokumente selbst austauschen).
+- Zugang zur Domainverwaltung bei der InternetWerk GmbH für die DNS-Umstellung.
 
 *CI 2026.01 · Grundke IT-Service · www.grundke-it.de*

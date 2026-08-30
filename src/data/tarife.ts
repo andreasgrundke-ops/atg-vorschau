@@ -2,54 +2,61 @@
  * Tarife ATG — eine Quelle der Wahrheit für Website, Kostenrechner, Flyer und Visitenkarte.
  *
  * Titel:        ATG Carsharing — Tarifdaten
- * Version:      1.2
+ * Version:      1.4
  * Autor:        Grundke IT-Service
- * Datum:        2026-08-12
- * Beschreibung: Zeittarife, Kilometerpreise je Fahrzeugklasse inkl. Staffel ab 301 km,
- *               Einmalbeträge und die Rechenlogik des Kostenrechners. Vorher standen
- *               dieselben Preise an rund 20 Stellen im Code — dabei sind Clio und
- *               Sandero in die falschen Klassen gerutscht. Preis ändern heißt jetzt:
- *               genau hier ändern.
+ * Datum:        2026-08-30
+ * Beschreibung: Zeittarife, Kilometerpreise je Fahrzeugklasse inklusive Staffel und die
+ *               Rechenlogik des Kostenrechners. Vorher standen dieselben Preise an rund
+ *               20 Stellen im Code — dabei sind Clio und Sandero in die falschen Klassen
+ *               gerutscht. Preis ändern heißt jetzt: genau hier ändern.
  *
- *               Quelle: Preisübersicht des Vereins (atg-grasbrunn.de/preise).
- *               Dort stehen je Klasse ZWEI Werte, z. B. „0,43 / 0,40". Rot ausgezeichnet
- *               ist der HÖHERE. Das ist kein Aktionspreis, sondern ein saisonaler
- *               Spritzuschlag: angekündigt am 15.04.2026 („Teure Spritpreise"), Benziner
- *               3 ct/km, Trafic 5 ct/km, „gilt mindestens bis 30.06.2026", Rücknahme im
- *               Folgequartal, wenn die Spritpreise sinken. Der niedrigere Wert ist also
- *               der reguläre Preis. Rechnerisch bestätigt: 0,40+0,03=0,43 · 0,45+0,03=0,48
- *               · 0,60+0,05=0,65.
+ *               Quelle ist die Preisübersicht des Vereins (atg-grasbrunn.de/preise),
+ *               gelesen und am 30.08.2026 von Wolfgang Schneidt bestätigt. Dort stehen je
+ *               Klasse zwei Werte, etwa „0,43 / 0,40". Der rot ausgezeichnete höhere ist
+ *               kein Aktionspreis, sondern der saisonale Spritzuschlag vom 15.04.2026:
+ *               3 ct/km für Benziner, 5 ct/km für den Trafic (0,40+0,03=0,43 ·
+ *               0,45+0,03=0,48 · 0,60+0,05=0,65). Er gilt weiterhin, obwohl die
+ *               Ankündigung nur „mindestens bis 30.06.2026" sagte. Nimmt der Verein ihn
+ *               zurück: `SPRITZUSCHLAG_GILT` auf false setzen, dann greifen die regulären
+ *               Preise (`km`) auf Website und Druckstücken gleichzeitig.
  *
- *               Das Enddatum ist verstrichen; die Preisseite wurde zuletzt am 21.07.2026
- *               geändert, ohne den Zuschlag zu entfernen. Wir zeigen deshalb die regulären
- *               Preise (`km`), der Zuschlagspreis steht als `kmMitZuschlag` daneben.
- *               Umstellen = `SPRITZUSCHLAG_GILT` auf true setzen.
+ *               Sonderfall ZOE: Ein Spritzuschlag trifft ein E-Auto nicht — „Renault ZOE
+ *               keine Änderung!" steht dazu auf der Preisseite, bestätigt am 30.08.2026.
+ *               Sandero und ZOE liegen beide in der Klasse PKW 2, die ZOE hat deshalb eine
+ *               eigene Zeile mit eigenem Kilometerpreis. Fällt der Zuschlag weg, zeigen
+ *               beide wieder denselben Betrag.
  *
- *               Sonderfall ZOE: Ein Spritzuschlag trifft ein E-Auto nicht, die Preisseite
- *               vermerkt dazu „Renault ZOE keine Änderung!". Sandero und ZOE liegen aber
- *               in derselben Klasse. Solange kein Zuschlag gilt, kosten beide 0,45 €/km
- *               und der Unterschied fällt nicht an; wird der Zuschlag wieder aktiviert,
- *               braucht die ZOE einen eigenen Satz — er hängt am Antrieb, nicht an der
- *               Preisklasse.
+ *               Staffel: Sie wiederholt sich je 1.000 Kilometer. Die Nutzungsordnung
+ *               (Ziff. 5, Fassung 01.01.2025) sagt es wörtlich: „Werden pro zusammen-
+ *               hängenden Buchungszeitraum mehr als 300 km gefahren, gilt jeweils für
+ *               km 301 bis 1000, 1301 bis 2000 usw. der km-Tarif II." Also 300 km zum
+ *               Grundtarif, 700 zum Staffelpreis, dann von vorn. Der Verein hat das am
+ *               30.08.2026 in Kurzform bestätigt („ab 1000 km gilt wieder der normale
+ *               Satz") — die Nutzungsordnung ergänzt, dass der Grundtarif dort nur
+ *               300 km lang gilt.
  *
  * Änderungshistorie:
  *   2026-08-12  1.0  Erstausgabe — herausgelöst aus index.astro nach der Korrekturliste
  *                    von Wolfgang Schneidt (feste Preise statt „ab", Staffel).
- *   2026-08-21  1.2  Spritzuschlag scharf geschaltet (`SPRITZUSCHLAG_GILT = true`) — die
- *                    Preise gelten laut Andreas bis auf weiteres so, wie sie auf
- *                    atg-grasbrunn.de stehen, und dort sind die roten Zuschlagspreise
- *                    nicht zurückgenommen. Die ZOE hat dafür eine eigene Klassenzeile
- *                    bekommen, weil sie als E-Auto beim regulären Satz bleibt.
  *   2026-08-21  1.1  Abgleich mit atg-grasbrunn.de: Der rote Wert ist der Spritzuschlag,
  *                    nicht ein Aktionspreis — die Bedeutung war umgekehrt hinterlegt.
  *                    `AKTIONSPREISE_GELTEN` heißt jetzt `SPRITZUSCHLAG_GILT` (Logik
- *                    gedreht), `kmRegulaer` heißt `kmMitZuschlag`. Die angezeigten
- *                    Beträge bleiben unverändert.
+ *                    gedreht), `kmRegulaer` heißt `kmMitZuschlag`.
+ *   2026-08-21  1.2  Spritzuschlag scharf geschaltet, ZOE mit eigener Klassenzeile.
+ *   2026-08-30  1.3  Antworten des Vereins eingearbeitet (Wolfgang Schneidt, 30.08.2026):
+ *                    Zuschlag gilt weiter, ZOE bleibt ausgenommen, die abschnittsweise
+ *                    Staffelung ist richtig, ab 1.001 km gilt wieder der Grundtarif.
+ *                    Der Deckel bei 1.000 km im Kostenrechner entfällt.
+ *   2026-08-30  1.4  Gegenprobe an der Nutzungsordnung (Ziff. 5): Die Staffel läuft
+ *                    zyklisch je 1.000 km — ab 1.301 km gilt wieder der Staffelpreis.
+ *                    `kmKosten` rechnet deshalb in 1.000er-Blöcken statt mit einem
+ *                    einmaligen dritten Abschnitt; ab 1.301 km war die Rechnung sonst
+ *                    zu teuer.
  */
 
 /**
  * Gilt der saisonale Spritzuschlag? `false` = reguläre Preise (schwarz in der Preisliste),
- * `true` = Zuschlagspreise (rot). Siehe Kopfkommentar; vom Verein zu bestätigen.
+ * `true` = Zuschlagspreise (rot). Vom Verein am 30.08.2026 bestätigt: gilt weiter.
  */
 export const SPRITZUSCHLAG_GILT = true;
 
@@ -61,13 +68,26 @@ export const ZEIT = {
   nacht: 0.2,
 } as const;
 
-/** Ab diesem Kilometer greift der reduzierte Satz; darüber hinaus endet die Staffel. */
+/**
+ * Kilometerstaffel einer Fahrt, zyklisch je `zyklus` Kilometer: die ersten `volleKm`
+ * zum Grundtarif, der Rest bis `bis` zum Staffelpreis, danach beginnt die Staffel von
+ * vorn (Nutzungsordnung Ziff. 5).
+ */
 export const STAFFEL = {
   ab: 301,
   bis: 1000,
-  /** Kilometer, die noch voll berechnet werden (1–300). */
+  /** Kilometer je Zyklus, die zum Grundtarif zählen (1–300, dann 1.001–1.300, …). */
   volleKm: 300,
+  /** Länge eines Staffelzyklus. */
+  zyklus: 1000,
 } as const;
+
+/**
+ * Obergrenze für Regler und Zahlenfeld im Kostenrechner. Kein Tarifwert, sondern eine
+ * Anzeigegrenze: Die Staffel endet bei 1.000 km, der Rechner soll aber zeigen können,
+ * was darüber passiert. 2.000 km decken jede Urlaubsfahrt ab.
+ */
+export const RECHNER_MAX = 2000;
 
 /**
  * Die Preisliste kennt drei Klassen. Die ZOE steht darin unter PKW 2, zahlt aber als
@@ -197,16 +217,22 @@ export interface KmKosten {
 }
 
 /**
- * Kilometerkosten mit Staffel: die ersten 300 km zum vollen Satz, jeder weitere
- * Kilometer zum reduzierten. Die Preisliste nennt die Staffel „ab km 301 – km 1.000",
- * ohne die Berechnungsweise zu erklären — diese (gestaffelte) Lesart ist die
- * vorsichtigere, weil sie nicht zu wenig ausweist. Vom Verein zu bestätigen.
+ * Kilometerkosten nach der Staffel der Nutzungsordnung (Ziff. 5): Je angefangene
+ * 1.000 Kilometer zählen die ersten 300 zum Grundtarif und die übrigen 700 zum
+ * Staffelpreis — „km 301 bis 1000, 1301 bis 2000 usw.".
+ *
+ * Abgerechnet wird abschnittsweise, nie rückwirkend: Wer die 1.000er-Grenze überfährt,
+ * behält den Rabatt auf die bereits gefahrenen Kilometer 301 bis 1.000 (Andreas,
+ * 30.08.2026). Deshalb ganze Zyklen zählen statt Schwellen vergleichen — bei 1.500 km
+ * ergibt das 600 km Grundtarif und 900 km Staffelpreis.
  */
 export function kmKosten(id: KlasseId, km: number): KmKosten {
   const volleSatz = kmSatz(id);
   const staffelSatz = KLASSEN[id].kmStaffel;
-  const volleKm = Math.min(km, STAFFEL.volleKm);
-  const staffelKm = Math.max(0, km - STAFFEL.volleKm);
+  const ganzeZyklen = Math.floor(km / STAFFEL.zyklus);
+  const restStrecke = km % STAFFEL.zyklus;
+  const volleKm = ganzeZyklen * STAFFEL.volleKm + Math.min(restStrecke, STAFFEL.volleKm);
+  const staffelKm = km - volleKm;
   const volleSumme = volleKm * volleSatz;
   const staffelSumme = staffelKm * staffelSatz;
   return {

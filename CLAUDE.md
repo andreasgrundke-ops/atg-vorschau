@@ -57,43 +57,57 @@ lassen, sonst reißt die E-Mail des Vereins ab. Ein Nameserver-Wechsel würde be
 einmal verschieben und muss die MX-Einträge mitnehmen.
 
 ## Stand / offen / nächster Schritt
-- **Stand:** 21.08.2026 — Version 1.2 auf der Vorschau (GitHub Pages). Enthält die
-  Korrekturliste von Wolfgang Schneidt (Mail vom 27.07.2026, eingearbeitet am 12.08.) und
-  zwei Nachzüge: Die schwebenden Aktions-Buttons zeigen unterhalb 1680 px nur noch ihre
-  Icons (48 px, Beschriftung klappt bei Hover/Fokus auf) — vorher lagen sie 83 px über dem
-  Kostenrechner und verdeckten den Betrag, und zwar auf jeder Breite ab 768 px, nicht nur
-  bei 1400. Außerdem holen Flyer, Querflyer und Visitenkarte ihre Beträge aus `tarife.ts`;
-  dort standen sie als fester Text, eine Preisumstellung hätte sie stumm veralten lassen.
-  Gegenprobe mit `AKTIONSPREISE_GELTEN = false`: Website und beide Flyer stellen gemeinsam
-  um. Soll/Ist je Punkt in `docs/SOLL-IST_Korrekturliste-Schneidt.md`.
-- **Preise (21.08.2026):** Die Website zeigt die Preise **mit saisonalem Spritzuschlag**,
-  also so, wie sie auf atg-grasbrunn.de als geltend markiert sind: 0,43 €/km PKW 1,
-  0,48 €/km Sandero, 0,45 €/km ZOE, 0,65 €/km Trafic (Staffel unverändert 0,32/0,37/0,52).
-  Der Zuschlag stammt aus der Vereinsmeldung vom 15.04.2026 (Benziner 3 ct, Trafic 5 ct,
-  „mindestens bis 30.06.2026") und ist nie zurückgenommen worden. Die ZOE hat eine eigene
-  Klassenzeile bekommen, weil ein Spritzuschlag ein E-Auto nicht trifft („Renault ZOE
-  keine Änderung!") — Tabelle, Kostenrechner und Fahrzeugkarte führen sie getrennt vom
-  Sandero. Rücknahme = `SPRITZUSCHLAG_GILT = false` in `tarife.ts`.
-- **Offen — Verein:** sechs Rückfragen, Herleitung und Belege in
-  `docs/RUECKFRAGEN-Verein_2026-08-12.md`: Gilt der Zuschlag noch? Ist die ZOE davon
-  ausgenommen? Lesart der Staffel ab 301 km, Satz oberhalb 1.000 km, Klassenzuordnung
-  Clio/Sandero, Bestätigung der Stellplätze über `/pins`.
-- **Offen — Rechtsseiten:** Der Footer zeigte auf eigene `/impressum/`, `/datenschutz/`
-  und `/barrierefreiheit/` — die es nicht gibt, alle drei liefen auf 404. Sie verweisen
-  jetzt auf die Seiten des Vereins. Eigene müssen vor dem Livegang her, weil die
-  WordPress-Datenschutzerklärung die Technik dieser Seite nicht beschreibt (OpenStreetMap-
-  Kacheln, Service Worker, lokale Schriften, keine Cookies).
-- **Stellplätze:** Alle fünf Koordinaten am 21.08.2026 über `/pins` gesetzt und gegen
-  OpenStreetMap geprüft (Clio 6 m, Trafic 16 m, Sandero 9 m neben den dort eingetragenen
-  ATG-Punkten, ZOE 7 m neben einer Ladesäule, Corsa Finkenstraße Höhe 14). Stehen bis zur
-  Abnahme durch den Verein weiter auf `geprueft: false`.
-- **Offen — vor dem Livegang:** Der Vorstand soll Preisliste und Dokumente selbst
-  austauschen können, also Login und Upload (Anforderung Andreas, 21.08.2026). Das sprengt
-  den heutigen Aufbau: Astro baut statisch, die Seite liegt auf GitHub Pages — dort gibt es
-  weder Anmeldung noch Schreibzugriff. Braucht eigenes Hosting mit Backend. Konzeptionell
-  offen, noch nicht begonnen.
-- **Nächster Schritt:** Antworten des Vereins einarbeiten (Preise = Konstanten in
-  `tarife.ts`, Koordinaten = `fahrzeuge.ts` + `geprueft: true`), danach Login/Upload
-  konzipieren.
+
+- **Stand:** 30.08.2026 — **Version 1.3**, gebaut und im Browser gegengeprüft, noch nicht
+  auf die Vorschau geschoben. Sie arbeitet die Mail von Wolfgang Schneidt vom 30.08.2026
+  ein: alle sechs Rückfragen beantwortet plus eine neue Korrektur.
+- **Neu in 1.3:**
+  - Der Dacia Sandero heißt in der Fahrzeugübersicht **Mittelklasse** statt Kleinwagen.
+    Er stand mit demselben Badge da wie der Corsa, gehört aber in die teurere Klasse
+    PKW 2. Das Badge kommt aus `fahrzeuge.ts` und zieht Fahrzeugkarte, Standorte-Chip
+    und Querflyer gemeinsam nach.
+  - **Die Kilometerstaffel läuft zyklisch.** Die Nutzungsordnung (Ziff. 5, Fassung
+    01.01.2025) sagt es wörtlich: „gilt jeweils für km 301 bis 1000, 1301 bis 2000 usw.
+    der km-Tarif II". Je angefangene 1.000 km zählen also 300 km zum Grundtarif und 700
+    zum Staffelpreis. Wolfgangs Kurzform („ab 1000 km wieder der normale Satz") stimmt,
+    gilt aber nur für 300 km. `kmKosten()` zählt deshalb ganze Zyklen; der Deckel bei
+    1.000 km im Rechner ist weg (`RECHNER_MAX` = 2.000). Kontrollwerte Corsa: 420 km =
+    167,40 € · 1.000 km = 353,00 € · 1.300 km = 482,00 € · 1.500 km = 546,00 € ·
+    2.000 km = 706,00 €.
+  - Preise, ZOE-Ausnahme, Staffel-Lesart und Klassenzuordnung sind bestätigt und bleiben
+    wie in 1.2. Die Stellplätze sind abgenommen — alle fünf auf `geprueft: true`.
+- **Preise (bestätigt 30.08.2026):** mit saisonalem Spritzuschlag, wie auf
+  atg-grasbrunn.de ausgewiesen: 0,43 €/km PKW 1, 0,48 €/km Sandero, 0,45 €/km ZOE,
+  0,65 €/km Trafic; Staffel 0,32/0,37/0,52. Rücknahme = `SPRITZUSCHLAG_GILT = false` in
+  `tarife.ts`, das stellt Website und Druckstücke gemeinsam um. Herleitung und Antworten
+  je Punkt: `docs/RUECKFRAGEN-Verein_2026-08-12.md`.
+- **Lesart der Staffel (geklärt 30.08.2026):** Abgerechnet wird abschnittsweise, nie
+  rückwirkend — wer die 1.000er-Grenze überfährt, behält den Rabatt auf die Kilometer
+  301 bis 1.000 (Andreas). Die Zyklen darüber stehen in der Nutzungsordnung Ziff. 5.
+  Beide Quellen decken sich; die Nutzungsordnung ist die genauere und liegt als
+  Volltext-Auszug in `docs/QUELLEN-Vereinsseite_2026-08-30.md`.
+- **Offen — Rechtsseiten:** Eigene `/impressum/`, `/datenschutz/` und
+  `/barrierefreiheit/` fehlen; der Footer zeigt auf die Seiten des Vereins. Vor dem
+  Livegang nötig, weil die WordPress-Datenschutzerklärung die Technik dieser Seite nicht
+  beschreibt (OpenStreetMap-Kacheln, Service Worker, lokale Schriften, keine Cookies).
+- **Backend und Onboarding — Konzept liegt vor:**
+  `docs/KONZEPT_Backend-und-Onboarding.md` (30.08.2026). Der Vorstand soll Preise,
+  Fahrzeuge und Dokumente selbst pflegen, Interessenten sollen sich online melden.
+  Vorgesehen: Directus auf dem Hetzner-VPS, Website bleibt statisch und wird beim
+  Speichern neu gebaut, Aufnahmestrecke erzeugt eine vorausgefüllte Beitrittserklärung.
+  Ohne sharePAD, ELKATO bleibt unangetastet (Entscheidung Andreas, 30.08.2026).
+  **Digital unterschrieben wird nicht** — Satzung § 4.2 verlangt Schriftform, der
+  Vorstand entscheidet über die Aufnahme; unterschrieben wird beim Aufnahmegespräch,
+  Ausweis und Führerschein im Original für jede fahrende Person. Voraussetzung für
+  jeden Betrieb auf dem VPS: AVV zwischen Verein und Grundke IT-Service.
+- **Offen — Domainzugang:** Für die DNS-Umstellung wird der Kundenzugang bei der
+  InternetWerk GmbH gebraucht; angefragt in der Mail vom 21.08.2026. Andreas hat nur den
+  WordPress-Login. Beim Umschalten nur den A-Record umhängen, MX und SPF stehen lassen.
+- **Offen — Fahrzeugfotos:** Die Seite lädt sie per Hotlink von `www.atg-grasbrunn.de`.
+  Wird WordPress nach dem Umzug abgeschaltet oder das Paket verkleinert, brechen die
+  Bilder. Vor dem Livegang lokal ablegen.
+- **Nächster Schritt:** Version 1.3 auf die Vorschau deployen und Wolfgang antworten,
+  parallel die Zugänge aus Kapitel 8 des Konzepts beim Vorstand anfragen. Danach
+  Rechtsseiten und Livegang, erst dann das Backend.
 
 *CI 2026.01 · Grundke IT-Service · www.grundke-it.de*

@@ -1,27 +1,23 @@
-# Rückfragen an den Verein — Stand 21.08.2026
+# Rückfragen an den Verein — beantwortet am 30.08.2026
 
-Offene Punkte aus der Umsetzung von Wolfgang Schneidts Korrekturliste (Mail vom
-27.07.2026). Alles andere ist eingearbeitet; diese Punkte kann nur der Verein
-beantworten. Die Fragen sind so formuliert, dass sie sich direkt in eine Mail kopieren
-lassen.
+Sechs Punkte aus der Umsetzung von Wolfgang Schneidts Korrekturliste konnte nur der
+Verein entscheiden. Wolfgang Schneidt hat sie am 30.08.2026 per Mail beantwortet, alle
+sechs. Dieses Dokument hält Frage, Antwort und die Stelle im Code fest — es ist damit
+die Herleitung für die Preise und Klassen, die auf der Seite stehen.
 
-> **Änderung am 21.08.2026:** Ein Abgleich mit atg-grasbrunn.de hat die Preisfrage
-> gedreht. Die frühere Fassung dieses Dokuments hielt den niedrigeren Wert für einen
-> Aktionspreis. Tatsächlich ist der höhere, rot ausgezeichnete Wert ein befristeter
-> Spritzuschlag. Herleitung siehe Punkt 1. Die Website zeigt seither die Preise so, wie
-> sie auf der Vereinsseite stehen — also mit Zuschlag (Entscheidung Andreas, 21.08.).
+Zusätzlich aus derselben Mail: Der Dacia Sandero heißt in der Fahrzeugübersicht jetzt
+**Mittelklasse** statt Kleinwagen.
 
 ---
 
-## 1. Gilt der saisonale Spritzuschlag noch?
+## 1. Gilt der saisonale Spritzuschlag noch? → **Ja**
 
 Auf der Preisseite steht je Klasse ein Wertepaar, der höhere rot ausgezeichnet, darunter
 „Die roten Preise gelten mindestens bis 30.06.2026".
 
 Die Vereinsmeldung vom 15.04.2026 („Teure Spritpreise") erklärt, was die roten Werte
-sind: ein **saisonaler Aufschlag für das laufende Quartal**, 3 Cent pro km für Benziner
-und 5 Cent für den Trafic, mit der Zusage, ihn im Folgequartal zurückzunehmen, falls die
-Spritpreise sinken. Die Rechnung geht auf:
+sind: ein saisonaler Aufschlag, 3 Cent pro km für Benziner und 5 Cent für den Trafic,
+mit der Zusage, ihn zurückzunehmen, falls die Spritpreise sinken. Die Rechnung geht auf:
 
 | Klasse | regulär | + Zuschlag | = rot |
 |---|---|---|---|
@@ -29,60 +25,73 @@ Spritpreise sinken. Die Rechnung geht auf:
 | PKW 2 | 0,45 €/km | 3 ct | 0,48 €/km |
 | Trafic | 0,60 €/km | 5 ct | 0,65 €/km |
 
-Der Staffelpreis ab 301 km hat nur einen Wert (0,32 / 0,37 / 0,52 €/km), ist also vom
-Zuschlag nicht betroffen.
+Der Staffelpreis ab 301 km hat nur einen Wert (0,32 / 0,37 / 0,52 €/km), ist vom
+Zuschlag also nicht betroffen.
 
-Das genannte Enddatum ist verstrichen. Die Preisseite wurde zuletzt am 21.07.2026
-geändert, ohne den Zuschlag zu entfernen.
+**Antwort:** „Ja, der Zuschlag gilt noch." Die Website zeigt deshalb 0,43 €/km für
+PKW 1, 0,48 €/km für den Sandero, 0,45 €/km für die ZOE und 0,65 €/km für den Trafic.
 
-**Frage:** Ist der Zuschlag ausgelaufen oder gilt er weiter?
+*Rücknahme ist eine Zeile:* `SPRITZUSCHLAG_GILT = false` in `src/data/tarife.ts` — sie
+stellt Website, Flyer, Querflyer und Visitenkarte gemeinsam um.
 
-Die neue Website zeigt seit dem 21.08.2026 die Preise **mit** Zuschlag, also genau die
-Werte, die auf eurer Preisseite als geltend markiert sind: 0,43 €/km für PKW 1, 0,48 €/km
-für den Sandero, 0,45 €/km für die ZOE und 0,65 €/km für den Trafic.
-
-*Rücknahme ist eine Zeile:* `SPRITZUSCHLAG_GILT = false` in `src/data/tarife.ts`.
-
-## 2. Die ZOE beim Zuschlag
+## 2. Ist die ZOE vom Zuschlag ausgenommen? → **Ja**
 
 Neben dem Wertepaar von PKW 2 steht, ebenfalls rot, „Renault ZOE keine Änderung!". Ein
-Spritzuschlag trifft ein Elektroauto nicht — die ZOE bliebe also bei 0,45 €/km, während
-der Sandero mit Zuschlag 0,48 €/km kostet.
+Spritzuschlag trifft ein Elektroauto nicht.
 
-**Frage:** Stimmt diese Lesart?
+**Antwort:** „Passt." Die ZOE hat eine eigene Zeile in Tarif-Tabelle und Kostenrechner
+und steht bei 0,45 €/km, der Sandero bei 0,48 €/km. Fällt der Zuschlag weg, kosten beide
+wieder gleich viel.
 
-So ist es umgesetzt: Die ZOE hat eine eigene Zeile in der Tarif-Tabelle und im
-Kostenrechner und steht bei 0,45 €/km, der Sandero bei 0,48 €/km. Fällt der Zuschlag
-weg, kosten beide wieder gleich viel und die Zeile zeigt denselben Betrag.
+## 3. Wie wird die Staffel ab 301 km gerechnet? → **Abschnittsweise**
 
-## 3. Wie wird die Staffel ab 301 km gerechnet?
+**Antwort:** „Die erste Variante ist richtig." Also die ersten 300 km zum normalen Satz,
+jeder weitere zum reduzierten — nicht rückwirkend auf die ganze Strecke.
 
-Der Kostenrechner rechnet gestaffelt: die ersten 300 km zum normalen Satz, jeder weitere
-Kilometer zum reduzierten. Beispiel 420 km im Corsa: 300 × 0,40 € + 120 × 0,32 €.
+Beispiel 420 km im Corsa: 300 × 0,43 € + 120 × 0,32 € = **167,40 €**. Der Kostenrechner
+weist genau diesen Wert aus, jede Position einzeln.
 
-**Frage:** Stimmt das so — oder gilt der reduzierte Satz ab 301 km rückwirkend für die
-ganze Strecke (420 × 0,32 €)? Der Unterschied sind hier 24,00 €.
+## 4. Was gilt oberhalb von 1.000 km? → **Wieder der normale Satz**
 
-## 4. Was gilt oberhalb von 1.000 km?
+Die Preisliste endet bei „ab km 301 – km 1.000". Der Rechner war deshalb bei 1.000 km
+gedeckelt und verwies auf den Vorstand.
 
-Die Preisliste endet bei „ab km 301 – km 1.000". Der Rechner ist deshalb bei 1.000 km
-gedeckelt, mit dem Hinweis, längere Fahrten beim Vorstand zu erfragen.
+**Antwort:** „Ab 1000 km gilt wieder der normale Satz."
 
-**Frage:** Gibt es für längere Fahrten einen eigenen Satz?
+**Präzisiert durch die Nutzungsordnung (Ziff. 5, Fassung 01.01.2025):** „Werden pro
+zusammenhängenden Buchungszeitraum mehr als 300 km gefahren, gilt jeweils für km 301 bis
+1000, **1301 bis 2000** usw. der km-Tarif II." Der Grundtarif ab Kilometer 1.001 gilt
+also nur für 300 km, dann greift wieder der Staffelpreis. Die Staffel läuft zyklisch:
+je angefangene 1.000 km sind 300 km Grundtarif und 700 km Staffelpreis.
 
-## 5. Stimmen die Fahrzeugklassen?
+So ist es umgesetzt. Der Deckel im Rechner ist weg, Regler und Zahlenfeld gehen bis
+2.000 km; oberhalb 1.000 km nennen die Rechnerzeilen „Grundtarif" und „Staffelpreis",
+weil die Kilometer dann nicht mehr an einem Stück liegen.
+
+> **Abgerechnet wird abschnittsweise, nie rückwirkend** (Andreas, 30.08.2026): Wer die
+> 1.000er-Grenze überfährt, behält den Rabatt auf die bereits gefahrenen Kilometer 301
+> bis 1.000. Rückwirkend gerechnet spränge der Preis beim 1.001. Kilometer um über 70 €.
+
+Kontrollwerte Corsa: 1.000 km = 353,00 € · 1.001 km = 353,43 € · 1.300 km = 482,00 € ·
+1.500 km = 546,00 € · 2.000 km = 706,00 €.
+
+## 5. Stimmen die Fahrzeugklassen? → **Ja**
 
 Laut Preisseite: **PKW 1** = Toyota Yaris, Opel Corsa, Renault Clio Grandtour ·
 **PKW 2** = Dacia Sandero, Renault ZOE. Danach ist der Clio der günstigere und der
-Sandero der teurere — auf der alten Entwurfsseite war das vertauscht, jetzt ist es nach
-der Preisliste eingetragen.
+Sandero der teurere — im ersten Entwurf war das vertauscht.
 
-**Frage:** Passt das? (Der Yaris ist raus, den gibt es nicht mehr — die Preisseite führt
-ihn noch.)
+**Antwort:** „Passt so!" Der Yaris bleibt draußen, den gibt es nicht mehr; die Preisseite
+des Vereins führt ihn noch.
 
-## 6. Stellplätze bestätigen
+Dazu passt die Nachmeldung vom 30.08.2026: Der Sandero trug in der Fahrzeugübersicht das
+Badge „Kleinwagen" und stand damit neben dem Corsa, obwohl er in der teureren Klasse
+liegt. Er heißt jetzt **Mittelklasse** — auf der Fahrzeugkarte, in der Standorte-Karte
+und auf dem Querflyer.
 
-Alle fünf Koordinaten hat Andreas am 21.08.2026 über `/pins` gesetzt. Gegenprobe über
+## 6. Stimmen die Stellplätze? → **Ja, alle fünf**
+
+Alle Koordinaten hat Andreas am 21.08.2026 über `/pins` gesetzt, Gegenprobe über
 OpenStreetMap:
 
 | Fahrzeug | Koordinate | Gegenprobe |
@@ -93,37 +102,30 @@ OpenStreetMap:
 | ZOE | 48.09589, 11.76123 | 7 m neben einer Wirelane-Ladesäule |
 | Corsa | 48.09708, 11.75879 | Finkenstraße auf Höhe Nr. 14 |
 
-**Bitte:** Die Seite **/pins** öffnen (nicht öffentlich verlinkt, am Handy bedienbar),
-jeden Pin gegenprüfen und bei Bedarf ziehen, auf **Liste kopieren** tippen und den Text
-zurückschicken. Danach stehen die Punkte auf `geprueft: true`.
-
-Vorschau-Adresse: `…/atg-vorschau/pins/`
-
-**Offen dabei:** Die ZOE steht laut Beschreibung „Am Rathaus (Ladepunkt)". Die gesetzte
-Koordinate liegt an einer Ladesäule rund 20 m neben dem Sandero. Beides kann stimmen,
-sollte aber bestätigt werden.
+**Antwort:** „Passt so!", die ZOE an der Ladesäule ausdrücklich eingeschlossen. Alle fünf
+stehen jetzt auf `geprueft: true` in `src/data/fahrzeuge.ts`.
 
 ---
 
-## Nebenbefund ohne Rückfrage
+## Nebenbefunde
 
-Die Preisseite nennt außerdem Grobverschmutzung 60 €, Fahrten außerhalb der Buchungszeit
-10 €, Zusatz-Transponderkarte 5 €. Diese Positionen stehen in `src/data/tarife.ts`
-bereit, sind auf der Website aber bewusst nicht ausgestellt — sie gehören eher in die
-Nutzungsordnung als auf eine Startseite. Falls gewünscht, nehmen wir sie in die
-Tarif-Tabelle auf.
+**Nicht ausgestellte Entgelte.** Die Preisseite nennt außerdem Grobverschmutzung 60 €,
+Fahrten außerhalb der Buchungszeit 10 €, Zusatz-Transponderkarte 5 €. Sie stehen in
+`src/data/tarife.ts` bereit, sind auf der Website aber bewusst nicht ausgestellt — sie
+gehören eher in die Nutzungsordnung als auf eine Startseite. Auf Wunsch nehmen wir sie
+in die Tarif-Tabelle auf.
 
-**Rechtsseiten fehlen.** Der Footer verwies auf eigene Seiten `/impressum/`,
+**Rechtsseiten fehlen weiterhin.** Der Footer verwies auf eigene Seiten `/impressum/`,
 `/datenschutz/` und `/barrierefreiheit/`, die es in diesem Projekt nicht gibt — alle drei
 liefen ins Leere. Sie zeigen jetzt auf die bestehenden Seiten des Vereins. Vor dem
 Livegang braucht die Seite eigene: Die WordPress-Datenschutzerklärung beschreibt die
 Technik dieser Website nicht (Kartenkacheln von OpenStreetMap, Service Worker, lokale
 Schriften, keine Cookies, kein Tracking).
 
-Ebenfalls abgeglichen und unverändert korrekt: Zeittarife (1,00 €/h tags, 0,20 €/h
-nachts), Aufnahmebeitrag 50 €, Einlage 600 €, monatlicher Beitrag 0 €, Selbstbeteiligung
-200 € Haftpflicht / 600 € Kasko, Vereinsdaten (Winklerring 12, VR 207138 AG München,
-Vorstand Böhme / Graf von Buxhoeveden / Schneidt).
+**Abgeglichen und unverändert korrekt:** Zeittarife (1,00 €/h tags, 0,20 €/h nachts),
+Aufnahmebeitrag 50 €, Einlage 600 €, monatlicher Beitrag 0 €, Selbstbeteiligung 200 €
+Haftpflicht / 600 € Kasko, Vereinsdaten (Winklerring 12, VR 207138 AG München, Vorstand
+Böhme / Graf von Buxhoeveden / Schneidt).
 
 ---
 

@@ -6,6 +6,11 @@
 Kunden-Website Auto-Teiler Grasbrunn e.V. (atg-grasbrunn.de) — Neuentwurf als Ablösung der
 bestehenden WordPress-Seite. Vorschau läuft über GitHub Pages, Abstimmung mit dem Vorstand.
 
+Aus der Website ist ein mehrteiliges Projekt geworden. Reihenfolge, Bausteine und
+Prüfaufträge stehen in **`docs/ROADMAP_ATG.md`** — Website (Prio 1), Abrechnung
+vereinfachen (Prio 2), Mitgliederverwaltung ablösen, Backend mit Aufnahmestrecke,
+Mitgliederkommunikation. Ziel hinter allem: mehr Mitglieder, mehr Buchungen.
+
 ## Stack / Technik
 - **Astro 7** (statischer Build) + Tailwind-Vite-Plugin, Vanilla-CSS in Scoped-Styles.
 - **Leaflet + OpenStreetMap** für die Standorte-Karte (kein Google, datensparsam).
@@ -22,6 +27,7 @@ bestehenden WordPress-Seite. Vorschau läuft über GitHub Pages, Abstimmung mit 
 | Startseite (alle Sektionen) | `src/pages/index.astro` |
 | Standorte-Karte | `src/components/StandorteKarte.astro` |
 | Stellplätze nachjustieren (intern, noindex) | `src/pages/pins.astro` → `/pins` |
+| Kommunikationsvorschlag für den Vorstand (intern, noindex) | `src/pages/kommunikation.astro` → `/kommunikation`. Rechnet seine Beispiele aus `tarife.ts`, veraltet also nicht. **Nicht verlinkt heißt nicht geheim** — wer die Adresse hat, sieht sie. Vereinsinterna wie der MVV-Abrechnungsmodus gehören nicht dorthin, sondern in `docs/` |
 | Flyer / Visitenkarte | `src/pages/flyer.astro`, `flyer-quer.astro`, `visitenkarte.astro` |
 
 **Fallstricke:**

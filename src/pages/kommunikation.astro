@@ -1,0 +1,495 @@
+---
+/**
+ * Vorschlag zur Mitgliederkommunikation — interne Seite für den Vorstand.
+ *
+ * Titel:        ATG Carsharing — Newsletter- und Aufweckplan
+ * Version:      1.0
+ * Autor:        Grundke IT-Service
+ * Datum:        2026-08-30
+ * Beschreibung: Nicht verlinkt, noindex — die Adresse wird per Mail weitergegeben.
+ *               Zeigt dem Vorstand, wie Mitglieder künftig informiert und zum Buchen
+ *               angeregt werden können: Empfängerkreis, Werkzeug, Jahresplan mit
+ *               Versandtagen, Beispiel-Newsletter, Social Media.
+ *
+ *               Die Beispielrechnungen kommen aus tarife.ts und rechnen sich bei jedem
+ *               Build neu. Eine Preisänderung veraltet diese Seite also nicht.
+ *
+ *               Ausführliche Fassung mit Herleitung: docs/KONZEPT_Newsletter-und-Social.md
+ *
+ * Änderungshistorie:
+ *   2026-08-30  1.0  Erstausgabe (Anforderung Andreas, 30.08.2026).
+ */
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/hanken-grotesk';
+import '../styles/global.css';
+import { fahrtkosten, eur, ZEIT, STAFFEL, proKm, kmSatz, KLASSEN } from '../data/tarife';
+
+const base = import.meta.env.BASE_URL;
+
+// Beispielfahrten — echte Zahlen statt Behauptungen. Genau diese Rechnung soll später
+// in jeder Ausgabe stehen.
+const fahrten = [
+  { titel: 'Einkauf und Baumarkt', ziel: 'Neukeferloh und Umgebung', auto: 'Opel Corsa', klasse: 'pkw1' as const, stdTag: 2, stdNacht: 0, km: 15 },
+  { titel: 'Nachmittag am Ammersee', ziel: 'Herrsching, hin und zurück', auto: 'Opel Corsa', klasse: 'pkw1' as const, stdTag: 6, stdNacht: 0, km: 90 },
+  { titel: 'Wandertag in den Bergen', ziel: 'Tegernseer Berge', auto: 'Renault Clio Grandtour', klasse: 'pkw1' as const, stdTag: 10, stdNacht: 0, km: 140 },
+  { titel: 'Ausflug mit acht Leuten', ziel: 'Chiemsee mit der ganzen Gruppe', auto: 'Renault Trafic', klasse: 'transporter' as const, stdTag: 9, stdNacht: 0, km: 190 },
+].map((f) => ({ ...f, kosten: fahrtkosten({ klasse: f.klasse, stdTag: f.stdTag, stdNacht: f.stdNacht, km: f.km }) }));
+
+const jahr = [
+  { m: 'Januar', thema: 'Winter und Wintersport', idee: 'Spitzingsee oder Sudelfeld — Ski und Rodel passen in den Trafic' },
+  { m: 'Februar', thema: 'Kultur bei schlechtem Wetter', idee: 'Museen in München, Therme Erding — Parken kostet mehr als das Auto' },
+  { m: 'März', thema: 'Frühjahrsputz und Garten', idee: 'Gartencenter, Baumarkt, Wertstoffhof — der Trafic ersetzt den Anhänger' },
+  { m: 'April', thema: 'Saisonstart', idee: 'Einladung zur Mitgliederversammlung, Jahresrückblick, Preise' },
+  { m: 'Mai', thema: 'Raus ins Grüne', idee: 'Wörthsee, Ammersee, Wildpark Poing' },
+  { m: 'Juni', thema: 'Seen und Baden', idee: 'Starnberger See, Chiemsee — mit Rechnung für die ganze Familie' },
+  { m: 'Juli', thema: 'Urlaub und lange Strecken', idee: 'Die Staffel erklärt: ab dem 301. Kilometer wird es günstiger' },
+  { m: 'August', thema: 'Berge', idee: 'Tegernseer Berge, Wendelstein, Wanderparkplätze' },
+  { m: 'September', thema: 'Zurück im Alltag', idee: 'Einkauf, Sperrmüll, Umzugshilfe, Studienstart' },
+  { m: 'Oktober', thema: 'Herbst und Reifenwechsel', idee: 'Was der Verein alles selbst erledigt, damit ihr es nicht müsst' },
+  { m: 'November', thema: 'Rechnen statt besitzen', idee: 'Vergleich mit dem eigenen Zweitwagen — und Werbung um neue Mitglieder' },
+  { m: 'Dezember', thema: 'Weihnachtsmarkt und Besuche', idee: 'Christkindlmarkt, Verwandtenbesuch, Feiertage rechtzeitig buchen' },
+];
+
+const start = [
+  { n: '0', wann: 'vor dem Livegang', an: 'Hauptkontakte', was: 'Adressen der Mitfahrenden nachtragen und zum Newsletter anmelden' },
+  { n: '1', wann: 'zum Livegang', an: 'alle', was: 'Die neue Website ist da — Preise, Rechner, Karte, Buchung mit einem Klick' },
+  { n: '2', wann: '2 Wochen später', an: 'Newsletter-Liste', was: 'Der Kostenrechner: drei durchgerechnete Fahrten' },
+  { n: '3', wann: '4 Wochen nach Start', an: 'Newsletter-Liste', was: 'Die Fahrzeuge im Porträt — welches Auto wofür' },
+];
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mitglieder erreichen — Vorschlag für den Vorstand (intern)</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#d42a22" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d42a22'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-size='14' fill='%23ffc400' text-anchor='middle'%3EATG%3C/text%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <main class="kd">
+      <header class="kd-head">
+        <p class="kd-kicker">Interne Seite · nicht öffentlich verlinkt · Vorschlag, Stand 30.08.2026</p>
+        <h1>Mitglieder erreichen — und wieder ans Fahren bringen</h1>
+        <p class="kd-lead">
+          Ein Carsharing-Verein lebt davon, dass die Fahrzeuge laufen. Wer ein halbes Jahr
+          nicht gebucht hat, vergisst, dass um die Ecke ein Auto steht. Dieser Vorschlag
+          zeigt, wie ihr das mit überschaubarem Aufwand ändert: <b>ein Newsletter im Monat</b>,
+          feste Themen, feste Zeiten — und die Zahlen, die für euch sprechen.
+        </p>
+      </header>
+
+      <!-- ============ 1. EMPFÄNGER ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">1</span> Wer angeschrieben wird</h2>
+
+        <div class="kd-flip">
+          <div class="kd-card kd-card-old">
+            <p class="kd-tag">Heute</p>
+            <p class="kd-big">1</p>
+            <p>Kontakt je Haushalt. Wer sonst noch fahren darf, erfährt es beim Abendessen — oder gar nicht.</p>
+          </div>
+          <div class="kd-arrow" aria-hidden="true">→</div>
+          <div class="kd-card kd-card-new">
+            <p class="kd-tag">Vorschlag</p>
+            <p class="kd-big">alle</p>
+            <p>Jede fahrberechtigte Person mit eigener Adresse. Wer fahren darf, soll auch erfahren, dass es sich lohnt.</p>
+          </div>
+        </div>
+
+        <p class="kd-note">
+          <b>Am Geld ändert sich nichts.</b> Rechnung, Lastschrift und die Stimme in der
+          Mitgliederversammlung bleiben beim Hauptkontakt des Haushalts — so wie es Satzung
+          und Nutzungsordnung vorsehen. Es geht allein darum, wer die Nachricht bekommt.
+        </p>
+
+        <div class="kd-warn">
+          <b>Ein Haken, den wir zuerst lösen müssen</b>
+          <p>
+            Eure Beitrittserklärung erfasst weitere Fahrberechtigte nur mit Vor- und Nachname —
+            <b>ohne E-Mail-Adresse</b>. Die Adressen gibt es also noch nicht. Zwei Fragen dazu
+            an euch: Sind sie vielleicht in ELKATO hinterlegt und lassen sich exportieren?
+            Falls nicht, sammeln wir sie einmalig ein — über eine Mail an die Hauptkontakte,
+            die sie weiterleiten oder direkt eintragen können. Im neuen Aufnahmeformular wird
+            die Adresse künftig gleich mitgefragt.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ 2. RECHTLICHES ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">2</span> Zwei Listen, damit es sauber bleibt</h2>
+        <p>
+          Vereinsinformationen dürft ihr euren Mitgliedern schicken — Einladung, Preisänderung,
+          Störung. „Fahr doch mal wieder zum See" ist dagegen Werbung, und dafür braucht es
+          eine Zustimmung. Der Unterschied klingt kleinlich, ist aber der Grund, warum Vereine
+          abgemahnt werden. Mit zwei Listen ist er erledigt:
+        </p>
+        <div class="kd-two">
+          <div class="kd-card">
+            <p class="kd-tag">Vereinsinfo</p>
+            <p>Mitgliederversammlung, Preise, Nutzungsordnung, Störungen, neues Fahrzeug.</p>
+            <p class="kd-fine">Grundlage ist die Mitgliedschaft. Keine Zustimmung nötig.</p>
+          </div>
+          <div class="kd-card">
+            <p class="kd-tag">Newsletter</p>
+            <p>Ausflugsideen, Tipps, Aktionen, Fahrzeugporträts.</p>
+            <p class="kd-fine">Anmeldung mit Bestätigungslink, jederzeit abbestellbar. Schützt den Vorstand persönlich.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 3. BEISPIELE ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">3</span> Das stärkste Argument: die Rechnung</h2>
+        <p>
+          Der Kostenrechner der neuen Website ist der beste Inhalt, den ihr habt. Jede Ausgabe
+          bekommt eine durchgerechnete Fahrt — kein „günstig unterwegs", sondern ein Betrag.
+          Diese vier rechnen sich bei jeder Preisänderung automatisch neu:
+        </p>
+
+        <div class="kd-fahrten">
+          {fahrten.map((f) => (
+            <article class="kd-fahrt">
+              <p class="kd-fahrt-titel">{f.titel}</p>
+              <p class="kd-fahrt-ziel">{f.ziel}</p>
+              <p class="kd-fahrt-preis">{eur(f.kosten.gesamt)}</p>
+              <p class="kd-fahrt-detail">
+                {f.auto} · {f.km} km · {f.stdTag} Std.<br />
+                {eur(f.kosten.zeitSumme)} Zeit + {eur(f.kosten.km.summe)} Kilometer
+              </p>
+            </article>
+          ))}
+        </div>
+        <p class="kd-fine">
+          Sprit und Versicherung sind darin enthalten. Zeittarif {ZEIT.tag.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €/Std.
+          tagsüber, Kilometer je nach Klasse ab {proKm(KLASSEN.pkw1.kmStaffel)} bis {proKm(kmSatz('transporter'))}.
+        </p>
+      </section>
+
+      <!-- ============ 4. SO SIEHT ES AUS ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">4</span> So sieht so eine Mail aus</h2>
+        <p>Immer derselbe Aufbau — Wiedererkennung schlägt Abwechslung. Ein Thema, ein Knopf.</p>
+
+        <div class="kd-mail">
+          <div class="kd-mail-bar">
+            <span class="kd-mail-von">Auto-Teiler Grasbrunn e.V.</span>
+            <span class="kd-mail-zeit">Do, 10:00</span>
+          </div>
+          <div class="kd-mail-betreff">
+            <b>Zum Ammersee und zurück: {eur(fahrten[1].kosten.gesamt)}</b>
+            <span>Der Sommer ist da — drei Ziele, die sich lohnen</span>
+          </div>
+          <div class="kd-mail-body">
+            <div class="kd-mail-bild">Ein Bild: Auto, Ziel, Jahreszeit</div>
+            <p><b>Servus zusammen,</b></p>
+            <p>
+              der Ammersee ist von Neukeferloh in einer knappen Stunde zu erreichen. Ein
+              Nachmittag am Wasser, mit dem Corsa gerechnet: <b>{eur(fahrten[1].kosten.gesamt)}</b> für
+              {' '}{fahrten[1].km} Kilometer und {fahrten[1].stdTag} Stunden. Sprit und Versicherung sind da schon drin.
+            </p>
+            <p class="kd-mail-cta-wrap"><span class="kd-mail-cta">Fahrzeug buchen</span></p>
+            <p class="kd-mail-mini">
+              <b>Kurz aus dem Verein:</b> Der Trafic hat neue Sommerreifen. Die
+              Mitgliederversammlung findet am … statt.
+            </p>
+            <p class="kd-mail-foot">
+              Auto-Teiler Grasbrunn e.V. · Winklerring 12 · 85630 Grasbrunn<br />
+              <u>Vom Newsletter abmelden</u> · <u>Datenschutz</u>
+            </p>
+          </div>
+        </div>
+
+        <p class="kd-note">
+          <b>Worauf es dabei ankommt:</b> eine Spalte, große Schrift, große Knöpfe. Ein
+          erheblicher Teil von euch liest am Handy, ein anderer mit Lesebrille am Tablet.
+          Text als Text, nicht als Bild — sonst bleibt die Mail leer, wenn der Mailanbieter
+          Bilder blockiert.
+        </p>
+      </section>
+
+      <!-- ============ 5. WANN ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">5</span> Wann verschickt wird</h2>
+
+        <div class="kd-zeit">
+          <div class="kd-zeit-haupt">
+            <p class="kd-tag">Fester Termin</p>
+            <p class="kd-big2">Donnerstag<br />10:00 Uhr</p>
+            <p>Einmal im Monat.</p>
+          </div>
+          <div class="kd-zeit-txt">
+            <p>
+              <b>Warum Donnerstag:</b> Da wird das Wochenende geplant. Montagvormittag geht in
+              der Wochenpost unter, freitagnachmittags liest niemand mehr, und am Wochenende
+              konkurriert die Mail mit dem Wochenende selbst.
+            </p>
+            <p>
+              <b>Warum zehn Uhr:</b> Die Morgenpost ist abgearbeitet, der Tag hat noch nicht
+              überhandgenommen. Für die Älteren unter uns die beste Zeit, für Berufstätige
+              liegt sie bis zur Mittagspause oben im Postfach.
+            </p>
+            <p>
+              <b>Und für die Jüngeren:</b> Wer nach zwei Tagen nicht geöffnet hat, bekommt
+              dieselbe Mail am <b>Sonntag um 18:30 Uhr</b> noch einmal mit anderem Betreff. Das
+              macht das Programm von allein und holt einen spürbaren Teil nach.
+            </p>
+            <p class="kd-fine">
+              Diese Zeiten sind Erfahrungswerte, keine Naturgesetze. Nach drei Ausgaben zeigt
+              die Auswertung, wann <i>eure</i> Mitglieder wirklich öffnen — dann passen wir den
+              Termin an.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 6. JAHRESPLAN ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">6</span> Der Jahresplan</h2>
+        <p>
+          Zwölf Ausgaben, jede mit einem Thema und einem Ziel in Reichweite. Er darf abweichen,
+          wenn etwas Aktuelles ansteht — ein neues Fahrzeug schlägt jedes geplante Thema. Und
+          er darf ausfallen: eine Ausgabe weniger ist besser als eine lieblose.
+        </p>
+        <div class="kd-jahr">
+          {jahr.map((j) => (
+            <article class="kd-monat">
+              <p class="kd-monat-m">{j.m}</p>
+              <p class="kd-monat-t">{j.thema}</p>
+              <p class="kd-monat-i">{j.idee}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- ============ 7. START ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">7</span> Die ersten vier Aussendungen</h2>
+        <ol class="kd-start">
+          {start.map((s) => (
+            <li>
+              <span class="kd-start-n">{s.n}</span>
+              <div>
+                <p class="kd-start-was">{s.was}</p>
+                <p class="kd-start-meta">{s.wann} · an {s.an}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div class="kd-hebel">
+          <b>Die Mail mit dem größten Hebel</b>
+          <p>
+            Eine Aussendung an alle, die seit mehr als sechs Monaten nicht gebucht haben. Kein
+            Vorwurf, sondern eine Einladung: „Wir haben lange nichts von dir gehört — hier sind
+            drei Ideen für den nächsten Samstag." Wer diese Liste hat, hat den Verein in der
+            Hand. Sie kommt aus ELKATO.
+          </p>
+        </div>
+
+        <div class="kd-spontan">
+          <p class="kd-tag">Zusätzlich: die kurze Aufweckmail</p>
+          <p>
+            Neben dem Monatsnewsletter eine zweite Sorte Mail — kurz, spontan, an der Lage
+            orientiert: <b>Donnerstagnachmittag, das Wochenende steht an, das Wetter wird gut
+            und die Fahrzeuge sind frei.</b> Drei Sätze, ein Bild, ein Knopf.
+          </p>
+          <blockquote>
+            „Am Samstag werden es 26 Grad — und vier Autos stehen noch frei. Wie wäre es mit
+            dem Wörthsee? Hin und zurück, ein Nachmittag: rund 40 Euro, Sprit und Versicherung
+            inklusive. Wenn es doch regnet: Deutsches Museum, parken ist teurer als das Auto."
+          </blockquote>
+          <p class="kd-fine">
+            Diese Mail ist stark, weil sie nichts erklärt, sondern einen Anlass liefert. Sie
+            braucht dafür aber echte Zurückhaltung: <b>höchstens einmal im Monat zusätzlich</b>,
+            sonst wird aus der Einladung Belästigung und die Abmeldungen steigen. Wer frei ist,
+            steht ohnehin in ELKATO — der Blick dorthin dauert eine Minute.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ 8. SOCIAL ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">8</span> Social Media — ehrlich betrachtet</h2>
+        <p>
+          Ein gepflegter Kanal schlägt drei verwaiste. Ein Account, auf dem seit acht Monaten
+          nichts steht, schadet mehr als gar keiner. Deshalb die Empfehlung, klein anzufangen:
+        </p>
+        <table class="kd-tab">
+          <thead>
+            <tr><th scope="col">Kanal</th><th scope="col">Lohnt sich?</th><th scope="col">Aufwand</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Facebook — Seite und lokale Gruppen</th><td class="kd-ja">Ja, wichtigster Kanal</td><td>2 Beiträge im Monat</td></tr>
+            <tr><th scope="row">Gemeindeblatt und Aushänge</th><td class="kd-ja">Ja, wird unterschätzt</td><td>2–4 Anzeigen im Jahr</td></tr>
+            <tr><th scope="row">nebenan.de</th><td class="kd-ja">Ja, wenn jemand dort ohnehin ist</td><td>1 Beitrag im Monat</td></tr>
+            <tr><th scope="row">Instagram</th><td class="kd-vielleicht">Nur mit jemandem, der Lust hat</td><td>4 Beiträge im Monat</td></tr>
+            <tr><th scope="row">WhatsApp-Gruppe</th><td class="kd-nein">Nein</td><td>wird zum Chat, alle sehen alle Nummern</td></tr>
+          </tbody>
+        </table>
+        <p class="kd-note">
+          <b>Die Inhalte kommen aus dem Newsletter.</b> Jede Ausgabe liefert zwei Beiträge: das
+          Ausflugsziel mit Bild und Preis, und eine kurze Zahl. Kein eigener Redaktionsstrang —
+          sonst schläft es nach sechs Wochen ein. Beste Zeiten: Dienstag und Donnerstag
+          18–20 Uhr, sonntags 10–12 Uhr.
+        </p>
+
+        <div class="kd-warn">
+          <b>Sucht euch Leute dafür — im Verein</b>
+          <p>
+            Der Vorstand soll das nicht auch noch nebenbei machen. Es braucht ein bis zwei
+            Mitglieder, die einen Kanal freiwillig übernehmen: Fotos machen, kurz etwas
+            schreiben, auf Kommentare antworten. Wer TikTok oder Instagram gern nutzt, findet
+            sich eher unter den jüngeren Mitgliedern — und genau die erreicht ihr über diese
+            Kanäle auch als neue Mitglieder. Zwei Bedingungen: Es wird mit dem Vorstand
+            abgestimmt, was nach außen geht, und niemand macht es allein. Der Aufruf dazu ist
+            selbst ein guter Inhalt für die erste oder zweite Newsletter-Ausgabe.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ 9. WAS NÖTIG IST ============ -->
+      <section class="kd-sec">
+        <h2><span class="kd-num">9</span> Was dafür nötig ist</h2>
+        <ul class="kd-todo">
+          <li><b>Nachsehen, was ELKATO hat:</b> Sind Adressen der Fahrberechtigten hinterlegt, lassen sie sich exportieren?</li>
+          <li><b>Beschluss:</b> alle Fahrberechtigten ansprechen, Rechnung bleibt beim Hauptkontakt.</li>
+          <li><b>Ein Versandprogramm.</b> Empfehlung: CleverReach — deutscher Anbieter, für eure Größe kostenlos, einfache Bedienung. Wichtig ist, dass ihr selbst verschicken könnt, ohne dass jemand mit Serverzugang danebensitzt.</li>
+          <li><b>Eine Anmeldeseite</b> auf der neuen Website, mit Bestätigungslink.</li>
+          <li><b>Einmal eine Vorlage bauen.</b> Danach kostet eine Ausgabe rund eine Stunde.</li>
+          <li><b>Wer schreibt?</b> Eine Person im Vorstand, die den Hut aufhat. Ich helfe bei den ersten Ausgaben und baue die Vorlage.</li>
+          <li><b>Ein Argument, das noch zu prüfen ist:</b> In München gibt es über 300 Stellplätze für Carsharing im öffentlichen Raum. Auf den allgemeinen davon darf nach dem Carsharing-Gesetz jedes Fahrzeug parken, das eine amtliche Kennzeichnung trägt — es hängt am Fahrzeug, nicht am Anbieter. Wenn unsere Autos diese Kennzeichnung bekommen können, wäre das für jede Fahrt in die Stadt bares Geld. Das muss beim Kreisverwaltungsreferat der Stadt München erfragt werden. <b>Vorher wird damit nicht geworben.</b></li>
+        </ul>
+      </section>
+
+      <footer class="kd-foot">
+        <p><b>Auto-Teiler Grasbrunn e.V.</b> · Vorschlag zur Mitgliederkommunikation · Stand 30.08.2026</p>
+        <p>Erstellt von Grundke IT-Service · <a href={base}>zurück zur Website-Vorschau</a></p>
+      </footer>
+    </main>
+
+    <style>
+      body { background: var(--color-bg); }
+      .kd { max-width: 900px; margin: 0 auto; padding: clamp(1.2rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 4rem; }
+
+      .kd-head { padding-bottom: 1.6rem; border-bottom: 3px solid var(--color-red); margin-bottom: 2.4rem; }
+      .kd-kicker { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-red-deep); margin-bottom: 0.7rem; }
+      .kd h1 { font-size: clamp(1.9rem, 5vw, 2.9rem); line-height: 1.08; margin-bottom: 0.9rem; }
+      .kd-lead { font-size: 1.1rem; line-height: 1.55; max-width: 62ch; }
+
+      .kd-sec { margin-bottom: 3.2rem; }
+      .kd-sec h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: 0.9rem; display: flex; align-items: center; gap: 0.7rem; }
+      .kd-num { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--color-red); color: #fff; font-size: 1rem; font-weight: 800; }
+      .kd-sec > p { max-width: 68ch; line-height: 1.6; margin-bottom: 1rem; }
+
+      .kd-card { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 14px; padding: 1.1rem 1.2rem; }
+      .kd-tag { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-muted); margin-bottom: 0.5rem; }
+      .kd-card p { line-height: 1.5; }
+      .kd-fine { font-size: 0.85rem; color: var(--color-muted); margin-top: 0.6rem; line-height: 1.5; }
+
+      /* 1 → alle */
+      .kd-flip { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; margin-bottom: 1.2rem; }
+      .kd-arrow { font-size: 2rem; color: var(--color-red); font-weight: 800; }
+      .kd-big { font-family: var(--font-display); font-size: 3rem; font-weight: 800; line-height: 1; margin-bottom: 0.5rem; }
+      .kd-card-old { opacity: 0.75; }
+      .kd-card-old .kd-big { color: var(--color-muted); }
+      .kd-card-new { border-color: var(--color-red); box-shadow: 0 14px 30px -22px rgba(212, 42, 34, 0.9); }
+      .kd-card-new .kd-big { color: var(--color-red); }
+
+      .kd-note { background: var(--color-surface); border-left: 4px solid var(--color-yellow); border-radius: 10px; padding: 0.9rem 1.1rem; line-height: 1.55; margin-top: 1rem; }
+      .kd-warn { background: var(--color-red-soft); border-left: 4px solid var(--color-red); border-radius: 10px; padding: 0.9rem 1.1rem; margin-top: 1.1rem; }
+      .kd-warn b { display: block; margin-bottom: 0.35rem; }
+      .kd-warn p { line-height: 1.55; }
+
+      .kd-two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+      /* Beispielfahrten */
+      .kd-fahrten { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.9rem; margin-bottom: 0.8rem; }
+      .kd-fahrt { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 14px; padding: 1rem; }
+      .kd-fahrt-titel { font-weight: 800; margin-bottom: 0.15rem; }
+      .kd-fahrt-ziel { font-size: 0.85rem; color: var(--color-muted); margin-bottom: 0.7rem; }
+      .kd-fahrt-preis { font-family: var(--font-display); font-size: 1.9rem; font-weight: 800; color: var(--color-red); line-height: 1; margin-bottom: 0.5rem; }
+      .kd-fahrt-detail { font-size: 0.82rem; color: var(--color-muted); line-height: 1.5; }
+
+      /* Mail-Attrappe */
+      .kd-mail { max-width: 460px; margin: 0 auto 1.2rem; background: #fff; border: 1px solid var(--color-line); border-radius: 14px; overflow: hidden; box-shadow: 0 24px 50px -34px rgba(0, 0, 0, 0.7); }
+      .kd-mail-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem; background: var(--color-bg); border-bottom: 1px solid var(--color-line); font-size: 0.8rem; }
+      .kd-mail-von { font-weight: 800; }
+      .kd-mail-zeit { color: var(--color-muted); }
+      .kd-mail-betreff { padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--color-line); }
+      .kd-mail-betreff b { display: block; font-size: 1rem; }
+      .kd-mail-betreff span { font-size: 0.85rem; color: var(--color-muted); }
+      .kd-mail-body { padding: 0.9rem; }
+      .kd-mail-body p { margin-bottom: 0.7rem; line-height: 1.5; font-size: 0.9rem; }
+      .kd-mail-bild { height: 110px; border-radius: 10px; background: linear-gradient(135deg, var(--color-red) 0%, var(--color-red-deep) 100%); color: #fff; display: grid; place-items: center; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.9rem; }
+      .kd-mail-cta-wrap { text-align: center; margin: 1rem 0; }
+      .kd-mail-cta { display: inline-block; background: var(--color-yellow); color: var(--color-ink); font-weight: 800; padding: 0.7rem 1.6rem; border-radius: 8px; }
+      .kd-mail-mini { font-size: 0.82rem; color: var(--color-muted); border-top: 1px solid var(--color-line); padding-top: 0.7rem; }
+      .kd-mail-foot { font-size: 0.72rem; color: var(--color-muted); text-align: center; border-top: 1px solid var(--color-line); padding-top: 0.7rem; margin-bottom: 0; }
+
+      /* Zeiten */
+      .kd-zeit { display: grid; grid-template-columns: 240px 1fr; gap: 1.4rem; align-items: start; }
+      .kd-zeit-haupt { background: var(--color-ink); color: #fff; border-radius: 14px; padding: 1.3rem; text-align: center; }
+      .kd-zeit-haupt .kd-tag { color: var(--color-yellow); }
+      .kd-big2 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 800; line-height: 1.15; margin-bottom: 0.5rem; }
+      .kd-zeit-txt p { line-height: 1.6; margin-bottom: 0.8rem; max-width: 60ch; }
+
+      /* Jahresplan */
+      .kd-jahr { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 0.8rem; }
+      .kd-monat { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 12px; padding: 0.85rem 0.95rem; border-top: 3px solid var(--color-yellow); }
+      .kd-monat-m { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-red-deep); margin-bottom: 0.25rem; }
+      .kd-monat-t { font-weight: 800; margin-bottom: 0.3rem; line-height: 1.25; }
+      .kd-monat-i { font-size: 0.85rem; color: var(--color-muted); line-height: 1.45; }
+
+      /* Startsequenz */
+      .kd-start { list-style: none; padding: 0; margin: 0 0 1.2rem; display: grid; gap: 0.7rem; }
+      .kd-start li { display: flex; gap: 0.9rem; align-items: flex-start; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 12px; padding: 0.85rem 1rem; }
+      .kd-start-n { display: grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--color-yellow); color: var(--color-ink); font-weight: 800; font-size: 0.9rem; }
+      .kd-start-was { font-weight: 700; line-height: 1.4; }
+      .kd-start-meta { font-size: 0.82rem; color: var(--color-muted); margin-top: 0.15rem; }
+      .kd-hebel { background: var(--color-ink); color: #fff; border-radius: 14px; padding: 1.1rem 1.2rem; }
+      .kd-hebel b { display: block; color: var(--color-yellow); margin-bottom: 0.4rem; }
+      .kd-hebel p { line-height: 1.55; }
+
+      .kd-spontan { background: var(--color-surface); border: 1px solid var(--color-line); border-top: 3px solid var(--color-red); border-radius: 14px; padding: 1.1rem 1.2rem; margin-top: 1rem; }
+      .kd-spontan p { line-height: 1.55; margin-bottom: 0.7rem; }
+      .kd-spontan blockquote { margin: 0.9rem 0; padding: 0.85rem 1rem; background: var(--color-bg); border-left: 4px solid var(--color-yellow); border-radius: 10px; font-style: italic; line-height: 1.55; }
+      .kd-spontan .kd-fine { margin-bottom: 0; }
+
+      /* Tabelle */
+      .kd-tab { width: 100%; border-collapse: collapse; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 12px; overflow: hidden; }
+      .kd-tab th, .kd-tab td { padding: 0.7rem 0.9rem; text-align: left; border-bottom: 1px solid var(--color-line); font-size: 0.92rem; }
+      .kd-tab thead th { background: var(--color-bg); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); }
+      .kd-tab tbody tr:last-child th, .kd-tab tbody tr:last-child td { border-bottom: 0; }
+      .kd-tab tbody th { font-weight: 700; }
+      .kd-ja { color: #1a7a5e; font-weight: 700; }
+      .kd-vielleicht { color: var(--color-yellow-deep); font-weight: 700; }
+      .kd-nein { color: var(--color-red-deep); font-weight: 700; }
+
+      /* To-do */
+      .kd-todo { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+      .kd-todo li { background: var(--color-surface); border: 1px solid var(--color-line); border-left: 4px solid var(--color-red); border-radius: 10px; padding: 0.8rem 1rem; line-height: 1.5; }
+
+      .kd-foot { border-top: 1px solid var(--color-line); padding-top: 1.2rem; font-size: 0.85rem; color: var(--color-muted); }
+      .kd-foot p { margin-bottom: 0.25rem; }
+      .kd-foot a { color: var(--color-red-deep); font-weight: 700; }
+
+      @media (max-width: 720px) {
+        .kd-flip { grid-template-columns: 1fr; }
+        .kd-arrow { transform: rotate(90deg); text-align: center; }
+        .kd-two, .kd-zeit { grid-template-columns: 1fr; }
+      }
+
+      @media print {
+        body { background: #fff; }
+        .kd-sec { break-inside: avoid; }
+        .kd-mail, .kd-monat, .kd-fahrt { break-inside: avoid; }
+      }
+    </style>
+  </body>
+</html>

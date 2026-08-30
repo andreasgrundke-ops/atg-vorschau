@@ -10,7 +10,9 @@
  */
 const base = import.meta.env.BASE_URL;
 // Externe Buchungsstrecke (Mitgliederbereich) — dauerhaft per Bottom-Tab erreichbar.
-const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
+// Ziel des Buchen-Tabs. Der Klick wird von BuchenDialog.astro abgefangen und
+// zeigt erst die Hinweise des Vereins; ohne JavaScript geht es direkt zu ELKATO.
+const BOOK = 'https://www.elkato.de/buchung/atg';
 ---
 
 <nav class="tabbar" aria-label="App-Navigation">
@@ -28,7 +30,7 @@ const BOOK = 'https://www.atg-grasbrunn.de/mitgliederbereich/';
     </span>
     <span>Mitglied+</span>
   </a>
-  <a class="tab tab-cta tab-book" href={BOOK} rel="noopener" aria-label="Fahrzeug buchen">
+  <a class="tab tab-cta tab-book" href={BOOK} target="_blank" rel="noopener" aria-label="Fahrzeug buchen" data-buchen>
     <span class="cta-circle">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
     </span>

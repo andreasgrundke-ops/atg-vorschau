@@ -89,10 +89,14 @@ einmal verschieben und muss die MX-Einträge mitnehmen.
   301 bis 1.000 (Andreas). Die Zyklen darüber stehen in der Nutzungsordnung Ziff. 5.
   Beide Quellen decken sich; die Nutzungsordnung ist die genauere und liegt als
   Volltext-Auszug in `docs/QUELLEN-Vereinsseite_2026-08-30.md`.
-- **Offen — Rechtsseiten:** Eigene `/impressum/`, `/datenschutz/` und
-  `/barrierefreiheit/` fehlen; der Footer zeigt auf die Seiten des Vereins. Vor dem
-  Livegang nötig, weil die WordPress-Datenschutzerklärung die Technik dieser Seite nicht
-  beschreibt (OpenStreetMap-Kacheln, Service Worker, lokale Schriften, keine Cookies).
+- **Rechtsseiten — Entwürfe liegen vor:** `docs/recht/RECHTSTEXTE_neue-Seite.md`
+  (Impressum, Datenschutzerklärung, Barrierefreiheit) und `docs/recht/AVV_ATG-Grundke-IT.md`.
+  Offen: Freigabe durch den Vorstand, dann als Astro-Seiten anlegen — der Footer zeigt
+  bis dahin auf die Seiten des Vereins. Zwei Punkte, die dabei geprüft wurden: Der Link
+  zur EU-Streitbeilegungsplattform entfällt (Plattform am 20.07.2025 eingestellt,
+  Verordnung aufgehoben), und eine förmliche Barrierefreiheitserklärung ist nicht
+  Pflicht (§ 3 Abs. 3 BFSG, Kleinstunternehmen im Dienstleistungsbereich) — die dritte
+  Seite ist deshalb bewusst freiwillig gehalten.
 - **Backend und Onboarding — Konzept liegt vor:**
   `docs/KONZEPT_Backend-und-Onboarding.md` (30.08.2026). Der Vorstand soll Preise,
   Fahrzeuge und Dokumente selbst pflegen, Interessenten sollen sich online melden.

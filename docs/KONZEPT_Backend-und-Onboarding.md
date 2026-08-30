@@ -148,7 +148,8 @@ Zwei-Faktor-Anmeldung für alle Konten mit Zugriff auf personenbezogene Daten.
 | **Löschkonzept** | Aufnahmeanfragen werden nach Abschluss oder Absage automatisch gelöscht — Vorschlag: 6 Monate. Wer Mitglied wird, ist danach in ELKATO geführt, nicht mehr hier. |
 | **Datensparsamkeit** | Keine Bankdaten online. Keine Ausweis- oder Führerscheindaten online. Nur was für Rückruf und Terminvereinbarung nötig ist. |
 | **Technisch** | TLS über Caddy, Datenbank nicht von außen erreichbar, verschlüsseltes Backup nach Wasabi, Zugriff nur über 2FA, Protokollierung der Zugriffe auf Anfragen. |
-| **Transparenz** | Die neue Datenschutzerklärung muss die Aufnahmestrecke, den Service Worker, OpenStreetMap-Kacheln und die Speicherdauer beschreiben. Die bestehende beschreibt Google Maps, Google Fonts und YouTube — nichts davon trifft auf die neue Seite zu. |
+| **Transparenz** | Entwürfe für Impressum, Datenschutzerklärung und Barrierefreiheit liegen in `recht/RECHTSTEXTE_neue-Seite.md`, der AVV in `recht/AVV_ATG-Grundke-IT.md`. Beim Backend kommt der Abschnitt zur Aufnahmestrecke hinzu. |
+| **Kartenkacheln** | Die Karte lädt beim Heranscrollen Kacheln von OpenStreetMap, dabei geht die IP-Adresse des Besuchers dorthin. Sobald der VPS steht, können wir die Kacheln über den eigenen Server spiegeln — dann verlässt kein Besucherdatum mehr das Haus. Kleiner Aufwand, sauberste Lösung. |
 | **Verzeichnis** | Der Verein führt ein Verarbeitungsverzeichnis; die neue Verarbeitung „Aufnahmeanfrage" gehört ergänzt. Zuarbeit können wir liefern. |
 
 ---

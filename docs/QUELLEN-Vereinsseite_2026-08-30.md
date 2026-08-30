@@ -135,7 +135,10 @@ anzeigen.
 **Impressum:** Auto-Teiler Grasbrunn e. V. (ATG), Winklerring 12, 85630 Grasbrunn ·
 Telefon +49 89 21541339 (Mailbox) · info@atg-grasbrunn.de · Vertretungsberechtigt: Dirk
 Böhme, Klaus Graf von Buxhoeveden, Wolfgang Schneidt · Amtsgericht München, VR 207138 ·
-inhaltlich verantwortlich: Dirk Böhme. Keine Umsatzsteuer-ID, **kein ODR-Hinweis**.
+inhaltlich verantwortlich: Dirk Böhme. Keine Umsatzsteuer-ID und kein Hinweis auf die
+EU-Streitbeilegungsplattform — Letzteres ist richtig so: Die Plattform wurde am
+20.07.2025 eingestellt und die Verordnung aufgehoben. Ein verbliebener Link wäre heute
+angreifbar, weil er ins Leere führt.
 
 **Datenschutzerklärung:** beschreibt Server-Logfiles, Cookies, Kontaktformular,
 Mitgliedschaftsantrag samt Bankdaten sowie die externen Dienste **ELKATO, Google Maps,
@@ -144,8 +147,15 @@ Google Web Fonts und YouTube**. Kein Datenschutzbeauftragter benannt.
 **Folge:** Die neue Seite kann diese Erklärung nicht übernehmen. Sie nutzt
 OpenStreetMap statt Google Maps, lokale Schriften statt Google Fonts, kein YouTube,
 keine Cookies, keinen Tracker, dafür einen Service Worker. Eine eigene Erklärung ist
-Pflicht, ebenso eine Barrierefreiheitserklärung (BFSG) und der ODR-Hinweis im
-Impressum, sobald die Seite live geht.
+Pflicht. Entwürfe für Impressum, Datenschutzerklärung und eine freiwillige Seite zur
+Barrierefreiheit liegen in `recht/RECHTSTEXTE_neue-Seite.md`.
+
+**Keine Pflicht zur Barrierefreiheitserklärung.** Das BFSG nimmt Kleinstunternehmen bei
+Dienstleistungen aus (§ 3 Abs. 3: unter zehn Beschäftigte, höchstens 2 Mio. € Umsatz).
+Der Verein hat keine Beschäftigten, und über die Website wird kein Vertrag geschlossen.
+Die förmliche Erklärung samt Schlichtungsstellen-Hinweis, Gebärdensprache und Leichter
+Sprache entfällt damit. Die Seite bleibt trotzdem barrierearm gebaut, die dritte
+Textseite sagt freiwillig, was sie kann und was nicht.
 
 ---
 

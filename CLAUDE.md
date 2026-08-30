@@ -57,8 +57,17 @@ Ermittelt über DNS, RIPE und die Anbieterseite — nicht vom Verein bestätigt.
 | Webserver | `91.210.225.28` (Apache), IP-Netz von IP-Projects, als InternetWerk GmbH eingetragen |
 | Mail | MX `mail.atg-grasbrunn.de` → **dieselbe IP**, SPF `include:spf.internetwerk.de` |
 
+**Kundenportal:** `https://verwaltung.internetwerk.de/login` — Eigenentwicklung des
+Anbieters, kein Plesk oder cPanel. Anmeldung mit **Kundennummer und Passwort**, eine
+Zwei-Faktor-Anmeldung gibt es nicht. Passwort zurücksetzen unter `/login/password`; die
+Mail geht an die dort hinterlegte Adresse — wenn das ein früherer Verantwortlicher ist,
+wird es zäh, deshalb gleich mit abfragen.
+
 Andreas hat den WordPress-Login, aber keinen Hoster-Zugang — der ist für die DNS-Einträge
-nötig und beim Verein anzufragen.
+nötig und beim Verein anzufragen. Konkret gebraucht werden **Kundennummer, Passwort und
+die im Konto hinterlegte E-Mail-Adresse**. Zugangsdaten nicht per Mail und nicht in den
+Chat: KeePassXC, Kundeneintrag im MSP Manager. Nach der Übergabe Passwort ändern, weil
+ohne zweiten Faktor das Passwort der einzige Schutz ist.
 
 **Beim Umschalten aufpassen:** Website und Vereins-Mail liegen auf derselben Maschine.
 Für den Livegang nur den A-Record (und ggf. `www`) umhängen. MX und SPF unangetastet

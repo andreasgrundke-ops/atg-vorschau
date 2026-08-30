@@ -25,8 +25,11 @@ bestehenden WordPress-Seite. Vorschau läuft über GitHub Pages, Abstimmung mit 
 | Flyer / Visitenkarte | `src/pages/flyer.astro`, `flyer-quer.astro`, `visitenkarte.astro` |
 
 **Fallstricke:**
-- Astro komprimiert HTML — ein Zeilenumbruch direkt nach `</b>` frisst das Leerzeichen.
-  Inline-Tags und Folgetext in dieselbe Zeile schreiben.
+- Astro komprimiert HTML — ein Zeilenumbruch frisst das Leerzeichen, wenn danach ein
+  `{Ausdruck}` folgt oder davor ein Inline-Tag wie `</b>` steht. Aus „Kilometer:\n
+  {STAFFEL.volleKm} km" wird „Kilometer:300 km". Zwischen zwei Textstücken passiert das
+  nicht. Also: Satzzeichen, Inline-Tag und der folgende Ausdruck gehören in dieselbe
+  Zeile. Gegenprobe im gebauten `dist/`, nicht im Quelltext.
 - Per JS erzeugte Elemente tragen kein `data-astro-cid` → Scoped-CSS greift nicht.
   Für solche Knoten `:global(...)` verwenden (siehe Kostenrechner-Zeilen).
 - Der Service Worker cacht die Shell: beim Testen von Änderungen abmelden oder Cache leeren,

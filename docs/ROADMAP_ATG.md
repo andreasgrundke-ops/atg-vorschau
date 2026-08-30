@@ -116,25 +116,52 @@ Abstimmung mit dem Vorstand, damit nichts Falsches nach außen geht.
 **Die Frage:** Dürfen ATG-Fahrzeuge auf den ausgewiesenen Carsharing-Stellplätzen in
 München parken, und fallen dort Gebühren an?
 
-**Was die erste Recherche ergeben hat** (Stand 30.08.2026, nicht bei der Stadt bestätigt):
+**Recherchiert am 30.08.2026** (Quellen: muenchenunterwegs.de, Rathaus-Umschau der
+Stadt München, Bundesverband CarSharing; nicht bei der Stadt rückbestätigt).
 
-- München hat über 300 Stellplätze für Carsharing im öffentlichen Raum.
-- Bei **allgemeinen Carsharing-Stellplätzen** darf nach dem Carsharinggesetz jedes
-  Fahrzeug parken, das eine **amtliche Kennzeichnung nach CsgG** trägt — die
-  Berechtigung hängt also am Fahrzeug, nicht am Anbieternamen.
-- Kommunen können solche Stellplätze zusätzlich von Parkgebühren befreien.
-- Die Stadt veröffentlicht die Standorte als offene Daten.
+München kennt **zwei verschiedene Arten** von Carsharing-Flächen. Der Unterschied ist
+für uns entscheidend:
 
-**Was das bedeuten würde:** Nicht nur die ZOE, sondern die ganze Flotte könnte in
-München privilegiert parken. Für ein Vereinsmitglied, das zum Einkaufen oder ins Museum
-fährt, ist das bares Geld und ein echter Grund, das Vereinsauto statt das eigene zu
-nehmen.
+| | Allgemeine Carsharing-Stellfläche | Stationsbasierter Stellplatz |
+|---|---|---|
+| Beschilderung | Zeichen 314 mit Carsharing-Sinnbild (vier Personen, geteiltes Fahrzeug), grüne Umrandung und weißes Piktogramm auf dem Boden | dasselbe, **zusätzlich ein Schild mit dem Namen des Anbieters** |
+| Wer darf parken | jedes Carsharing-Fahrzeug mit gültiger Vignette — Münchner oder Bundesvignette nach § 39 Abs. 11 StVO | **nur** das eine Fahrzeug des benannten Anbieters |
+| Anzahl in München | Teil der über 300 Carsharing-Plätze | 108 Standorte, aktuell STATTAUTO und CarVia |
+| Falschparker | nicht berechtigt | der berechtigte Anbieter **lässt abschleppen** |
 
-**Was zu tun ist:** Beim Kreisverwaltungsreferat der Stadt München nachfragen, welche
-Voraussetzungen ein stationsbasierter Verein für die Kennzeichnung erfüllen muss und wer
-sie erteilt. Der Bundesverband CarSharing hat dazu einen Leitfaden. **Erst fragen, dann
-werben** — solange das nicht schriftlich bestätigt ist, darf es in keinem Newsletter
-stehen.
+Seit Juli 2026 hängt an den 108 stationsbasierten Plätzen ein zusätzliches Klarstellungs-
+schild. Grund laut Stadt: Es kam wiederholt vor, dass dort abgestellte Privat- **und
+fremde Carsharing-Fahrzeuge** abgeschleppt wurden.
+
+**Für den ATG heißt das im Ist-Zustand:**
+
+- **Nein, die Fahrzeuge dürfen dort nicht parken.** Ohne Vignette ist ein ATG-Auto auf
+  einer Carsharing-Fläche ein Falschparker wie jedes Privatfahrzeug. Auf den 108
+  stationsbasierten Plätzen kommt das Risiko dazu, abgeschleppt zu werden.
+- In Parklizenzgebieten gilt für ATG-Fahrzeuge das normale Regime: Parkschein oder
+  Parkscheibe.
+- Die grüne Markierung allein sagt also nichts darüber, ob **wir** dort stehen dürfen —
+  entscheidend ist die Vignette am Fahrzeug und das Zusatzschild am Mast.
+
+**Wo die Chance liegt:** Mit einer Vignette dürfte die **ganze Flotte** die allgemeinen
+Flächen nutzen, nicht nur die ZOE — die Berechtigung hängt am Fahrzeug, nicht am
+Anbieternamen. Die Münchner Vignette erlaubt darüber hinaus das kostenfreie Abstellen in
+Parklizenzgebieten; belegt ist das bisher für Freefloating-Anbieter, für stationsbasierte
+ist es zu klären.
+
+**Die entscheidende Frage, die nur die Stadt beantworten kann:** Bekommt ein Verein aus
+dem Umland ohne eigene Station in München eine Vignette? Das ist der Punkt, an dem es
+scheitern kann — die Regelungen sind erkennbar auf Anbieter mit Angebot in der Stadt
+zugeschnitten.
+
+**Zu tun:** Anfrage beim Mobilitätsreferat der Landeshauptstadt München (dort liegt das
+Thema, nicht beim Kreisverwaltungsreferat), Stichwort Carsharing-Vignette nach § 39
+Abs. 11 StVO für einen stationsbasierten Anbieter mit Sitz außerhalb. Der Bundesverband
+CarSharing hat einen Leitfaden zum Carsharinggesetz, der die Voraussetzungen erklärt.
+
+**Erst fragen, dann werben.** Solange keine schriftliche Bestätigung vorliegt, darf das
+in keinem Newsletter, keinem Beitrag und auf keiner Seite stehen. Ein Mitglied, das sich
+darauf verlässt und abgeschleppt wird, kostet den Verein mehr als die Aktion bringt.
 
 ### B. MVV-Karten in Neukeferloh
 

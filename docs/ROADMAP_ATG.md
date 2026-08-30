@@ -154,10 +154,75 @@ dem Umland ohne eigene Station in München eine Vignette? Das ist der Punkt, an 
 scheitern kann — die Regelungen sind erkennbar auf Anbieter mit Angebot in der Stadt
 zugeschnitten.
 
-**Zu tun:** Anfrage beim Mobilitätsreferat der Landeshauptstadt München (dort liegt das
-Thema, nicht beim Kreisverwaltungsreferat), Stichwort Carsharing-Vignette nach § 39
-Abs. 11 StVO für einen stationsbasierten Anbieter mit Sitz außerhalb. Der Bundesverband
-CarSharing hat einen Leitfaden zum Carsharinggesetz, der die Voraussetzungen erklärt.
+#### Zwei Vignetten, zwei Reichweiten
+
+| | Münchner Vignette | Bundesvignette (§ 39 Abs. 11 StVO) |
+|---|---|---|
+| Carsharing-Stellflächen | ja | ja |
+| Parken im übrigen öffentlichen Raum | auf allen Parkplätzen, auch Bewohnerparken und Kurzzeitzonen | nein — dort gilt Parkschein oder Parkscheibe wie für alle |
+| Wer sie typischerweise hat | Anbieter mit Angebot in München | Anbieter von außerhalb |
+
+Für den ATG ist damit die **Bundesvignette der realistische Weg**: Sie öffnet die
+allgemeinen Carsharing-Flächen, aber nicht das volle Münchner Privileg. Genau das reicht
+für den Zweck — ein Mitglied, das ins Museum oder zum Einkaufen fährt, sucht einen Platz,
+kein Bewohnerparkrecht.
+
+#### Wo diese Flächen liegen — Stand 30.08.2026
+
+Das Mobilitätsreferat veröffentlicht die allgemeinen Carsharing-Parkplätze als offene
+Daten (Datenlizenz Deutschland Namensnennung 2.0, tägliche Aktualisierung). Abruf über
+den WFS-Dienst des Geoportals:
+
+```
+https://geoportal.muenchen.de/geoserver/mor_wfs/ows?service=WFS&version=1.0.0
+  &request=GetFeature&typeName=mor_wfs:ruhver_carsharing&outputFormat=csv
+```
+
+**710 Flächen im Datensatz, davon 685 in Betrieb** und 25 stillgelegt. Alle sind vom Typ
+„allgemein/freefloating" und tragen **keinen Anbieternamen** — es sind also genau die
+Plätze, die jedes gekennzeichnete Carsharing-Fahrzeug nutzen darf. Die 108
+stationsbasierten Plätze von STATTAUTO und CarVia stecken nicht in diesem Datensatz.
+
+Die zehn stärksten Bezirke:
+
+| Bezirk | Plätze | | Bezirk | Plätze |
+|---|---|---|---|---|
+| Maxvorstadt | 60 | | Schwabing-Freimann | 44 |
+| Schwabing-West | 57 | | Milbertshofen-Am Hart | 38 |
+| Ludwigsvorstadt-Isarvorstadt | 50 | | Schwanthalerhöhe | 37 |
+| Neuhausen-Nymphenburg | 49 | | Untergiesing-Harlaching | 33 |
+| Au-Haidhausen | 46 | | Bogenhausen | 30 |
+| Altstadt-Lehel | 46 | | Berg am Laim | 21 |
+
+Der Osten, aus dem unsere Mitglieder kommen, ist ebenfalls versorgt: Trudering-Riem 18,
+Ramersdorf-Perlach 16, dazu Bogenhausen und Berg am Laim. Standortnamen aus dem
+Datensatz, die für Ausflüge zählen: **Pinakotheken**, St.-Jakobs-Platz, Maximiliansplatz,
+Oberanger, Marstallstraße, Königinstraße/Veterinärstraße, Arabellapark, Innsbrucker Ring,
+Messe West, ZOB.
+
+#### Was es kostet
+
+Für die Nutzung zahlt der Fahrer nichts. Die Stadt lässt sich stattdessen von den
+Anbietern eine **Pauschale je Fahrzeug** zahlen. Die Höhe steht nicht öffentlich und ist
+mit der Anfrage zu erfragen — bei fünf Fahrzeugen ist das die Rechnung, die über Ja oder
+Nein entscheidet.
+
+#### Die Anfrage
+
+Zuständig ist das Mobilitätsreferat, und es gibt eine eigene Adresse dafür:
+**carsharing.mor@muenchen.de** (aus den Metadaten des Datensatzes).
+
+Zu fragen ist:
+
+1. Kann ein stationsbasierter Carsharing-Verein mit Sitz im Landkreis München, dessen
+   Fahrzeuge in Grasbrunn stehen, eine Kennzeichnung als Carsharing-Fahrzeug erhalten?
+2. Welche Voraussetzungen und Nachweise sind nötig, welches Verfahren, welche Dauer?
+3. Was kostet es je Fahrzeug und Jahr?
+4. Berechtigt die Kennzeichnung zum Parken auf allen 685 allgemeinen Flächen?
+5. Gibt es eine Variante nur fürs Zielparken, ohne eigene Station in München?
+
+Der Bundesverband CarSharing hat zusätzlich einen Leitfaden zum Carsharinggesetz, der
+die bundesrechtlichen Voraussetzungen erklärt.
 
 **Erst fragen, dann werben.** Solange keine schriftliche Bestätigung vorliegt, darf das
 in keinem Newsletter, keinem Beitrag und auf keiner Seite stehen. Ein Mitglied, das sich

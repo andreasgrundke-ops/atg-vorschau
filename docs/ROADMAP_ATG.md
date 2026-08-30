@@ -24,6 +24,44 @@ Zweck.
 
 ---
 
+## Offene Punkte (Stand 30.08.2026)
+
+| # | Thema | Was offen ist | Wer | Prio |
+|---|---|---|---|---|
+| **Website — Livegang** ||||
+| 1 | Kilometerstaffel | Nutzungsordnung Ziff. 5 bestätigen (301–1000, 1301–2000 …) | Wolfgang | hoch |
+| 2 | Abrechnung ELKATO | Rechnet ELKATO wie unser Kostenrechner? | Wolfgang | hoch |
+| 3 | Hoster-Zugang | Kundennummer, Passwort, hinterlegte E-Mail-Adresse | Dirk | hoch |
+| 4 | Hosting-Paket | Vertragsunterlagen — verkleinern oder auf den VPS | Dirk | hoch |
+| 5 | Fahrzeugfotos | Originalgrößen, aktuell von WordPress gehotlinkt | Dirk | hoch |
+| 6 | Rechtstexte | Freigabe, dann als Astro-Seiten anlegen | Vorstand → Andreas | hoch |
+| 7 | Buchen-Dialog | Sind ZKneu-Hinweis und Kartenausgabe noch aktuell? | Vorstand | mittel |
+| **Backend und Aufnahmestrecke** ||||
+| 8 | AVV | Unterschrift; Löschfrist und Backup-Ziel entscheiden | Vorstand | hoch |
+| 9 | Vereinspostfach | `noreply@atg-grasbrunn.de`, DKIM und DMARC | Dirk | mittel |
+| 10 | Formularvorlagen | Beitrittserklärung und SEPA-Mandat | Vorstand | mittel |
+| 11 | Zuständigkeit Aufnahmen | Wer bekommt die Meldung, wer ruft an | Vorstand | mittel |
+| **Marketing und Kommunikation** ||||
+| 12 | Konzept freigeben | Andreas' Freigabe für Newsletter- und Social-Plan | **Andreas** | hoch |
+| 13 | Grundsatzentscheidung | Will der Vorstand das? Alle Fahrberechtigten ansprechen? | Vorstand | hoch |
+| 14 | Adressbasis | Hat ELKATO E-Mail-Adressen der Fahrberechtigten, exportierbar? | Vorstand | hoch |
+| 15 | Versandwerkzeug | CleverReach oder Listmonk, Konto anlegen, AVV | Andreas | mittel |
+| 16 | Anmeldeseite | Double Opt-in auf der Website | Andreas | mittel |
+| 17 | HTML-Vorlage | Newsletter-Vorlage im Vereinsdesign, einmalig | Andreas | mittel |
+| 18 | Aussendung 0 | Adressen der Mitfahrenden einsammeln | Vorstand + Andreas | mittel |
+| 19 | Ehrenamtliche | Ein bis zwei Mitglieder für die Kanäle finden | Vorstand | niedrig |
+| 20 | Wer schreibt | Person im Vorstand mit dem Hut auf | Vorstand | mittel |
+| 21 | TikTok | Aufnehmen oder weglassen — Entscheidung Andreas | **Andreas** | niedrig |
+| **Weitere Bausteine** ||||
+| 22 | Abrechnungstermin | Wann Andreas beim nächsten Lauf dabei ist | Wolfgang | mittel |
+| 23 | Mitgliederverwaltung | Wirklich Excel? ELKATO-Schnittstelle? sharePAD wann? | Vorstand | mittel |
+| 24 | Carsharing-Vignette | Anfrage an carsharing.mor@muenchen.de, fünf Fragen | Andreas | niedrig |
+| 25 | Karte der Plätze | Erst nach Antwort der Stadt | Andreas | niedrig |
+| 26 | MVV-Karten | Ist-Aufnahme Abrechnungsmodus, Briefkasten. Nicht bewerben | Vorstand | niedrig |
+| 27 | Sonstige Entgelte | Service-Pauschale 25 €, Sonderreinigung 100 € ausstellen? | Vorstand | niedrig |
+
+---
+
 ## 1. Website (läuft)
 
 Neuentwurf als Ablösung der WordPress-Seite. Stand und offene Punkte: `../CLAUDE.md`.

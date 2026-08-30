@@ -76,9 +76,12 @@ einmal verschieben und muss die MX-Einträge mitnehmen.
 
 ## Stand / offen / nächster Schritt
 
-- **Stand:** 30.08.2026 — **Version 1.3**, gebaut und im Browser gegengeprüft, noch nicht
-  auf die Vorschau geschoben. Sie arbeitet die Mail von Wolfgang Schneidt vom 30.08.2026
-  ein: alle sechs Rückfragen beantwortet plus eine neue Korrektur.
+- **Stand:** 30.08.2026 — **Version 1.3 ist auf der Vorschau veröffentlicht** und live
+  gegengeprüft. Sie arbeitet die Mail von Wolfgang Schneidt vom 30.08.2026 ein: alle
+  sechs Rückfragen beantwortet, dazu der Sandero als Mittelklasse, die zyklische
+  Kilometerstaffel, der Buchen-Dialog vor ELKATO und zwei Korrekturen (fehlendes
+  Leerzeichen in der Rechner-Fußnote, unlesbarer Pflichtfeld-Hinweis unter dem
+  Formular).
 - **Neu in 1.3:**
   - Der Dacia Sandero heißt in der Fahrzeugübersicht **Mittelklasse** statt Kleinwagen.
     Er stand mit demselben Badge da wie der Corsa, gehört aber in die teurere Klasse
@@ -128,8 +131,12 @@ einmal verschieben und muss die MX-Einträge mitnehmen.
 - **Offen — Fahrzeugfotos:** Die Seite lädt sie per Hotlink von `www.atg-grasbrunn.de`.
   Wird WordPress nach dem Umzug abgeschaltet oder das Paket verkleinert, brechen die
   Bilder. Vor dem Livegang lokal ablegen.
-- **Nächster Schritt:** Version 1.3 auf die Vorschau deployen und Wolfgang antworten,
-  parallel die Zugänge aus Kapitel 8 des Konzepts beim Vorstand anfragen. Danach
-  Rechtsseiten und Livegang, erst dann das Backend.
+- **Alle offenen Punkte als Tabelle:** `docs/ROADMAP_ATG.md`, Abschnitt „Offene Punkte" —
+  27 Zeilen mit Zuständigkeit und Priorität. Das ist der Wiedereinstieg.
+- **Nächster Schritt:** Die zusammengeführte Mail an alle drei Vorstandsmitglieder
+  rausschicken (Entwurf liegt im Chatverlauf vom 30.08.2026, Aufbau: ein Teil je Person,
+  Antworten direkt im Text). Parallel Punkt 12 der offenen Liste klären — Andreas gibt
+  den Kommunikationsplan frei oder ändert ihn, daran hängt der ganze Marketing-Block.
+  Danach Rechtsseiten und Livegang, erst dann das Backend.
 
 *CI 2026.01 · Grundke IT-Service · www.grundke-it.de*

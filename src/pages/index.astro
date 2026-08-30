@@ -1103,7 +1103,14 @@ const faqSchema = {
     .jf-msg { margin-top: 0.7rem; font-weight: 700; font-size: 0.9rem; min-height: 1.1em; text-align: center; }
     .jf-msg.is-ok { color: var(--color-success, #1a7a5e); }
     .jf-msg.is-err { color: var(--color-red-deep); }
-    .jf-fine { margin-top: 0.8rem; font-size: 0.78rem; color: var(--color-muted); }
+    .jf-fine { margin-top: 0.8rem; font-size: 0.82rem; color: var(--color-muted); }
+    /* .band p faerbt Absaetze hellrosa (#ffe7e3) fuer den roten Grund und gewinnt mit
+       seiner hoeheren Spezifitaet auch innerhalb der weissen Formularkarte. Der
+       Pflichtfeld-Hinweis stand dadurch hellrosa auf Weiss und war kaum zu lesen.
+       Die Statuszeile bekommt hier bewusst keine Farbe, sonst schluege sie
+       .jf-msg.is-ok / .is-err bei gleicher Spezifitaet. */
+    .join-form .jf-fine { max-width: none; margin: 0.9rem 0 0; color: var(--color-muted); }
+    .join-form .jf-msg { max-width: none; margin: 0.7rem 0 0; }
 
     /* „oder direkt" — Anrufen + Rückruf bleiben erhalten */
     .band-alt { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem; margin-top: 1.3rem; color: #ffe7e3; font-weight: 700; }
